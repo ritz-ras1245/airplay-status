@@ -43,7 +43,9 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 
 - Node.js v20+, ES Modules, Express + EJS
 - No `.env` for secrets (Keychain later if needed)
-- Spec-driven — `specs/p0-airplay-status.md` + roadmap `specs/p1-*.md` … `specs/p5-*.md`
+- Spec-driven — `specs/p0-airplay-status.md` + roadmap `specs/p1-*.md` … `specs/p6-*.md`
+- Cloud-PR-ready specs follow `specs/cloud-cursor-pr-standard.md`
+- Cloud agents: read `AGENT_START_HERE.md` on the feature branch before implementing
 - Minimal scope; match existing code style
 - Do not commit unless user asks
 
@@ -58,8 +60,11 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 | **P3** — eInk display | 📄 Spec | `specs/p3-eink-display.md` (+ P3.1 profiles, on-demand PNG) |
 | **P4** — eInk controls | 📄 Spec | `specs/p4-eink-controls.md` |
 | **P5** — Deployment | 📄 Spec | `specs/p5-deployment.md` — Pi, Docker |
+| **P6** — Echo Show | 📄 Spec | `specs/p6-echo-show.md` — Tier B push; monorepo `integrations/echo/` |
 
-**Implementation order (from spec):** P1 spike → P3 `/eink` → P2 Tidbyt → P4 → P5.
+**Implementation order (from spec):** P1 spike → P3 `/eink` → P2 Tidbyt → P4 → P5 → P6.
+
+**Cloud agent pickup:** checkout `feat/p6-echo-show`, read [AGENT_START_HERE.md](AGENT_START_HERE.md) — see [cloud-cursor-pr-standard.md](specs/cloud-cursor-pr-standard.md).
 
 ## Data Model
 
