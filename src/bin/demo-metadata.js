@@ -12,7 +12,7 @@ import {
 const SAMPLE_LINES = [
   'The AirPlay client at "192.168.1.10" has connected to this player.',
   'Play Session Begin.',
-  'The name of the AirPlay client is "Ritesh\'s Mac Studio".',
+  'The name of the AirPlay client is "Demo Mac".',
   'Title: "Señorita".',
   'Artist: "Shawn Mendes, Camila Cabello".',
   'Album Name: "Señorita".',

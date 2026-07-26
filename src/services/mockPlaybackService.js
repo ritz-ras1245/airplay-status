@@ -1,5 +1,5 @@
 /**
- * Mock playback service — dummy data matching docs/spec.md
+ * Mock playback service — dummy data matching specs/p0-airplay-status.md
  */
 export const getPlaybackState = async (forceNothingPlaying = false) => {
   if (forceNothingPlaying) {

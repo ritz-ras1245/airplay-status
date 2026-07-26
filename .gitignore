@@ -4,3 +4,4 @@ node_modules/
 *.log
 vendor/
 src/public/artwork/current.*
+config/eink-devices.json

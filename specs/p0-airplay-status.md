@@ -1,4 +1,4 @@
-# Technical Specification: AirPlay Status
+# P0 — AirPlay Status Dashboard
 
 ## Overview
 
@@ -113,12 +113,13 @@ metadata = {
 
 Metadata pipe format is binary/XML-style, decoded by `shairport-sync-metadata-reader`. See [shairport-sync-metadata-reader](https://github.com/mikebrady/shairport-sync-metadata-reader).
 
-## Node Service API (Planned)
+## Node Service API
 
 | Method | Path | Description |
 |---|---|---|
 | GET | `/` | Dashboard UI |
 | GET | `/api/status` | JSON playback state |
+| GET | `/api/events` | SSE playback updates |
 | GET | `/artwork/current.jpg` | Current album art (if available) |
 
 ## UI Requirements
@@ -136,24 +137,57 @@ Metadata pipe format is binary/XML-style, decoded by `shairport-sync-metadata-re
 4. **Local network only** — sender and receiver must be on the same LAN.
 5. **macOS 15.4+** system Now Playing APIs are restricted; this approach bypasses that by being a receiver.
 
-## Implementation Phases
+## P0 Implementation Status
 
-| Phase | Goal | Commit message (suggested) |
+| Step | Goal | Status |
 |---|---|---|
-| **1** | Spec, AGENTS.md, README, git init | `feat: phase 1 - spec and project scaffolding` |
-| **2** | Wireframe UI with mock data + nothing-playing toggle | `ui: wireframe with dummy data and empty state` |
-| **3** | shairport-sync install docs, metadata pipe reader script | `feat: shairport-sync sidecar and metadata reader` |
-| **4** | Live metadata → UI (replace mock service) | `feat: live airplay metadata in dashboard` |
-| **5** | Hardening: launchd service, install script, troubleshooting | `chore: local service setup and docs` |
+| Scaffolding | Spec, AGENTS.md, README, git init | Done |
+| Wireframe UI | Mock data + nothing-playing toggle | Done |
+| Sidecar | shairport-sync install docs, metadata pipe reader | Done |
+| Live metadata | Pipe reader → dashboard (SSE) | Done |
+| Hardening | launchd service, install script, troubleshooting | Planned |
+
+## Roadmap (P1–P5)
+
+Future work extends the same playback state from `/api/status`. Specs live in this directory:
+
+| Phase | Goal | Status | Spec |
+|---|---|---|---|
+| **P1** | Web play/pause/prev/next via DACP | Spec | [p1-remote-control.md](./p1-remote-control.md) |
+| **P2** | Tidbyt now-playing push | Spec | [p2-tidbyt.md](./p2-tidbyt.md) |
+| **P3** | Kindle/eInk read-only display | Spec | [p3-eink-display.md](./p3-eink-display.md) (incl. [P3.1 device profiles](./p3-eink-display.md#p31-side-quest--device-profiles)) |
+| **P4** | eInk transport controls | Spec | [p4-eink-controls.md](./p4-eink-controls.md) |
+| **P5** | Cross-platform deployment (Pi, Docker, Synology) | Spec | [p5-deployment.md](./p5-deployment.md) |
+
+### Feasibility summary (P1–P5)
+
+| Phase | Feasible? | Confidence | Main risk |
+|-------|-----------|------------|-----------|
+| **P1** Web controls | **Conditional** | Medium | Apple deprecated DACP on iOS 17.4+; iPhone may ignore play/pause/skip even when commands send |
+| **P2** Tidbyt | **Yes** | High | Custom apps don't auto-refresh — server pushes WebP on a schedule |
+| **P3** Kindle display | **Yes** | High | Browser path is simplest; jailbreak fetch path for always-on wall display |
+| **P4** Kindle controls | **Conditional** | Medium | Same DACP limits as P1; browser UI can expose buttons but iPhone may not respond |
+| **P5** Non-Mac deploy | **Yes** | High on RPi; Medium on Docker; Low on Synology | mDNS discovery requires host networking / Avahi |
+
+**Suggested implementation order:** P1 spike → P3 browser `/eink` → P2 Tidbyt → P4 eInk controls → P5 deployment docs/compose (P5 can parallelize with P2).
 
 ## File Structure (Target)
 
 ```
 airplay-status/
+├── specs/
+│   ├── p0-airplay-status.md
+│   ├── p1-remote-control.md
+│   ├── p2-tidbyt.md
+│   ├── p3-eink-display.md
+│   ├── p4-eink-controls.md
+│   └── p5-deployment.md
 ├── docs/
-│   └── spec.md
+│   ├── debug-capture.md
+│   └── shairport-setup.md
 ├── config/
-│   └── shairport-sync.conf.example
+│   ├── shairport-sync.conf.example
+│   └── eink-devices.example.json   # P3.1
 ├── bin/
 │   ├── run-local.sh
 │   └── read-metadata.sh

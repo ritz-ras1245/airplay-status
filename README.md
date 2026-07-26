@@ -17,104 +17,41 @@ Your device (Music, Spotify, etc.)
 - macOS (primary) or Linux
 - Node.js v20+
 - [Homebrew](https://brew.sh) (macOS)
-- shairport-sync with metadata support (Phase 3)
+- shairport-sync with metadata support (installed by `./bin/setup-sidecar.sh`)
 
 ## Quick Start
 
-> Phase 1 is documentation and scaffolding only. The dashboard arrives in Phase 2.
-
 ```bash
-# Clone (after GitHub repo is created)
-git clone https://github.com/<USER>/airplay-status.git
+git clone https://github.com/ritz-ras1245/airplay-status.git
 cd airplay-status
-
-# Install Node dependencies (Phase 2+)
 npm install
-
-# Start the dashboard (Phase 2+)
-npm start
-# → http://localhost:3003
-```
-
-## Running with Live AirPlay Metadata (Phase 3+)
-
-See **[docs/shairport-setup.md](docs/shairport-setup.md)** for the full guide.
-
-### Quick start
-
-```bash
 chmod +x bin/*.sh
-./bin/setup-sidecar.sh          # one-time: install shairport-sync + build metadata reader
-
-./bin/run-shairport.sh          # terminal 1: start AirPlay receiver
-./bin/read-metadata.sh          # terminal 2: human-readable metadata
-# or
-npm run watch:metadata          # terminal 2: JSON playback state stream
+./bin/setup-sidecar.sh   # one-time: shairport-sync + metadata reader
+./bin/run-local.sh       # receiver + dashboard → http://localhost:3003
 ```
 
-### 1. Install shairport-sync
+On your iPhone or Mac, start playback and select **both** your real speakers and **AirPlay Status** as outputs.
 
-```bash
-brew install shairport-sync
-```
+Details: **[docs/shairport-setup.md](docs/shairport-setup.md)**. Debug playback issues: `./bin/run-local.sh --debug` — see [docs/debug-capture.md](docs/debug-capture.md).
 
-Verify metadata support:
+## Phases
 
-```bash
-shairport-sync -V
-# Output should include the word "metadata"
-```
+| Phase | Status | Description |
+|-------|--------|-------------|
+| **P0** — Live dashboard | Done | Sidecar, metadata pipe, SSE dashboard ([p0 spec](specs/p0-airplay-status.md)) |
+| **P0** — Hardening | Planned | launchd, install script |
+| **P1** — Remote control | Spec | [p1-remote-control.md](specs/p1-remote-control.md) |
+| **P2** — Tidbyt | Spec | [p2-tidbyt.md](specs/p2-tidbyt.md) |
+| **P3** — eInk display | Spec | [p3-eink-display.md](specs/p3-eink-display.md) |
+| **P4** — eInk controls | Spec | [p4-eink-controls.md](specs/p4-eink-controls.md) |
+| **P5** — Deployment | Spec | [p5-deployment.md](specs/p5-deployment.md) |
 
-### 2. Configure the receiver
-
-Copy the example config and edit as needed:
-
-```bash
-mkdir -p ~/.config/shairport-sync
-cp config/shairport-sync.conf.example ~/.config/shairport-sync/shairport-sync.conf
-```
-
-Key settings: receiver name **"AirPlay Status"**, metadata pipe enabled, dummy audio output.
-
-### 3. Start shairport-sync
-
-```bash
-shairport-sync -c ~/.config/shairport-sync/shairport-sync.conf
-```
-
-The receiver appears in your AirPlay picker as **AirPlay Status**.
-
-### 4. Start the dashboard
-
-```bash
-npm start
-```
-
-Or use the wrapper script (Phase 5):
-
-```bash
-./bin/run-local.sh
-```
-
-### 5. Play music
-
-On your iPhone or Mac, start playback and select **both** your real speakers and **AirPlay Status** as outputs. Open http://localhost:3003 to see the track info.
-
-## Development Phases
-
-| Phase | Description |
-|---|---|
-| 1 | Spec, docs, project scaffolding |
-| 2 | Wireframe UI with mock data |
-| 3 | shairport-sync sidecar + metadata reader |
-| 4 | Live metadata in dashboard |
-| 5 | Service setup, install scripts, troubleshooting |
-
-See [docs/spec.md](docs/spec.md) for the full technical specification.
+See [specs/p0-airplay-status.md](specs/p0-airplay-status.md) for the full P0 technical specification.
 
 ## Project Docs
 
-- [docs/spec.md](docs/spec.md) — architecture, data model, API, phases
+- [specs/p0-airplay-status.md](specs/p0-airplay-status.md) — architecture, data model, API, P0 status
+- [specs/](specs/) — P1–P5 roadmap specs
 - [AGENTS.md](AGENTS.md) — context for AI assistants continuing this work
 
 ## Limitations

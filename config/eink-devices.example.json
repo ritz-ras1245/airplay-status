@@ -1,0 +1,110 @@
+{
+  "default": {
+    "label": "Generic / unidentified eInk",
+    "showProgressBar": false,
+    "progressBarPx": 216,
+    "segmentMinPx": 24,
+    "segmentMax": 20,
+    "refreshSec": 60,
+    "refreshMinSec": 10,
+    "refreshMaxSec": 120,
+    "pngWidth": 600,
+    "pngHeight": 800
+  },
+  "6inch": {
+    "label": "~6\" eInk class — map your small screen here",
+    "showProgressBar": true,
+    "progressBarPx": 192,
+    "segmentMinPx": 22,
+    "segmentMax": 8,
+    "refreshSec": 60,
+    "refreshMinSec": 10,
+    "refreshMaxSec": 120,
+    "pngWidth": 600,
+    "pngHeight": 800
+  },
+  "7inch": {
+    "label": "~7\" eInk class — common Kindle-sized",
+    "showProgressBar": true,
+    "progressBarPx": 216,
+    "segmentMinPx": 24,
+    "segmentMax": 9,
+    "refreshSec": 60,
+    "refreshMinSec": 10,
+    "refreshMaxSec": 120,
+    "pngWidth": 758,
+    "pngHeight": 1024
+  },
+  "10inch": {
+    "label": "~10\" eInk class — large panel / wall display",
+    "showProgressBar": true,
+    "progressBarPx": 280,
+    "segmentMinPx": 28,
+    "segmentMax": 10,
+    "refreshSec": 60,
+    "refreshMinSec": 10,
+    "refreshMaxSec": 120,
+    "pngWidth": 960,
+    "pngHeight": 1280
+  },
+  "167ppi": {
+    "label": "167ppi density class",
+    "showProgressBar": true,
+    "progressBarPx": 192,
+    "segmentMinPx": 22,
+    "segmentMax": 8,
+    "refreshSec": 60,
+    "refreshMinSec": 10,
+    "refreshMaxSec": 120,
+    "pngWidth": 600,
+    "pngHeight": 800
+  },
+  "227ppi": {
+    "label": "227ppi density class",
+    "showProgressBar": true,
+    "progressBarPx": 216,
+    "segmentMinPx": 24,
+    "segmentMax": 9,
+    "refreshSec": 60,
+    "refreshMinSec": 10,
+    "refreshMaxSec": 120,
+    "pngWidth": 758,
+    "pngHeight": 1024
+  },
+  "300ppi": {
+    "label": "300ppi density class",
+    "showProgressBar": true,
+    "progressBarPx": 240,
+    "segmentMinPx": 26,
+    "segmentMax": 9,
+    "refreshSec": 60,
+    "refreshMinSec": 10,
+    "refreshMaxSec": 120,
+    "pngWidth": 758,
+    "pngHeight": 1024
+  },
+  "profile1": {
+    "label": "Custom profile 1 — note your hardware in label",
+    "showProgressBar": true,
+    "progressBarPx": 216,
+    "segmentMinPx": 24,
+    "segmentMax": 9,
+    "refreshSec": 60,
+    "refreshMinSec": 10,
+    "refreshMaxSec": 120,
+    "pngWidth": 600,
+    "pngHeight": 800
+  },
+  "profile2": {
+    "label": "Custom profile 2 — note your hardware in label",
+    "showProgressBar": true,
+    "progressBarPx": 216,
+    "segmentMinPx": 24,
+    "segmentMax": 9,
+    "refreshSec": 60,
+    "refreshMinSec": 10,
+    "refreshMaxSec": 120,
+    "pngWidth": 600,
+    "pngHeight": 800
+  }
+}
