@@ -59,7 +59,7 @@ Single metadata pipe feeds one Node process; all UIs and integrations consume `/
 | Node app | `npm start` or `run-local.sh` on port 3003 |
 | mDNS | Bonjour built-in |
 
-P0 hardening (launchd, install script) remains separate from P5 cross-platform docs — see the hardening row in [p0-airplay-status.md](./p0-airplay-status.md).
+macOS prod automation (launchd, install script) is **[P99 — prod readiness](./p99-prod-readiness.md)**, separate from P5 cross-platform deployment docs.
 
 ## Raspberry Pi (recommended production)
 
@@ -127,7 +127,7 @@ npm ci
 PORT=3003 node src/index.js
 ```
 
-Use systemd unit (future hardening phase) or `pm2` for persistence.
+Use systemd unit (future P99 / P5 addendum) or `pm2` for persistence.
 
 ### Verification
 

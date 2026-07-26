@@ -36,29 +36,25 @@ Details: **[docs/shairport-setup.md](docs/shairport-setup.md)**. Debug playback 
 
 ## Phases
 
+Phase numbering: **P1–P98** features · **P99** prod readiness · **P100–P999** iteration 2 ([specs/README.md](specs/README.md)).
+
 | Phase | Status | Description |
 |-------|--------|-------------|
 | **P0** — Live dashboard | Done | Sidecar, metadata pipe, SSE dashboard ([p0 spec](specs/p0-airplay-status.md)) |
-| **P0** — Hardening | Planned | launchd, install script |
 | **P1** — Remote control | Spec | [p1-remote-control.md](specs/p1-remote-control.md) |
 | **P2** — Tidbyt | MVP done | [p2-tidbyt.md](specs/p2-tidbyt.md) — [integrations/tidbyt/](integrations/tidbyt/) |
 | **P3** — eInk display | Spec | [p3-eink-display.md](specs/p3-eink-display.md) |
 | **P4** — eInk controls | Spec | [p4-eink-controls.md](specs/p4-eink-controls.md) |
 | **P5** — Deployment | Spec | [p5-deployment.md](specs/p5-deployment.md) |
+| **P99** — Prod readiness | Spec | [p99-prod-readiness.md](specs/p99-prod-readiness.md) — logs, Grafana, SOPs, launchd |
 
 See [specs/p0-airplay-status.md](specs/p0-airplay-status.md) for the full P0 technical specification.
 
 ## Project Docs
 
 - [specs/p0-airplay-status.md](specs/p0-airplay-status.md) — architecture, data model, API, P0 status
-- [specs/](specs/) — P1–P5 roadmap specs
+- [specs/](specs/) — phase specs (see [specs/README.md](specs/README.md))
 - [AGENTS.md](AGENTS.md) — context for AI assistants continuing this work
-
-## Limitations
-
-- You must select **AirPlay Status** as an output each time you play (or save an AirPlay group).
-- Metadata quality depends on the source app (Apple Music is best; some apps send little or no artwork).
-- Local network only — sender and receiver must be on the same LAN.
 
 ## License
 

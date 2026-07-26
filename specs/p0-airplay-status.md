@@ -145,9 +145,10 @@ Metadata pipe format is binary/XML-style, decoded by `shairport-sync-metadata-re
 | Wireframe UI | Mock data + nothing-playing toggle | Done |
 | Sidecar | shairport-sync install docs, metadata pipe reader | Done |
 | Live metadata | Pipe reader → dashboard (SSE) | Done |
-| Hardening | launchd service, install script, troubleshooting | Planned |
 
-## Roadmap (P1–P5)
+**P0 is complete.** Production polish (launchd, structured logs, Grafana, agent/human debugging SOPs) lives in **[P99 — prod readiness](./p99-prod-readiness.md)**, implemented last in iteration 1.
+
+## Roadmap (P1–P6, P99)
 
 Future work extends the same playback state from `/api/status`. Specs live in this directory:
 
@@ -158,6 +159,7 @@ Future work extends the same playback state from `/api/status`. Specs live in th
 | **P3** | Kindle/eInk read-only display | Spec | [p3-eink-display.md](./p3-eink-display.md) (incl. [P3.1 device profiles](./p3-eink-display.md#p31-side-quest--device-profiles)) |
 | **P4** | eInk transport controls | Spec | [p4-eink-controls.md](./p4-eink-controls.md) |
 | **P5** | Cross-platform deployment (Pi, Docker, Synology) | Spec | [p5-deployment.md](./p5-deployment.md) |
+| **P99** | Production readiness (launchd, logs, Grafana, debugging SOPs) | Spec | [p99-prod-readiness.md](./p99-prod-readiness.md) |
 
 ### Feasibility summary (P1–P5)
 
@@ -181,7 +183,10 @@ airplay-status/
 │   ├── p2-tidbyt.md
 │   ├── p3-eink-display.md
 │   ├── p4-eink-controls.md
-│   └── p5-deployment.md
+│   ├── p5-deployment.md
+│   ├── p6-echo-show.md
+│   ├── p99-prod-readiness.md
+│   └── README.md
 ├── docs/
 │   ├── debug-capture.md
 │   └── shairport-setup.md
