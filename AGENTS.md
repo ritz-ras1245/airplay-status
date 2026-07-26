@@ -136,3 +136,13 @@ See `docs/debug-capture.md`. Normal mode redirects `/debug` to `/`. For prod iss
 
 - shairport-sync metadata: https://github.com/mikebrady/shairport-sync-metadata-reader
 - iOS DACP limits: https://github.com/mikebrady/shairport-sync/issues/1858
+
+## Cursor Cloud specific instructions
+
+The Cloud VM is headless Linux with no AirPlay hardware, no `shairport-sync`, and no Bonjour/mDNS. The real receiver path (`./bin/run-local.sh`, `bin/setup-sidecar.sh`, `bin/run-shairport.sh`) cannot work here — do not try to install/run shairport-sync for feature testing.
+
+- **Run the dashboard in mock mode** for all local development/testing: `USE_MOCK=true npm run dev` (dev = `node --watch`, hot reload). Serves on http://localhost:3003. `npm start` is the non-watch variant.
+- In mock mode, `/api/status` and `/` return the built-in mock track; `/api/events` (SSE) is disabled (returns 404 — expected). Use `/?mock=true&state=nothing` to preview the idle "nothing playing" state.
+- **Live mode without hardware:** running without `USE_MOCK` still boots (Express listens); it just logs a warning that shairport-sync isn't running and reports empty playback. Set `SKIP_SHAIRPORT_CHECK=1` to silence that warning.
+- **No lint or automated tests** are configured (no `test`/`lint` scripts, no test framework). Only runtime scripts exist in `package.json`: `start`, `dev`, `watch:metadata`, `demo`.
+- **Tidbyt push** (`src/services/tidbytPushService.js`) stays disabled unless `TIDBYT_DEVICE_ID` + `TIDBYT_API_TOKEN` are in `.env` and the `pixlet` CLI is installed (not present in the VM); startup prints a warning and the dashboard runs regardless.
