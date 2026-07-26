@@ -1,5 +1,9 @@
-// AirPlay Status — shairport-sync configuration
+// AirPlay Status — shairport-sync configuration (macOS / classic AirPlay 1)
 // Copy to: ~/.config/shairport-sync/shairport-sync.conf
+//
+// NOTE: Homebrew shairport-sync is AirPlay 1 only. iPhone cannot select this
+// receiver together with HomePlay / AP2 speakers in one group.
+// See docs/multi-room-airplay.md and config/shairport-sync-airplay2.conf.example (Pi/Linux).
 // Verify backends: shairport-sync -h
 
 general =

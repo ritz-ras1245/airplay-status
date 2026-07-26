@@ -1,0 +1,38 @@
+// AirPlay Status — shairport-sync AirPlay 2 configuration (Linux / Raspberry Pi)
+// Copy to: /etc/shairport-sync.conf  (or ~/.config/shairport-sync/shairport-sync.conf)
+//
+// Prerequisites (NOT supported on macOS — see docs/multi-room-airplay.md):
+//   1. shairport-sync built with --with-airplay-2 and --with-ffmpeg
+//   2. nqptp installed and running (needs UDP ports 319 and 320)
+//   3. Verify: shairport-sync -V includes "airplay-2" or similar
+//
+// Enables iPhone multi-speaker picker: select HomePods + AirPlay Status together.
+
+general =
+{
+  name = "AirPlay Status";
+  output_backend = "pipe";
+  mdns_backend = "avahi";    // Linux; use "dns-sd" only on macOS (classic only there)
+  interpolation = "basic";
+  ignore_volume_control = "yes";
+  port = 7000;               // AirPlay 2 (5000 = classic AirPlay 1)
+  regtype = "_airplay._tcp"; // AirPlay 2 service advertisement
+};
+
+pipe =
+{
+  name = "/dev/null";
+};
+
+metadata =
+{
+  enabled = "yes";
+  include_cover_art = "yes";
+  pipe_name = "/tmp/shairport-sync-metadata";
+  pipe_timeout = 5000;
+};
+
+diagnostics =
+{
+  log_verbosity = 1;
+};

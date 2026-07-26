@@ -1,0 +1,10 @@
+# Placeholder for release records (CanonicalReleaseRecord YAML per §3 in release-and-versioning.md)
+#
+# Example: docs/releases/1.0.0.yaml after P100 ship
+#
+# project: airplay-status
+# releaseLine: 1
+# semver: "1.0.0"
+# phaseGate: P100
+# gitTag: "v1.0.0"
+# ...

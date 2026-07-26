@@ -59,8 +59,10 @@ npm run watch:metadata
 ## Using it
 
 1. Start playback on iPhone or Mac
-2. Open AirPlay and select **both** your real speakers and **AirPlay Status**
+2. Open AirPlay and select **AirPlay Status**
 3. Metadata lines (or JSON) should appear in Terminal 2
+
+**Multi-speaker from iPhone:** Homebrew on macOS is **AirPlay 1 only** — you cannot select AirPlay Status together with HomePods or other AirPlay 2 speakers in one group. See **[docs/multi-room-airplay.md](multi-room-airplay.md)**. For multi-room + metadata, run an **AirPlay 2** receiver on Raspberry Pi/Linux (`config/shairport-sync-airplay2.conf.example`).
 
 When you stop playback or disconnect, the reader emits an empty state.
 
@@ -85,6 +87,7 @@ Edit `~/.config/shairport-sync/shairport-sync.conf`:
 **No metadata in reader**
 
 - Confirm you selected **AirPlay Status** as an output (not just your speakers)
+- On iPhone with HomePods: you may need **only** AirPlay Status, or use a Pi AP2 receiver — [multi-room-airplay.md](multi-room-airplay.md)
 - Check pipe exists: `ls -l /tmp/shairport-sync-metadata`
 - Rebuild reader: `make -C vendor/shairport-sync-metadata-reader`
 

@@ -30,13 +30,13 @@ chmod +x bin/*.sh
 ./bin/run-local.sh       # receiver + dashboard → http://localhost:3003
 ```
 
-On your iPhone or Mac, start playback and select **both** your real speakers and **AirPlay Status** as outputs.
+On your iPhone or Mac, start playback and select **AirPlay Status** as an output. For **multi-speaker** from iPhone (HomePods + metadata), see [docs/multi-room-airplay.md](docs/multi-room-airplay.md) — requires AirPlay 2 on Linux/Pi, not macOS Homebrew.
 
 Details: **[docs/shairport-setup.md](docs/shairport-setup.md)**. Debug playback issues: `./bin/run-local.sh --debug` — see [docs/debug-capture.md](docs/debug-capture.md).
 
 ## Phases
 
-Phase numbering: **P1–P98** features · **P99** prod readiness · **P100–P999** iteration 2 ([specs/README.md](specs/README.md)).
+Phase numbering: [specs/README.md](specs/README.md). Pre-P100: **0.y.z**; **P100** → **1.0.0**. Global RVS: `~/.standards/` (not in repo).
 
 | Phase | Status | Description |
 |-------|--------|-------------|
@@ -46,15 +46,16 @@ Phase numbering: **P1–P98** features · **P99** prod readiness · **P100–P99
 | **P3** — eInk display | Spec | [p3-eink-display.md](specs/p3-eink-display.md) |
 | **P4** — eInk controls | Spec | [p4-eink-controls.md](specs/p4-eink-controls.md) |
 | **P5** — Deployment | Spec | [p5-deployment.md](specs/p5-deployment.md) |
+| **P49** — Pre-prod beta | **Next** | [p49-preprod-deployment.md](specs/p49-preprod-deployment.md) — RPi4, AirPlay 2 |
 | **P99** — Prod readiness | Spec | [p99-prod-readiness.md](specs/p99-prod-readiness.md) — logs, Grafana, SOPs, launchd |
 
 See [specs/p0-airplay-status.md](specs/p0-airplay-status.md) for the full P0 technical specification.
 
 ## Project Docs
 
+- [docs/versioning.md](docs/versioning.md) — semver, `/api/version`, deploy env
 - [specs/p0-airplay-status.md](specs/p0-airplay-status.md) — architecture, data model, API, P0 status
-- [specs/](specs/) — phase specs (see [specs/README.md](specs/README.md))
-- [AGENTS.md](AGENTS.md) — context for AI assistants continuing this work
+- [specs/](specs/) — phase specs · [AGENTS.md](AGENTS.md) — context for AI assistants
 
 ## License
 

@@ -5,6 +5,8 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VENDOR="$ROOT/vendor/shairport-sync-metadata-reader"
 CONFIG_DIR="$HOME/.config/shairport-sync"
 CONFIG="$CONFIG_DIR/shairport-sync.conf"
+# shellcheck source=bin/lib/airplay-mode.sh
+source "$ROOT/bin/lib/airplay-mode.sh"
 
 echo "==> Installing shairport-sync (Homebrew)..."
 if ! command -v shairport-sync >/dev/null; then
@@ -44,10 +46,21 @@ else
 fi
 
 echo ""
+echo "==> AirPlay mode..."
+BUILD="$(airplay_build_mode 2>/dev/null || echo missing)"
+echo "    shairport-sync build: $BUILD"
+if airplay_is_macos 2>/dev/null && [[ "$BUILD" == "classic" ]]; then
+  echo ""
+  echo "    NOTE: macOS Homebrew = AirPlay 1 only."
+  echo "    iPhone cannot multi-select AirPlay Status with HomePod/AP2 speakers."
+  echo "    See docs/multi-room-airplay.md (Pi/Linux AirPlay 2 is the fix)."
+fi
+
+echo ""
 echo "Setup complete."
 echo ""
 echo "Next steps:"
 echo "  1. Terminal 1: ./bin/run-shairport.sh"
 echo "  2. Terminal 2: ./bin/read-metadata.sh"
-echo "  3. AirPlay to 'AirPlay Status' alongside your speakers"
+echo "  3. AirPlay to 'AirPlay Status' (on iPhone: usually alone, or use Pi AP2 for multi-room)"
 echo "  4. Optional JSON stream: npm run watch:metadata"

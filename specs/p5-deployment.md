@@ -59,7 +59,15 @@ Single metadata pipe feeds one Node process; all UIs and integrations consume `/
 | Node app | `npm start` or `run-local.sh` on port 3003 |
 | mDNS | Bonjour built-in |
 
-macOS prod automation (launchd, install script) is **[P99 — prod readiness](./p99-prod-readiness.md)**, separate from P5 cross-platform deployment docs.
+## Relationship to P49 and P99
+
+| Spec | Role |
+|------|------|
+| **P5** (this doc) | Platform reference — macOS, Pi, Docker, Synology tradeoffs |
+| **P49** | Opinionated **pre-prod beta** path — package RPi4, AP2, fleet optional → [p49-preprod-deployment.md](./p49-preprod-deployment.md) |
+| **P99** | Prod readiness after beta sign-off → [p99-prod-readiness.md](./p99-prod-readiness.md) |
+
+**iPhone multi-room:** macOS = AirPlay 1 only; full multi-speaker beta is **P49** on RPi4 — [multi-room-airplay.md](../docs/multi-room-airplay.md), [p49-preprod-deployment.md](./p49-preprod-deployment.md).
 
 ## Raspberry Pi (recommended production)
 

@@ -2,47 +2,82 @@
 
 All phase specs live in `specs/p*.md`. Numbering is intentional and permanent.
 
-## Iteration 1 (current)
+## Release lines vs phases
 
-| Range | Meaning |
-|-------|---------|
-| **P0** | Foundation — live dashboard (complete) |
-| **P1–P98** | Feature phases — integrations, controls, displays, deployment guides, etc. |
-| **P99** | **Production readiness** — implement **last** (see scope below) |
+| Concept | Meaning |
+|---------|---------|
+| **P100, P200, P300…** | **Release gates** — ship **1.0.0**, **2.0.0**, **3.0.0** to prod |
+| **P99, P199, P299…** | **Prod-readiness** work for the **next** hundred milestone |
+| **P49, P149, P249…** | **Beta / pre-prod** on real hardware before prod-readiness |
+| **P0–P48, P101–P148…** | Features (Mac dev with documented caveats) |
 
-## Iteration 2 (future)
+**Semver ↔ phases:** [docs/versioning.md](../docs/versioning.md) (this repo) · global RVS: `~/.standards/release-and-versioning.md`
 
-| Range | Meaning |
-|-------|---------|
-| **P100–P998** | Iteration 2 features |
-| **P999** | Iteration 2 production readiness (same scope as P99) |
+| Release gate | Prod readiness | Semver shipped |
+|--------------|----------------|----------------|
+| **P100** | **P99** | **1.0.0** (patches **1.0.x**) |
+| **P200** | **P199** | **2.0.0** (patches **2.0.x**) |
+| **P300** | **P299** | **3.0.0** (patches **3.0.x**) |
 
-Do not renumber iteration 1 specs when starting iteration 2.
+**Current repo:** building towards **P100** → semver **0.y.z** (now **0.1.0**). **Next milestone: P49** (RPi4 beta). Patches on shipped prod use **`release/N.x`** — see `~/.standards/`.
 
-## Production readiness — canonical scope (P99 / P999)
+---
 
-**Do not call this “P0 hardening”.** In any spec or doc, **hardening** and **prod readiness** mean the same bundle:
+## Formula (line N ≥ 1)
 
-1. **Persistence** — install script, launchd/systemd, boot/start
-2. **Logs** — structured always-on logging, prod log paths
-3. **Observability** — optional self-hosted Grafana + Loki (not SaaS)
-4. **SOPs** — `docs/sop/debugging-humans.md` + `docs/sop/debugging-agents.md`
-5. **Health & runbooks** — `/api/health`, `check-sidecar.sh`, prod troubleshooting docs
+| Step | Phase |
+|------|-------|
+| Features | N=1: **P0–P48**; N≥2: **P((N−1)×100+1)–P((N−1)×100+48)** |
+| Beta | **P((N−1)×100+49)** |
+| Prod readiness | **P((N−1)×100+99)** |
+| **Release** | **P(N×100)** → **N.0.0** |
 
-Full spec: [p99-prod-readiness.md](./p99-prod-readiness.md). Deep metadata debug (`--debug`) stays dev-only per [debug-capture.md](../docs/debug-capture.md).
+Iteration 1 uses **P49** for beta+pre-prod combined (no P149).
 
-## Sub-phases
+---
 
-Decimal-style suffixes in prose only (not filenames): **P3.1** device profiles in `p3-eink-display.md`. File remains `p3-eink-display.md`.
+## Pipelines
+
+**Line 1 (now):** Mac dev → **P49** beta (RPi4) → **P99** → **P100** release `1.0.0`
+
+**Line 2+:** Mac dev → **P149** beta → **P199** → **P200** release `2.0.0`
+
+**Patches:** ad-hoc on **`release/1.x`** as `1.0.1`, `1.0.2` while `main` continues `2.0.0-dev`.
+
+---
+
+## Production readiness (P99 / P199 / P299)
+
+Same scope every line — see [p99-prod-readiness.md](./p99-prod-readiness.md) (P99 template; P199/P299 reuse scope at their line):
+
+Persistence, logs, Grafana/Loki optional, SOPs, `/api/health`, `/api/version`, runbooks.
+
+Do **not** call this “P0 hardening”.
+
+---
+
+## Runtime versioning
+
+**This repo:** [docs/versioning.md](../docs/versioning.md) + **`GET /api/version`**. Global field naming: `~/.standards/release-and-versioning.md`.
+
+Record `version` + `gitCommit` at P49 / P99 / P100 and every patch deploy.
+
+---
+
+## Optional guideline
+
+[guidelines/mac-dev-linux-beta.md](./guidelines/mac-dev-linux-beta.md) — Mac dev when beta needs Linux/Pi.
+
+---
 
 ## Index
 
 | Spec | Phase |
 |------|-------|
-| [p0-airplay-status.md](./p0-airplay-status.md) | P0 — dashboard |
-| [p1-remote-control.md](./p1-remote-control.md) | P1 |
-| [p2-tidbyt.md](./p2-tidbyt.md) | P2 |
-| [p3-eink-display.md](./p3-eink-display.md) | P3 |
-| [p4-eink-controls.md](./p4-eink-controls.md) | P4 |
-| [p5-deployment.md](./p5-deployment.md) | P5 |
-| [p99-prod-readiness.md](./p99-prod-readiness.md) | P99 — prod readiness |
+| [p0-airplay-status.md](./p0-airplay-status.md) | P0 |
+| [p1-remote-control.md](./p1-remote-control.md) – [p5-deployment.md](./p5-deployment.md) | P1–P5 features |
+| [p49-preprod-deployment.md](./p49-preprod-deployment.md) | P49 — line 1 beta |
+| [p99-prod-readiness.md](./p99-prod-readiness.md) | P99 — line 1 prod readiness |
+| *(future)* | P149, P199, P100 release checklist |
+| [guidelines/mac-dev-linux-beta.md](./guidelines/mac-dev-linux-beta.md) | Cross-project |
+| [../docs/versioning.md](../docs/versioning.md) | Semver + API (this repo) |

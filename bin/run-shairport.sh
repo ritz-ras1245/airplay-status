@@ -20,4 +20,7 @@ fi
 
 echo "Starting shairport-sync as AirPlay Status receiver..."
 echo "Config: $CONFIG"
+# shellcheck source=bin/lib/airplay-mode.sh
+source "$ROOT/bin/lib/airplay-mode.sh"
+airplay_print_multiroom_notice
 exec shairport-sync -c "$CONFIG"

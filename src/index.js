@@ -15,6 +15,7 @@ import {
   resolveTidbytStartup,
   startTidbytPushService,
 } from './services/tidbytPushService.js';
+import { APP_VERSION, getVersionInfo } from './lib/appVersion.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -66,6 +67,10 @@ const resolvePlayback = async (req) => {
 app.get('/api/status', async (req, res) => {
   const { playback } = await resolvePlayback(req);
   res.json(playback);
+});
+
+app.get('/api/version', (_req, res) => {
+  res.json(getVersionInfo());
 });
 
 app.get('/api/events', (req, res) => {
@@ -128,7 +133,9 @@ app.get('/debug', handleDashboard);
 
 app.listen(PORT, () => {
   const mode = USE_MOCK ? 'mock' : 'live';
-  console.log(`AirPlay Status (${mode}) at http://localhost:${PORT}`);
+  const deploy = process.env.DEPLOY_PHASE ? ` phase=${process.env.DEPLOY_PHASE}` : '';
+  console.log(`AirPlay Status v${APP_VERSION} (${mode})${deploy} at http://localhost:${PORT}`);
+  console.log(`Version API: http://localhost:${PORT}/api/version`);
   if (METADATA_DEBUG) {
     console.log(`Debug capture UI at http://localhost:${PORT}/debug`);
   }

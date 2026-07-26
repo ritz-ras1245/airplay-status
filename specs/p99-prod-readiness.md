@@ -2,7 +2,7 @@
 
 **Status:** Spec (pre-implementation)  
 **Depends on:** Feature phases you intend to ship (minimum: P0 live dashboard ✅)  
-**Iteration:** 1 — run **after** feature work for the release, **before** calling the stack “production”
+**Iteration:** 1 — run **after P49 beta sign-off**, **before P100** release (`1.0.0`)
 
 ## Goal
 
@@ -115,7 +115,9 @@ Self-hosted observability — **not** Grafana Cloud / SaaS.
 
 ### 5. Health check
 
-- `GET /api/health` → `{ "ok": true, "shairport": "running"|"unknown", "uptimeSec": …, "integrations": { "tidbyt": "enabled"|"disabled", "echo": "…" } }`
+- `GET /api/version` → `{ name, version, gitCommit, deployPhase, deployHost, node }` — **implemented**; see [versioning.md](../docs/versioning.md)
+- `GET /api/health` → `{ ok, shairport, uptimeSec, version, … }` (P99)
+- `bin/check-version.sh http://<host>:3003` for deploy verification
 - `bin/check-sidecar.sh` remains quick CLI probe; SOP references both
 
 ### 6. Troubleshooting runbook (`docs/prod-troubleshooting.md`)

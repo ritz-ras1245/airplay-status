@@ -131,7 +131,7 @@ Metadata pipe format is binary/XML-style, decoded by `shairport-sync-metadata-re
 
 ## Known Limitations
 
-1. User must **select "AirPlay Status" as an AirPlay output** each session (or save an AirPlay group).
+1. User must **select "AirPlay Status" as an AirPlay output** each session (or save an AirPlay group). **iPhone multi-room** with HomePods/AP2 speakers requires an **AirPlay 2** receiver (Linux/Pi) — not macOS Homebrew; see [docs/multi-room-airplay.md](../docs/multi-room-airplay.md).
 2. Metadata quality depends on the **source app** — Apple Music is rich; some apps send title only or no artwork.
 3. **Not passive** — cannot read status from speakers you do not also stream to.
 4. **Local network only** — sender and receiver must be on the same LAN.
@@ -159,7 +159,8 @@ Future work extends the same playback state from `/api/status`. Specs live in th
 | **P3** | Kindle/eInk read-only display | Spec | [p3-eink-display.md](./p3-eink-display.md) (incl. [P3.1 device profiles](./p3-eink-display.md#p31-side-quest--device-profiles)) |
 | **P4** | eInk transport controls | Spec | [p4-eink-controls.md](./p4-eink-controls.md) |
 | **P5** | Cross-platform deployment (Pi, Docker, Synology) | Spec | [p5-deployment.md](./p5-deployment.md) |
-| **P99** | Production readiness (launchd, logs, Grafana, debugging SOPs) | Spec | [p99-prod-readiness.md](./p99-prod-readiness.md) |
+| **P49** | Pre-prod / local beta (RPi4, AirPlay 2) | Spec | [p49-preprod-deployment.md](./p49-preprod-deployment.md) |
+| **P99** | Production readiness | Spec | [p99-prod-readiness.md](./p99-prod-readiness.md) |
 
 ### Feasibility summary (P1–P5)
 
@@ -171,7 +172,7 @@ Future work extends the same playback state from `/api/status`. Specs live in th
 | **P4** Kindle controls | **Conditional** | Medium | Same DACP limits as P1; browser UI can expose buttons but iPhone may not respond |
 | **P5** Non-Mac deploy | **Yes** | High on RPi; Medium on Docker; Low on Synology | mDNS discovery requires host networking / Avahi |
 
-**Suggested implementation order:** P1 spike → P3 browser `/eink` → P2 Tidbyt → P4 eInk controls → P5 deployment docs/compose (P5 can parallelize with P2).
+**Suggested implementation order:** P1 spike → P3 browser `/eink` → P2 Tidbyt → P4 → **P49 beta (RPi4)** → P99 prod. P5 remains platform reference doc.
 
 ## File Structure (Target)
 
