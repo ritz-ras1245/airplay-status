@@ -1,0 +1,4 @@
+{
+  "name": "airplay-status",
+  "install": "npm ci && bash .cursor/cloud-bootstrap.sh"
+}
