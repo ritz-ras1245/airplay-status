@@ -1,3 +1,4 @@
+import './env.js';
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -9,6 +10,11 @@ import {
 } from './services/airplayMetadataService.js';
 import { getPlaybackState as getMockPlaybackState } from './services/mockPlaybackService.js';
 import { formatMs } from './utils/formatTime.js';
+import {
+  printTidbytStartupStatus,
+  resolveTidbytStartup,
+  startTidbytPushService,
+} from './services/tidbytPushService.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -125,5 +131,22 @@ app.listen(PORT, () => {
   console.log(`AirPlay Status (${mode}) at http://localhost:${PORT}`);
   if (METADATA_DEBUG) {
     console.log(`Debug capture UI at http://localhost:${PORT}/debug`);
+  }
+
+  const tidbyt = resolveTidbytStartup();
+  printTidbytStartupStatus(tidbyt);
+
+  if (tidbyt.shouldStart) {
+    startTidbytPushService({
+      baseUrl: `http://localhost:${PORT}`,
+      deviceId: tidbyt.deviceId,
+      apiToken: tidbyt.apiToken,
+      installationId: tidbyt.installationId,
+      getPlaybackState: async () => {
+        if (USE_MOCK) return getMockPlaybackState();
+        return getLivePlaybackState();
+      },
+      onPlaybackChange: USE_MOCK ? null : onPlaybackChange,
+    });
   }
 });

@@ -54,7 +54,7 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 | **P0** — Live dashboard | ✅ Done | `specs/p0-airplay-status.md` — SSE, debug capture, sidecar |
 | **P0** — Hardening | 🔲 Pending | launchd, install script |
 | **P1** — Remote control | 📄 Spec | `specs/p1-remote-control.md` — DACP via Node |
-| **P2** — Tidbyt | 📄 Spec | `specs/p2-tidbyt.md` |
+| **P2** — Tidbyt | ✅ MVP | `specs/p2-tidbyt.md`, `integrations/tidbyt/` |
 | **P3** — eInk display | 📄 Spec | `specs/p3-eink-display.md` (+ P3.1 profiles, on-demand PNG) |
 | **P4** — eInk controls | 📄 Spec | `specs/p4-eink-controls.md` |
 | **P5** — Deployment | 📄 Spec | `specs/p5-deployment.md` — Pi, Docker |

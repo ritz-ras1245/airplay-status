@@ -41,7 +41,7 @@ Details: **[docs/shairport-setup.md](docs/shairport-setup.md)**. Debug playback 
 | **P0** — Live dashboard | Done | Sidecar, metadata pipe, SSE dashboard ([p0 spec](specs/p0-airplay-status.md)) |
 | **P0** — Hardening | Planned | launchd, install script |
 | **P1** — Remote control | Spec | [p1-remote-control.md](specs/p1-remote-control.md) |
-| **P2** — Tidbyt | Spec | [p2-tidbyt.md](specs/p2-tidbyt.md) |
+| **P2** — Tidbyt | MVP done | [p2-tidbyt.md](specs/p2-tidbyt.md) — [integrations/tidbyt/](integrations/tidbyt/) |
 | **P3** — eInk display | Spec | [p3-eink-display.md](specs/p3-eink-display.md) |
 | **P4** — eInk controls | Spec | [p4-eink-controls.md](specs/p4-eink-controls.md) |
 | **P5** — Deployment | Spec | [p5-deployment.md](specs/p5-deployment.md) |

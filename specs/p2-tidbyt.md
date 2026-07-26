@@ -1,6 +1,6 @@
 # Phase P2 — Tidbyt Integration
 
-**Status:** Spec (pre-implementation)  
+**Status:** Implemented (MVP — needs device testing)  
 **Depends on:** Phase 4 live metadata (`/api/status`)  
 **Optional dependency:** P1 not required (display-only)
 
@@ -25,7 +25,7 @@ Custom Pixlet apps pushed via `pixlet push` **do not run on the Tidbyt** — the
 │ airplay-status   │
 │ /api/status      │
 └────────┬─────────┘
-         │ poll on change + heartbeat
+         │ poll on playback change
          ▼
 ┌──────────────────┐     render      ┌─────────────┐
 │ tidbytPushService│ ──────────────► │ WebP 64×32  │
@@ -74,9 +74,7 @@ Environment variables (no `.env` file in repo; inject at runtime per project con
 | `TIDBYT_ENABLED` | No | `1` to start push loop |
 | `TIDBYT_DEVICE_ID` | Yes if enabled | Device ID from Tidbyt app |
 | `TIDBYT_API_TOKEN` | Yes if enabled | API token from Tidbyt app |
-| `TIDBYT_INSTALLATION_ID` | No | Default `airplay-status` |
-| `TIDBYT_PUSH_INTERVAL_MS` | No | Heartbeat default `45000` (45s) |
-| `TIDBYT_PUSH_ON_CHANGE` | No | Default `true` — push immediately on state change |
+| `TIDBYT_INSTALLATION_ID` | No | Default `airplaystatus` (alphanumeric only) |
 
 Future: macOS Keychain storage for token (same pattern as planned Spotify pivot).
 
@@ -84,8 +82,8 @@ Future: macOS Keychain storage for token (same pattern as planned Spotify pivot)
 
 **Triggers:**
 
-1. **On change** — subscribe to `onPlaybackChange()` from `airplayMetadataService`
-2. **Heartbeat** — `setInterval` every `TIDBYT_PUSH_INTERVAL_MS` (keeps display fresh if rotation evicts)
+1. **On change** — subscribe to `onPlaybackChange()` when title/artist/art/play state changes (ignores progress-only updates)
+2. **No heartbeat** — only push while something is playing; idle/stopped sessions do not push
 
 **Push flow:**
 
@@ -96,13 +94,13 @@ Future: macOS Keychain storage for token (same pattern as planned Spotify pivot)
    ```
 3. Push via API:
    ```bash
-   pixlet push --installation-id airplay-status "$TIDBYT_DEVICE_ID" /tmp/tidbyt.webp
+   pixlet push --installation-id airplaystatus "$TIDBYT_DEVICE_ID" /tmp/tidbyt.webp
    ```
    Or REST:
    ```
    POST https://api.tidbyt.com/v0/devices/{deviceID}/push
    Authorization: Bearer {token}
-   { "image": "<base64 webp>", "installationID": "airplay-status" }
+   { "image": "<base64 webp>", "installationID": "airplaystatus" }
    ```
 
 **Error handling:**
@@ -120,7 +118,7 @@ Future: macOS Keychain storage for token (same pattern as planned Spotify pivot)
 # Requires: pixlet, TIDBYT_DEVICE_ID, TIDBYT_API_TOKEN
 curl -s http://localhost:3003/api/status \
   | pixlet render integrations/tidbyt/airplay-status.star -o /tmp/tidbyt.webp
-pixlet push --installation-id airplay-status "$TIDBYT_DEVICE_ID" /tmp/tidbyt.webp
+pixlet push --installation-id airplaystatus "$TIDBYT_DEVICE_ID" /tmp/tidbyt.webp
 ```
 
 ## Integration with `run-local.sh`
@@ -147,11 +145,11 @@ src/services/
 
 ## Acceptance criteria
 
-- [ ] Tidbyt shows current track within 60s of playback start
-- [ ] Title/artist update on track change
-- [ ] Empty state when nothing playing
-- [ ] Installation persists in Tidbyt app rotation (`--installation-id`)
-- [ ] Manual `bin/push-tidbyt.sh` works for debugging
+- [ ] Tidbyt shows current track within 60s of playback start *(needs device test)*
+- [ ] Title/artist update on track change *(needs device test)*
+- [x] Idle session removes installation from Tidbyt rotation (no lingering frame)
+- [x] Installation persists in Tidbyt app rotation (`--installation-id`)
+- [x] Manual `bin/push-tidbyt.sh` works for debugging *(requires pixlet + credentials)*
 
 ## Future: P2b — Community app
 
