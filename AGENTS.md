@@ -179,3 +179,13 @@ See `docs/debug-capture.md`. Normal mode redirects `/debug` to `/`. For prod iss
 
 - shairport-sync metadata: https://github.com/mikebrady/shairport-sync-metadata-reader
 - iOS DACP limits: https://github.com/mikebrady/shairport-sync/issues/1858
+
+## Cursor Cloud specific instructions
+
+The Cursor Cloud VM is Linux with **no `shairport-sync` sidecar and no AirPlay hardware**, so the live capture path cannot run here. Develop and test against the built-in **mock mode** instead — no sidecar setup required.
+
+- **Run the dashboard (mock):** `USE_MOCK=true npm run dev` (or `npm start`), then open `http://localhost:3003`. Default port is `3003` (`PORT` env). `npm run dev` uses `node --watch` for hot reload.
+- **Mock behavior gotchas:** `USE_MOCK=true` disables the metadata pipe watcher and the "shairport not running" warning, and serves a fixed sample track (`Señorita`). SSE endpoint `GET /api/events` returns **404** in mock mode (live updates only exist in live mode). Per-request mock is also available without the env var via `?mock=true` (e.g. `/?mock=true`, `/api/status?mock=true`, `/?mock=true&state=nothing`).
+- **Do NOT run `./bin/run-local.sh`, `./bin/run-shairport.sh`, or `./bin/setup-sidecar.sh` here** — they require `shairport-sync` + mDNS + AirPlay and will not work in the cloud VM. `./bin/demo.sh` starts the server in *live* (not mock) mode, so prefer `USE_MOCK=true` explicitly.
+- **No test/lint/build:** `package.json` defines no `test`, `lint`, or `build` scripts. `npm run demo` runs a parser-only smoke (`src/bin/demo-metadata.js`) with no server and no sidecar — useful as a quick CI-style check of `metadataParser.js`.
+- **Git hooks are opt-in:** hooks live in `.githooks/` but only activate after `./bin/setup-git-hooks.sh` sets `core.hooksPath`. They enforce the repo's `{action}/{user}/{description}` branch policy; cloud-agent `cursor/*` branches do not match it, so leave hooks unconfigured when pushing agent branches.
