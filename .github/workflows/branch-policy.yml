@@ -20,3 +20,16 @@ jobs:
             exit 1
           fi
           echo "OK: ${BRANCH}"
+
+  privacy-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tracked-file privacy check
+        run: |
+          if [[ -x bin/check-tracked-privacy.sh ]]; then
+            ./bin/check-tracked-privacy.sh
+          else
+            echo "Missing bin/check-tracked-privacy.sh — run rit init or copy from engineering-standards template"
+            exit 1
+          fi

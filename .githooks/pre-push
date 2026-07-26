@@ -1,24 +1,36 @@
 #!/usr/bin/env bash
-# Validate branch name: {action}/{user}/{description} or release/N.x
+# pre-push: branch policy + tracked-file privacy check
 set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+cd "${ROOT:-.}"
 
 branch="$(git symbolic-ref --quiet HEAD 2>/dev/null || true)"
 branch="${branch#refs/heads/}"
 
-if [[ -z "${branch}" ]]; then
-  exit 0
+if [[ -n "${branch}" && "${branch}" != "main" ]]; then
+  pattern='^(feat|fix|doc|chore|refactor|test|ci|spec|hotfix)/[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+$|^release/[0-9]+\.x$'
+  if [[ ! "${branch}" =~ ${pattern} ]]; then
+    echo "pre-push: invalid branch name '${branch}'." >&2
+    echo "Use: {action}/{user}/{description}  e.g. feat/__RIT_OWNER__/my-change" >&2
+    echo "Policy: .github/BRANCH_POLICY.md" >&2
+    exit 1
+  fi
 fi
 
-if [[ "${branch}" == "main" ]]; then
-  exit 0
-fi
-
-pattern='^(feat|fix|doc|chore|refactor|test|ci|spec|hotfix)/[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+$|^release/[0-9]+\.x$'
-
-if [[ ! "${branch}" =~ ${pattern} ]]; then
-  echo "pre-push: invalid branch name '${branch}'." >&2
-  echo "Use: {action}/{user}/{description}  e.g. feat/ritz-ras1245/my-change" >&2
-  echo "Policy: .github/BRANCH_POLICY.md" >&2
+if [[ -x "${ROOT}/bin/check-tracked-privacy.sh" ]]; then
+  "${ROOT}/bin/check-tracked-privacy.sh"
+elif [[ -f "${HOME}/.config/rit/standards-home" ]]; then
+  STANDARDS="$(cat "${HOME}/.config/rit/standards-home")"
+  if [[ -x "${STANDARDS}/bin/check-tracked-privacy.sh" ]]; then
+    "${STANDARDS}/bin/check-tracked-privacy.sh"
+  else
+    echo "pre-push: privacy check missing in standards checkout" >&2
+    exit 1
+  fi
+else
+  echo "pre-push: run ./bin/setup-git-hooks.sh and ensure bin/check-tracked-privacy.sh exists" >&2
+  echo "Or install engineering-standards: bin/install-local.sh" >&2
   exit 1
 fi
 
