@@ -16,12 +16,14 @@ import {
   startTidbytPushService,
 } from './services/tidbytPushService.js';
 import { APP_VERSION, getVersionInfo } from './lib/appVersion.js';
+import { getDeployStage } from './lib/deployStage.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const deployStage = getDeployStage();
 const app = express();
-const PORT = process.env.PORT || 3003;
+const PORT = Number(process.env.PORT || deployStage.port);
 const USE_MOCK = process.env.USE_MOCK === 'true';
 const METADATA_DEBUG = process.env.METADATA_DEBUG === '1';
 
@@ -38,7 +40,7 @@ if (!USE_MOCK) {
         execSync('pgrep -f "shairport-sync -c"', { stdio: 'ignore' });
       } catch {
         console.warn('');
-        console.warn('⚠  shairport-sync is not running — "AirPlay Status" will not appear on your iPhone.');
+        console.warn(`⚠  shairport-sync is not running — "${deployStage.airplayReceiverName}" will not appear on your iPhone.`);
         console.warn('   In another terminal: ./bin/run-shairport.sh');
         console.warn('   Or use: ./bin/run-local.sh (starts both)');
         console.warn('');
@@ -116,6 +118,7 @@ const renderDashboard = async (req, res, { showDebugCapture = false } = {}) => {
     live,
     showDebugCapture,
     formatMs,
+    deployStage,
   });
 };
 
@@ -133,8 +136,10 @@ app.get('/debug', handleDashboard);
 
 app.listen(PORT, () => {
   const mode = USE_MOCK ? 'mock' : 'live';
-  const deploy = process.env.DEPLOY_PHASE ? ` phase=${process.env.DEPLOY_PHASE}` : '';
-  console.log(`AirPlay Status v${APP_VERSION} (${mode})${deploy} at http://localhost:${PORT}`);
+  const { dashboardTitle, label, deployPhase } = deployStage;
+  const phase = deployPhase ? ` phase=${deployPhase}` : '';
+  console.log(`${dashboardTitle} v${APP_VERSION} (${mode}, ${label})${phase} at http://localhost:${PORT}`);
+  console.log(`AirPlay picker name: ${deployStage.airplayReceiverName}`);
   console.log(`Version API: http://localhost:${PORT}/api/version`);
   if (METADATA_DEBUG) {
     console.log(`Debug capture UI at http://localhost:${PORT}/debug`);

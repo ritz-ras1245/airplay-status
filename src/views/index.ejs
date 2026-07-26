@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AirPlay Status</title>
+  <title><%= deployStage.dashboardTitle %></title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -12,8 +12,8 @@
 <body>
   <div class="container">
     <header id="page-header" class="header" <%= live && playback.title ? 'hidden' : '' %>>
-      <h1>📡 AirPlay Status</h1>
-      <p id="subtitle"><%= live ? 'Live from AirPlay' : 'Mock preview' %></p>
+      <h1>📡 <%= deployStage.dashboardTitle %><% if (deployStage.id !== 'prod') { %> <span class="stage-badge stage-badge--<%= deployStage.id %>"><%= deployStage.label %></span><% } %></h1>
+      <p id="subtitle"><%= live ? 'Live from AirPlay' : 'Mock preview' %><% if (deployStage.deployHost) { %> · <%= deployStage.deployHost %><% } %></p>
     </header>
 
     <% if (live) { %>
@@ -22,7 +22,7 @@
           <div class="empty-icon">🔇</div>
           <h2 class="empty-title">Nothing playing</h2>
           <p class="empty-subtitle">
-            Select <strong>AirPlay Status</strong> as an output alongside your speakers to see track info here.
+            Select <strong><%= deployStage.airplayReceiverName %></strong> as an output alongside your speakers to see track info here.
           </p>
         </div>
 

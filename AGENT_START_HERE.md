@@ -1,6 +1,7 @@
 # Agent start here — P49 RPi4 beta
 
 **Branch:** `feat/ritz-ras1245/p49-rpi-beta`  
+**Cloud environment:** `airplay-status + standards` (Cursor dashboard)  
 **Read this file first**, then the spec. Do not work on `feat/p6-echo-show` (sibling agent).
 
 ---
@@ -8,24 +9,73 @@
 ## Pickup prompt (embedded — execute from file)
 
 ```
-Implement P49 pre-prod deployment for airplay-status on Raspberry Pi 4 (AirPlay 2).
+You are implementing P49 pre-prod deployment for airplay-status (Raspberry Pi 4, AirPlay 2).
 
-Read AGENT_START_HERE.md, then specs/p49-preprod-deployment.md end to end.
+Environment: Cursor cloud env "airplay-status + standards" (multi-repo; global rules via install-local.sh).
+Branch: feat/ritz-ras1245/p49-rpi-beta — work only on this branch. Open a PR when done; do not merge to main.
 
-Goals:
-1. Try Docker host-network on Pi first (deploy/docker/); document spike in docs/p49-docker-spike.md.
-2. If spike fails, ship bare-metal Path B (deploy/rpi/install.sh, systemd, nqptp + shairport-sync AP2).
-3. Enable iPhone multi-speaker: real HomePods + AirPlay Status together (not possible on Mac AP1).
+Step 0 — Smoke tests (run before writing deploy code; stop and report if any fail):
 
-Follow branch policy: work on this branch only; owner will merge to main without PR.
-Do not commit unless user asks. Match existing code style. No secrets in repo.
+  npm ci
+  bash .cursor/cloud-bootstrap.sh
+  test -L ~/.cursor/rules/release-and-versioning.mdc && echo "rules symlink ok"
+  USE_MOCK=true SKIP_SHAIRPORT_CHECK=1 npm start &
+  sleep 2
+  curl -sf http://localhost:3003/api/version | head -c 200
+  curl -sf 'http://localhost:3003/api/status?mock=true' | head -c 200
+  kill %1 2>/dev/null || true
+  echo "smoke tests passed"
 
-Verify: GET /api/version with DEPLOY_PHASE=p49; ./bin/check-version.sh http://<pi>:3003
+Step 1 — Read AGENT_START_HERE.md (this file) and specs/p49-preprod-deployment.md end to end.
 
-Branch naming: {action}/{user}/{description} — see .github/BRANCH_POLICY.md in this repo.
+Step 2 — Implement P49 deliverables:
+  1. Try Docker host-network on Pi first (deploy/docker/); document spike in docs/p49-docker-spike.md.
+  2. If spike fails, ship bare-metal Path B (deploy/rpi/install.sh, systemd, nqptp + shairport-sync AP2).
+  3. Enable iPhone multi-speaker: real HomePods + AirPlay Status together (not possible on Mac AP1).
 
-Cloud agent: open a PR when done; do not merge to main. Owner's global standards are local-only (not in this repo).
+Constraints:
+- Do not commit unless user asks. Match existing code style. No secrets in repo.
+- Cloud VM cannot validate iPhone/AirPlay/Pi hardware — document human sign-off steps clearly.
+- Do not touch feat/p6-echo-show.
+
+Step 3 — Before opening PR, re-run smoke tests above on the cloud VM (mock dashboard must still work).
+
+Step 4 — Open PR to main with summary, deploy README paths, and human beta checklist for Pi + iPhone.
 ```
+
+---
+
+## Cloud agent handoff
+
+| Setting | Value |
+|---------|--------|
+| **Repository** | `ritz-ras1245/airplay-status` |
+| **Branch** | `feat/ritz-ras1245/p49-rpi-beta` |
+| **Environment** | `airplay-status + standards` |
+| **Entry point** | This file → pickup prompt above |
+| **Merge** | **PR required** (cloud agent) |
+
+Tell the agent:
+
+> Read `AGENT_START_HERE.md` and follow the pickup prompt (Step 0 smoke tests first).
+
+---
+
+## Smoke tests (cloud VM)
+
+Run these **before** and **after** P49 deploy artifact work. All must pass on the cloud agent machine.
+
+| # | Command | Expected |
+|---|---------|----------|
+| 1 | `npm ci` | exits 0 |
+| 2 | `bash .cursor/cloud-bootstrap.sh` | `found standards dependency checkout`; `install-local: cursor rule →` |
+| 3 | `test -L ~/.cursor/rules/release-and-versioning.mdc` | rules symlink exists |
+| 4 | `USE_MOCK=true SKIP_SHAIRPORT_CHECK=1 npm start` (background) | log: `AirPlay Status v0.1.0 (mock)` |
+| 5 | `curl -sf http://localhost:3003/api/version` | JSON with `"version":"0.1.0"`, `"deployStage":"dev"` (or `"beta"` if `.env` set) |
+| 6 | `curl -sf 'http://localhost:3003/api/status?mock=true'` | JSON playback payload |
+| 7 | `./bin/check-version.sh http://localhost:3003` | pretty-printed version JSON |
+
+Stop and report failures before implementing `deploy/`. Mock mode is required on cloud (no shairport-sync).
 
 ---
 
@@ -54,6 +104,7 @@ Mac dev (AP1, features) → P49 beta (RPi4, AP2) → P99 prod readiness → P100
 - P0 dashboard, SSE, metadata sidecar ✅
 - P2 Tidbyt MVP (`integrations/tidbyt/`) ✅
 - Branch policy: `.github/BRANCH_POLICY.md`, hooks, CI
+- Cursor cloud env: `.cursor/environment.json`, `.cursor/cloud-bootstrap.sh`
 - P49 **spec only** — `specs/p49-preprod-deployment.md` (implementation is this branch)
 - P99 spec — `specs/p99-prod-readiness.md` (after P49 sign-off)
 
@@ -69,7 +120,7 @@ Mac dev (AP1, features) → P49 beta (RPi4, AP2) → P99 prod readiness → P100
 | Policy doc | [.github/BRANCH_POLICY.md](.github/BRANCH_POLICY.md) |
 | Cloud agents | Open a **PR** — do not merge to `main` |
 
-Owner's global engineering standards live on their local machine only — not in this public repo.
+Global engineering standards load via cloud bootstrap (`~/.cursor/rules/` symlinks). Not duplicated in this public repo.
 
 ---
 
@@ -99,17 +150,25 @@ bin/p49-install-rpi.sh             # optional rsync from Mac
 
 ### Beta env on Pi
 
+Copy [config/deploy/beta.env.example](../config/deploy/beta.env.example) to `.env`, then:
+
+```bash
+./bin/render-shairport-config.sh --stage beta   # iPhone shows "AirPlay Status (Beta)"
+```
+
 | Variable | Example |
 |----------|---------|
+| `DEPLOY_STAGE` | `beta` |
 | `DEPLOY_PHASE` | `p49` |
-| `GIT_COMMIT` | short sha at deploy |
+| `AIRPLAY_RECEIVER_NAME` | `AirPlay Status (Beta)` |
 | `PORT` | `3003` |
+| `LOG_LEVEL` | `info` |
 
-Use `config/shairport-sync-airplay2.conf.example`. nqptp needs UDP **319/320** on host.
+See [config/deploy/README.md](../config/deploy/README.md).
 
 ---
 
-## Beta sign-off checklist (human + device)
+## Beta sign-off checklist (human + device — not cloud)
 
 From `specs/p49-preprod-deployment.md`:
 
@@ -123,10 +182,12 @@ From `specs/p49-preprod-deployment.md`:
 
 ## Suggested implementation order
 
-1. Spike Docker on RPi4 → `docs/p49-docker-spike.md`
-2. Path B if needed → systemd + AP2
-3. `.env` on Pi (not committed) + deploy README
-4. Soak + sign-off → then P99
+1. **Smoke tests** (Step 0 above)
+2. Spike Docker on RPi4 → `docs/p49-docker-spike.md` (artifacts + human steps)
+3. Path B if needed → systemd + AP2
+4. `.env` on Pi (not committed) + deploy README
+5. Re-run cloud smoke tests; open PR
+6. Human soak + sign-off on Pi → then P99
 
 ---
 
@@ -145,17 +206,10 @@ From `specs/p49-preprod-deployment.md`:
 
 ---
 
-## Open cloud agent
+## Open local Cursor window
 
-1. Push branch `feat/ritz-ras1245/p49-rpi-beta` to GitHub.
-2. Start Cursor Cloud Agent on this repo + branch.
-3. Tell the agent: **Read `AGENT_START_HERE.md` and follow the pickup prompt.**
-
-## Open new local Cursor window
-
-1. Checkout this branch: `git checkout feat/ritz-ras1245/p49-rpi-beta`
-2. Open workspace file: [airplay-status-p49.code-workspace](airplay-status-p49.code-workspace)  
-   Or: **File → Open Folder** on this repo after checkout.
+1. `git checkout feat/ritz-ras1245/p49-rpi-beta`
+2. Open [airplay-status-p49.code-workspace](airplay-status-p49.code-workspace)
 3. Tell the agent: **Read `AGENT_START_HERE.md` and follow the pickup prompt.**
 
 ---
@@ -165,3 +219,4 @@ From `specs/p49-preprod-deployment.md`:
 | Date | Change |
 |------|--------|
 | 2026-07-26 | P49 branch handoff — RPi4 beta, AP2, context dump |
+| 2026-07-26 | Cloud env + Step 0 smoke tests; merge main cloud bootstrap |

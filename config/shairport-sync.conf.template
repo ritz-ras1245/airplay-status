@@ -1,0 +1,29 @@
+// AirPlay Status — shairport-sync classic / macOS (template)
+// Render: ./bin/render-shairport-config.sh --stage dev --classic
+
+general =
+{
+  name = "__AIRPLAY_RECEIVER_NAME__";
+  output_backend = "pipe";
+  mdns_backend = "dns-sd";
+  interpolation = "basic";
+  ignore_volume_control = "yes";
+};
+
+pipe =
+{
+  name = "/dev/null";
+};
+
+metadata =
+{
+  enabled = "yes";
+  include_cover_art = "yes";
+  pipe_name = "/tmp/shairport-sync-metadata";
+  pipe_timeout = 5000;
+};
+
+diagnostics =
+{
+  log_verbosity = __SHAIRPORT_LOG_VERBOSITY__;
+};

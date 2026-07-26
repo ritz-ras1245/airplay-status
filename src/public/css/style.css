@@ -55,6 +55,33 @@ body {
   margin-top: 0.375rem;
 }
 
+.stage-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  vertical-align: middle;
+  margin-left: 0.35rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.stage-badge--dev {
+  background: rgba(10, 132, 255, 0.2);
+  color: #6eb6ff;
+}
+
+.stage-badge--beta {
+  background: rgba(255, 159, 10, 0.2);
+  color: #ffb340;
+}
+
+.stage-badge--prod {
+  background: rgba(48, 209, 88, 0.15);
+  color: #5de87a;
+}
+
 .header[hidden] {
   display: none;
 }

@@ -1,0 +1,32 @@
+// AirPlay Status — shairport-sync AirPlay 2 (template)
+// Render: ./bin/render-shairport-config.sh --stage beta
+// Or copy config/shairport-sync-airplay2.conf.example for default name.
+
+general =
+{
+  name = "__AIRPLAY_RECEIVER_NAME__";
+  output_backend = "pipe";
+  mdns_backend = "avahi";
+  interpolation = "basic";
+  ignore_volume_control = "yes";
+  port = 7000;
+  regtype = "_airplay._tcp";
+};
+
+pipe =
+{
+  name = "/dev/null";
+};
+
+metadata =
+{
+  enabled = "yes";
+  include_cover_art = "yes";
+  pipe_name = "/tmp/shairport-sync-metadata";
+  pipe_timeout = 5000;
+};
+
+diagnostics =
+{
+  log_verbosity = __SHAIRPORT_LOG_VERBOSITY__;
+};

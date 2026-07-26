@@ -1,5 +1,6 @@
 // AirPlay Status — shairport-sync AirPlay 2 configuration (Linux / Raspberry Pi)
-// Copy to: /etc/shairport-sync.conf  (or ~/.config/shairport-sync/shairport-sync.conf)
+// P49 beta name on iPhone: ./bin/render-shairport-config.sh --stage beta
+// Static copy (dev name): cp this file to /etc/shairport-sync.conf
 //
 // Prerequisites (NOT supported on macOS — see docs/multi-room-airplay.md):
 //   1. shairport-sync built with --with-airplay-2 and --with-ffmpeg

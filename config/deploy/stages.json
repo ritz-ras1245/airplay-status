@@ -1,0 +1,27 @@
+{
+  "dev": {
+    "label": "Dev",
+    "airplayReceiverName": "AirPlay Status",
+    "dashboardTitle": "AirPlay Status",
+    "port": 3003,
+    "logLevel": "debug",
+    "shairportLogVerbosity": 2
+  },
+  "beta": {
+    "label": "Beta",
+    "airplayReceiverName": "AirPlay Status (Beta)",
+    "dashboardTitle": "AirPlay Status (Beta)",
+    "port": 3003,
+    "logLevel": "info",
+    "shairportLogVerbosity": 1,
+    "deployPhase": "p49"
+  },
+  "prod": {
+    "label": "Prod",
+    "airplayReceiverName": "AirPlay Status",
+    "dashboardTitle": "AirPlay Status",
+    "port": 3003,
+    "logLevel": "info",
+    "shairportLogVerbosity": 0
+  }
+}
