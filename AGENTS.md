@@ -78,6 +78,20 @@ See `docs/spec.md`. Key fields: `isPlaying`, `title`, `artist`, `album`, `albumA
 - Do not assume AirPlay metadata is always complete — handle missing artwork/title gracefully.
 - Do not play audio from the receiver — metadata only.
 - Do not commit unless the user explicitly asks.
+- Do not infer pause/disconnect from a single metadata field — use log capture (`docs/debug-capture.md`).
+
+## Debug Capture (standard for live metadata bugs)
+
+When debugging pause, resume, disconnect, or progress sync:
+
+1. `./bin/run-shairport.sh` (terminal 1)
+2. `./bin/run-debug.sh` (terminal 2) — tee to `/tmp/airplay-status-debug.log`
+3. Open `http://localhost:3003?debug=1` — tap UI markers before each iPhone action
+4. User says **done** → agent reads log with `grep -a`
+
+See **`docs/debug-capture.md`**. Cursor skill: `event-log-capture` (personal). Project rule: `.cursor/rules/debug-capture.mdc`.
+
+Key event semantics: `pend` = paused (keep UI), `aend` = disconnect (clear UI), ignore `prsm` after `pfls`.
 
 ## GitHub Setup (Next Step After Phase 1)
 

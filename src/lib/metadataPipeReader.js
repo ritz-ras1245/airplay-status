@@ -19,6 +19,8 @@ const CODE = {
   CLIENT_MODEL: 0x636d6f64,
   SENDER: 0x736e6472,
   DISCONNECT: 0x64697363,
+  ACTIVE_BEGIN: 0x61626567,
+  ACTIVE_END: 0x61656e64,
 };
 
 const SAMPLE_RATE = 44100;
@@ -94,6 +96,8 @@ export const itemToUpdate = (item) => {
       }
     }
     if (code === CODE.DISCONNECT) return { type: 'event', event: 'disconnect' };
+    if (code === CODE.ACTIVE_BEGIN) return { type: 'event', event: 'active_begin' };
+    if (code === CODE.ACTIVE_END) return { type: 'event', event: 'active_end' };
     if (code === CODE.PLAY_BEGIN) return { type: 'event', event: 'play' };
     if (code === CODE.PLAY_END) return { type: 'event', event: 'stop' };
     if (code === CODE.PAUSE) return { type: 'event', event: 'pause' };

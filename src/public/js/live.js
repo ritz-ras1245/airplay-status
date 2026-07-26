@@ -24,9 +24,8 @@ const els = {
 
 let snapshot = null;
 let lastArtUrl = null;
-let lastPlaying = null;
-let playingDebounce = null;
 let progressAnchor = { ms: 0, at: 0 };
+let frozenProgressMs = 0;
 let emptyTimer = null;
 
 const setVisible = (hasTrack) => {
@@ -59,21 +58,41 @@ const updateProgress = (progressMs, durationMs) => {
   els.timeTotal.textContent = formatMs(durationMs);
 };
 
+const setBadge = (playing) => {
+  els.badge.textContent = playing ? '▶ Playing' : '⏸ Paused';
+  els.badge.classList.toggle('status-badge--paused', !playing);
+};
+
 const applySnapshot = (playback) => {
+  const wasPlaying = snapshot?.isPlaying ?? false;
   snapshot = playback;
-  progressAnchor = { ms: playback.progressMs ?? 0, at: Date.now() };
 
   const hasTrack = !!playback.title;
   setVisible(hasTrack);
-  if (!hasTrack) return;
+  if (!hasTrack) {
+    lastArtUrl = null;
+    frozenProgressMs = 0;
+    progressAnchor = { ms: 0, at: 0 };
+    els.artImg.removeAttribute('src');
+    els.artImg.hidden = true;
+    els.artPh.hidden = false;
+    if (els.title.textContent) els.title.textContent = '';
+    if (els.artist.textContent) els.artist.textContent = '';
+    if (els.album.textContent) els.album.textContent = '';
+    updateProgress(0, 0);
+    return;
+  }
 
-  const hasArt = !!(playback.albumArt || lastArtUrl);
+  const hasArt = !!playback.albumArt;
 
   if (playback.albumArt) {
     if (lastArtUrl !== playback.albumArt) {
       els.artImg.src = playback.albumArt;
       lastArtUrl = playback.albumArt;
     }
+  } else {
+    lastArtUrl = null;
+    els.artImg.removeAttribute('src');
   }
 
   els.artImg.hidden = !hasArt;
@@ -89,30 +108,26 @@ const applySnapshot = (playback) => {
     els.album.textContent = playback.album ?? '';
   }
 
-  updateProgress(playback.progressMs ?? 0, playback.durationMs ?? 0);
-
-  if (lastPlaying !== playback.isPlaying) {
-    if (playingDebounce) {
-      clearTimeout(playingDebounce);
-      playingDebounce = null;
-    }
-
-    const setBadge = (playing) => {
-      lastPlaying = playing;
-      els.badge.textContent = playing ? '▶ Playing' : '⏸ Paused';
-      els.badge.classList.toggle('status-badge--paused', !playing);
-    };
-
-    if (playback.isPlaying) {
-      setBadge(true);
-    } else {
-      playingDebounce = setTimeout(() => setBadge(false), 400);
-    }
+  if (playback.isPlaying) {
+    progressAnchor = { ms: playback.progressMs ?? 0, at: Date.now() };
+    frozenProgressMs = progressAnchor.ms;
+    updateProgress(progressAnchor.ms, playback.durationMs ?? 0);
+  } else if (wasPlaying && !playback.isPlaying) {
+    const elapsed = Date.now() - progressAnchor.at;
+    frozenProgressMs = Math.min(
+      playback.durationMs ?? Infinity,
+      progressAnchor.ms + elapsed,
+    );
+    updateProgress(frozenProgressMs, playback.durationMs ?? 0);
+  } else {
+    updateProgress(frozenProgressMs, playback.durationMs ?? 0);
   }
 
-  const source = playback.source || 'AirPlay';
-  if (els.source.textContent !== source) {
-    els.source.textContent = source;
+  setBadge(playback.isPlaying);
+
+  const sourceLabel = playback.source || 'AirPlay';
+  if (els.source.textContent !== sourceLabel) {
+    els.source.textContent = sourceLabel;
   }
 };
 
@@ -137,3 +152,26 @@ source.onerror = () => {
 };
 
 setInterval(tickProgress, 1000);
+
+const markTestStep = async (label, button) => {
+  try {
+    const res = await fetch('/api/debug/mark', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ label }),
+    });
+    if (!res.ok) throw new Error('mark failed');
+    if (button) {
+      button.classList.add('debug-btn--sent');
+      setTimeout(() => button.classList.remove('debug-btn--sent'), 1200);
+    }
+  } catch (err) {
+    console.error('test mark failed', err);
+  }
+};
+
+for (const button of document.querySelectorAll('.debug-btn[data-mark]')) {
+  button.addEventListener('click', () => {
+    markTestStep(button.dataset.mark, button);
+  });
+}

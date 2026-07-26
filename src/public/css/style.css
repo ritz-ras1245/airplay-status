@@ -255,3 +255,51 @@ body {
   border: 1px solid var(--border);
   border-radius: 999px;
 }
+
+.debug-bar {
+  margin-top: 1.25rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+}
+
+.debug-bar__hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.debug-bar__hint code {
+  font-size: 0.6875rem;
+  color: var(--accent);
+}
+
+.debug-bar__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.debug-btn {
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.4rem 0.65rem;
+  color: var(--text);
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.debug-btn:hover {
+  background: var(--border);
+}
+
+.debug-btn--sent {
+  border-color: var(--accent);
+  color: var(--accent);
+}

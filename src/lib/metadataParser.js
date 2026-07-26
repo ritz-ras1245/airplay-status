@@ -5,6 +5,7 @@
 export const createEmptyPlaybackState = () => ({
   isPlaying: false,
   connected: false,
+  streamOpen: false,
   title: null,
   artist: null,
   album: null,
@@ -47,6 +48,8 @@ export const parseMetadataLine = (line) => {
     { event: 'stop', regex: /^Play Session End\.$/ },
     { event: 'pause', regex: /^Pause\./ },
     { event: 'resume', regex: /^Resume\./ },
+    { event: 'active_begin', regex: /^Enter Active State\.$/ },
+    { event: 'active_end', regex: /^Exit Active State\.$/ },
     { event: 'disconnect', regex: /^The AirPlay client at .* has disconnected/ },
     {
       event: 'progress',
@@ -104,8 +107,9 @@ export const applyMetadataUpdate = (state, update) => {
 
   if (update.type === 'field') {
     if (update.field === 'progress') {
+      if (!next.isPlaying) return next;
+
       const { progressMs, durationMs } = update.value;
-      // Progress RTP window must not overwrite track length from astm
       if (Number.isFinite(progressMs) && (progressMs > 0 || next.progressMs === 0)) {
         next.progressMs = progressMs;
       }
@@ -118,37 +122,42 @@ export const applyMetadataUpdate = (state, update) => {
     const value = update.value;
     if (value === '' || value == null) return next;
 
-    if (update.field === 'title' && value !== next.title) {
+    if (update.field === 'title') {
+      if (value === next.title) return next;
       next.title = value;
-      next.isPlaying = true;
+      next.isPlaying = next.streamOpen;
       next.progressMs = 0;
       return next;
     }
 
     next[update.field] = value;
-    if (update.field === 'title') {
-      next.isPlaying = true;
-    }
     return next;
   }
 
   switch (update.event) {
     case 'connect':
+    case 'active_begin':
       next.connected = true;
       break;
     case 'play':
-    case 'resume':
       next.connected = true;
+      next.streamOpen = true;
       next.isPlaying = true;
+      break;
+    case 'resume':
+      if (next.connected) {
+        next.streamOpen = true;
+        next.isPlaying = true;
+      }
       break;
     case 'pause':
       next.isPlaying = false;
       break;
     case 'stop':
-      if (next.title) {
-        next.isPlaying = false;
-      }
+      next.streamOpen = false;
+      next.isPlaying = false;
       break;
+    case 'active_end':
     case 'disconnect':
       return createEmptyPlaybackState();
     case 'artwork':

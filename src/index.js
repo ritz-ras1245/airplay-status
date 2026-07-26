@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import {
   getPlaybackState as getLivePlaybackState,
+  logTestMarker,
   onPlaybackChange,
   startMetadataWatcher,
 } from './services/airplayMetadataService.js';
@@ -15,10 +16,12 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3003;
 const USE_MOCK = process.env.USE_MOCK === 'true';
+const METADATA_DEBUG = process.env.METADATA_DEBUG === '1';
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
 
 if (!USE_MOCK) {
   startMetadataWatcher();
@@ -79,6 +82,16 @@ app.get('/api/events', (req, res) => {
   req.on('close', () => unsubscribe());
 });
 
+app.post('/api/debug/mark', (req, res) => {
+  const label = String(req.body?.label ?? 'step').trim().slice(0, 120);
+  if (!label) {
+    res.status(400).json({ ok: false, error: 'label required' });
+    return;
+  }
+  logTestMarker(label);
+  res.json({ ok: true, label });
+});
+
 app.get('/', async (req, res) => {
   const { playback, forceNothingPlaying, live } = await resolvePlayback(req);
 
@@ -86,6 +99,8 @@ app.get('/', async (req, res) => {
     playback,
     forceNothingPlaying,
     live,
+    showDebugCapture: METADATA_DEBUG || req.query.debug === '1',
+    metadataDebug: METADATA_DEBUG,
     formatMs,
   });
 });
