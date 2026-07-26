@@ -11,66 +11,118 @@
 </head>
 <body>
   <div class="container">
-    <header class="header">
+    <header id="page-header" class="header" <%= live && playback.title ? 'hidden' : '' %>>
       <h1>📡 AirPlay Status</h1>
-      <p>Now playing on your speakers</p>
+      <p id="subtitle"><%= live ? 'Live from AirPlay' : 'Mock preview' %></p>
     </header>
 
-    <% if (!playback.isPlaying) { %>
-      <div class="card card--empty">
-        <div class="empty-icon">🔇</div>
-        <h2 class="empty-title">Nothing playing</h2>
-        <p class="empty-subtitle">
-          Select <strong>AirPlay Status</strong> as an output alongside your speakers to see track info here.
-        </p>
+    <% if (live) { %>
+      <div id="playback-view">
+        <div id="empty-state" class="card card--empty" <%= playback.title ? 'hidden' : '' %>>
+          <div class="empty-icon">🔇</div>
+          <h2 class="empty-title">Nothing playing</h2>
+          <p class="empty-subtitle">
+            Select <strong>AirPlay Status</strong> as an output alongside your speakers to see track info here.
+          </p>
+        </div>
+
+        <div id="track-card" class="card" <%= playback.title ? '' : 'hidden' %>>
+          <div class="album-art-frame">
+            <img
+              id="album-art"
+              class="album-art"
+              src="<%= playback.albumArt || '' %>"
+              alt="Album art"
+              <%= playback.albumArt ? '' : 'hidden' %>
+            >
+            <div id="album-art-ph" class="album-art album-art--placeholder" <%= playback.albumArt ? 'hidden' : '' %>>🎵</div>
+          </div>
+
+          <div class="track-info">
+            <h2 class="track-title" id="track-title"><%= playback.title || '' %></h2>
+            <p class="track-artist" id="track-artist"><%= playback.artist || '' %></p>
+            <p class="track-album" id="track-album"><%= playback.album || '' %></p>
+          </div>
+
+          <div class="progress-section">
+            <div class="progress-bar">
+              <div
+                id="progress-fill"
+                class="progress-fill"
+                style="width: <%= playback.durationMs ? Math.min(100, Math.round((playback.progressMs / playback.durationMs) * 100)) : 0 %>%"
+              ></div>
+            </div>
+            <div class="progress-times">
+              <span id="progress-current"><%= formatMs(playback.progressMs) %></span>
+              <span id="progress-total"><%= formatMs(playback.durationMs) %></span>
+            </div>
+          </div>
+
+          <div class="status-row">
+            <span id="status-badge" class="status-badge <%= playback.isPlaying ? '' : 'status-badge--paused' %>">
+              <%= playback.isPlaying ? '▶ Playing' : '⏸ Paused' %>
+            </span>
+            <span class="source-info">
+              <img src="/images/airplay-icon-white.png" alt="" class="airplay-icon" aria-hidden="true">
+              <span id="track-source"><%= playback.source || 'AirPlay' %></span>
+            </span>
+          </div>
+        </div>
       </div>
+      <script src="/js/live.js" type="module"></script>
     <% } else { %>
-      <div class="card">
-        <img
-          class="album-art"
-          src="<%= playback.albumArt %>"
-          alt="Album art for <%= playback.album %>"
-        >
-
-        <div class="track-info">
-          <h2 class="track-title"><%= playback.title %></h2>
-          <p class="track-artist"><%= playback.artist %></p>
-          <p class="track-album"><%= playback.album %></p>
-        </div>
-
-        <div class="progress-section">
-          <div class="progress-bar">
-            <div
-              class="progress-fill"
-              style="width: <%= Math.round((playback.progressMs / playback.durationMs) * 100) %>%"
-            ></div>
+      <div id="playback-view">
+        <% if (!playback.isPlaying && !playback.title) { %>
+          <div class="card card--empty">
+            <div class="empty-icon">🔇</div>
+            <h2 class="empty-title">Nothing playing</h2>
+            <p class="empty-subtitle">Mock preview — use live mode for AirPlay.</p>
           </div>
-          <div class="progress-times">
-            <span><%= formatMs(playback.progressMs) %></span>
-            <span><%= formatMs(playback.durationMs) %></span>
+        <% } else { %>
+          <div class="card">
+            <% if (playback.albumArt) { %>
+              <img class="album-art" src="<%= playback.albumArt %>" alt="Album art">
+            <% } else { %>
+              <div class="album-art album-art--placeholder">🎵</div>
+            <% } %>
+            <div class="track-info">
+              <h2 class="track-title"><%= playback.title %></h2>
+              <p class="track-artist"><%= playback.artist %></p>
+              <p class="track-album"><%= playback.album %></p>
+            </div>
+            <div class="progress-section">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: <%= playback.durationMs ? Math.round((playback.progressMs / playback.durationMs) * 100) : 0 %>%"></div>
+              </div>
+              <div class="progress-times">
+                <span><%= formatMs(playback.progressMs) %></span>
+                <span><%= formatMs(playback.durationMs) %></span>
+              </div>
+            </div>
+            <div class="status-row">
+              <span class="status-badge">▶ Playing</span>
+              <span class="source-info">
+                <img src="/images/airplay-icon-white.png" alt="" class="airplay-icon" aria-hidden="true">
+                <%= playback.source || 'AirPlay' %>
+              </span>
+            </div>
           </div>
-        </div>
-
-        <div class="status-row">
-          <span class="status-badge">▶ Playing</span>
-          <span class="source-info">
-            <img src="/images/airplay-icon.png" alt="" class="airplay-icon" aria-hidden="true">
-            <%= playback.source %>
-          </span>
-        </div>
+        <% } %>
+      </div>
+      <div class="toggle-section">
+        <% if (forceNothingPlaying) { %>
+          <a href="/?mock=true" class="toggle-btn">▶ Show Now Playing</a>
+        <% } else { %>
+          <a href="/?mock=true&state=nothing" class="toggle-btn">🔇 Show Nothing Playing</a>
+        <% } %>
       </div>
     <% } %>
 
-    <div class="toggle-section">
-      <% if (forceNothingPlaying) { %>
-        <a href="/" class="toggle-btn">▶ Show Now Playing</a>
-      <% } else { %>
-        <a href="/?state=nothing" class="toggle-btn">🔇 Show Nothing Playing</a>
-      <% } %>
-    </div>
-
     <p style="text-align: center;">
-      <span class="phase-tag">Phase 2 · Wireframe</span>
+      <span class="phase-tag"><%= live ? 'Live · AirPlay' : 'Mock preview' %></span>
+      <% if (live) { %>
+        <a href="/?mock=true" class="phase-tag" style="margin-left:0.5rem;text-decoration:none;">Mock</a>
+      <% } %>
     </p>
   </div>
 </body>

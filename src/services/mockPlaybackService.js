@@ -24,7 +24,7 @@ export const getPlaybackState = async (forceNothingPlaying = false) => {
     albumArt: '/images/album-art.png',
     progressMs: 95000,
     durationMs: 191000,
-    source: 'AirPlay',
+    source: 'Mock Player',
     updatedAt: new Date().toISOString(),
   };
 };

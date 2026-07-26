@@ -55,6 +55,24 @@ body {
   margin-top: 0.375rem;
 }
 
+.header[hidden] {
+  display: none;
+}
+
+.album-art[hidden],
+.album-art--placeholder[hidden] {
+  display: none !important;
+}
+
+.album-art-frame {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.album-art-frame .album-art {
+  margin-bottom: 0;
+}
+
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -89,6 +107,18 @@ body {
 .empty-subtitle strong {
   color: var(--text);
   font-weight: 500;
+}
+
+.album-art--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+  background: var(--surface-raised);
+  margin-bottom: 1.5rem;
+  aspect-ratio: 1;
+  border-radius: 12px;
+  opacity: 0.5;
 }
 
 .album-art {
@@ -141,7 +171,7 @@ body {
   height: 100%;
   background: var(--accent);
   border-radius: 2px;
-  transition: width 0.3s ease;
+  transition: width 0.8s linear;
 }
 
 .progress-times {
@@ -164,6 +194,10 @@ body {
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--accent);
+}
+
+.status-badge--paused {
+  color: var(--text-muted);
 }
 
 .source-info {

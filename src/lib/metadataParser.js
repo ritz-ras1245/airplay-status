@@ -1,96 +1,160 @@
 /**
- * Parse a single line of shairport-sync-metadata-reader stdout into an event.
- * Returns null if the line is not recognized.
+ * Parse metadata events into playback state updates.
  */
-const LINE_PATTERNS = [
-  { field: 'title', regex: /^Title: "(.*)"\.$/ },
-  { field: 'artist', regex: /^Artist: "(.*)"\.$/ },
-  { field: 'album', regex: /^Album Name: "(.*)"\.$/ },
-  { field: 'durationMs', regex: /^Track length: (\d+) milliseconds\.$/, numeric: true },
-  { field: 'genre', regex: /^Genre: "(.*)"\.$/ },
-  { field: 'clientName', regex: /^The name of the AirPlay client is "(.*)"\.$/ },
-];
-
-const EVENT_PATTERNS = [
-  { event: 'play', regex: /^Play Session Begin\.$/ },
-  { event: 'stop', regex: /^Play Session End\.$/ },
-  { event: 'pause', regex: /^Pause\.( \(AirPlay 2 only\.\))?$/ },
-  { event: 'resume', regex: /^Resume\.( \(AirPlay 2 only\.\))?$/ },
-  { event: 'artwork', regex: /^Picture received, length (\d+) bytes\.$/, bytes: true },
-  { event: 'clientConnect', regex: /^The AirPlay client at "(.*)" has connected to this player\.$/ },
-  { event: 'clientDisconnect', regex: /^The AirPlay client at "(.*)" has disconnected from this player\./ },
-];
 
 export const createEmptyPlaybackState = () => ({
   isPlaying: false,
+  connected: false,
   title: null,
   artist: null,
   album: null,
   albumArt: null,
   progressMs: 0,
   durationMs: 0,
-  source: null,
+  clientName: null,
+  clientModel: null,
+  senderApp: null,
   updatedAt: null,
 });
 
+/** @deprecated text-line parser kept for demo script */
 export const parseMetadataLine = (line) => {
   const trimmed = line.trim();
   if (!trimmed) return null;
 
-  for (const pattern of LINE_PATTERNS) {
-    const match = trimmed.match(pattern.regex);
-    if (!match) continue;
+  const patterns = [
+    { field: 'title', regex: /^Title: "(.*)"\.$/ },
+    { field: 'artist', regex: /^Artist: "(.*)"\.$/ },
+    { field: 'album', regex: /^Album Name: "(.*)"\.$/ },
+    { field: 'durationMs', regex: /^Track length: (\d+) milliseconds\.$/, numeric: true },
+    { field: 'clientName', regex: /^The name of the AirPlay client is "(.*)"\.$/ },
+    { field: 'clientModel', regex: /^The model of the AirPlay client is "(.*)"\.$/ },
+  ];
 
-    return {
-      type: 'field',
-      field: pattern.field,
-      value: pattern.numeric ? Number(match[1]) : match[1],
-    };
+  for (const pattern of patterns) {
+    const match = trimmed.match(pattern.regex);
+    if (match) {
+      return {
+        type: 'field',
+        field: pattern.field,
+        value: pattern.numeric ? Number(match[1]) : match[1],
+      };
+    }
   }
 
-  for (const pattern of EVENT_PATTERNS) {
+  const events = [
+    { event: 'play', regex: /^Play Session Begin\.$/ },
+    { event: 'stop', regex: /^Play Session End\.$/ },
+    { event: 'pause', regex: /^Pause\./ },
+    { event: 'resume', regex: /^Resume\./ },
+    { event: 'disconnect', regex: /^The AirPlay client at .* has disconnected/ },
+    {
+      event: 'progress',
+      regex: /^Progress String "(\d+)\/(\d+)\/(\d+)"\.$/,
+      progress: true,
+    },
+  ];
+
+  for (const pattern of events) {
     const match = trimmed.match(pattern.regex);
     if (!match) continue;
 
-    const payload = pattern.bytes
-      ? { length: Number(match[1]) }
-      : match[1]
-        ? { client: match[1] }
-        : {};
+    if (pattern.progress) {
+      const start = Number(match[1]);
+      const current = Number(match[2]);
+      const end = Number(match[3]);
+      const rtpToMs = (f) => Math.max(0, Math.round((f / 44100) * 1000));
+      return {
+        type: 'field',
+        field: 'progress',
+        value: { progressMs: rtpToMs(current - start), durationMs: rtpToMs(end - start) },
+      };
+    }
 
-    return { type: 'event', event: pattern.event, ...payload };
+    return { type: 'event', event: pattern.event };
   }
 
   return null;
 };
 
+export const formatSource = (state) => {
+  if (state.clientName) return state.clientName;
+  if (state.senderApp) return state.senderApp;
+  if (state.clientModel) return state.clientModel;
+  return 'AirPlay';
+};
+
+export const toPublicState = (state) => ({
+  isPlaying: state.isPlaying,
+  connected: state.connected,
+  title: state.title,
+  artist: state.artist,
+  album: state.album,
+  albumArt: state.albumArt,
+  progressMs: state.progressMs,
+  durationMs: state.durationMs,
+  source: formatSource(state),
+  updatedAt: state.updatedAt,
+});
+
 export const applyMetadataUpdate = (state, update) => {
+  if (!update) return state;
+
   const next = { ...state, updatedAt: new Date().toISOString() };
 
   if (update.type === 'field') {
-    next[update.field] = update.value;
-    if (update.field === 'clientName') {
-      next.source = update.value;
+    if (update.field === 'progress') {
+      const { progressMs, durationMs } = update.value;
+      // Progress RTP window must not overwrite track length from astm
+      if (Number.isFinite(progressMs) && (progressMs > 0 || next.progressMs === 0)) {
+        next.progressMs = progressMs;
+      }
+      if (durationMs > 0 && next.durationMs === 0) {
+        next.durationMs = durationMs;
+      }
+      return next;
     }
-    if (['title', 'artist', 'album'].includes(update.field)) {
+
+    const value = update.value;
+    if (value === '' || value == null) return next;
+
+    if (update.field === 'title' && value !== next.title) {
+      next.title = value;
+      next.isPlaying = true;
+      next.progressMs = 0;
+      return next;
+    }
+
+    next[update.field] = value;
+    if (update.field === 'title') {
       next.isPlaying = true;
     }
     return next;
   }
 
   switch (update.event) {
+    case 'connect':
+      next.connected = true;
+      break;
     case 'play':
     case 'resume':
+      next.connected = true;
       next.isPlaying = true;
       break;
     case 'pause':
       next.isPlaying = false;
       break;
     case 'stop':
-    case 'clientDisconnect':
+      if (next.title) {
+        next.isPlaying = false;
+      }
+      break;
+    case 'disconnect':
       return createEmptyPlaybackState();
-    case 'clientConnect':
-      next.source = update.client ?? next.source;
+    case 'artwork':
+      if (update.albumArt) {
+        next.albumArt = update.albumArt;
+      }
       break;
     default:
       break;

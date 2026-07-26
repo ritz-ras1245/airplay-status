@@ -88,6 +88,16 @@ Edit `~/.config/shairport-sync/shairport-sync.conf`:
 - Check pipe exists: `ls -l /tmp/shairport-sync-metadata`
 - Rebuild reader: `make -C vendor/shairport-sync-metadata-reader`
 
+**`mDNS backend not found` / `Could not establish mDNS advertisement`**
+
+- Backend name must be `dns-sd` (hyphen), **not** `dns_sd` (underscore)
+- Fix in `~/.config/shairport-sync/shairport-sync.conf` or re-copy from `config/shairport-sync.conf.example`
+
+**Port 5000 already in use**
+
+- Disable macOS **AirPlay Receiver** (System Settings → General → AirDrop & Handoff)
+- Or stop another `shairport-sync` instance: `pkill shairport-sync`
+
 **Metadata reader not found**
 
 ```bash

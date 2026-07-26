@@ -6,7 +6,7 @@ general =
 {
   name = "AirPlay Status";
   output_backend = "pipe";
-  mdns_backend = "dns_sd";   // macOS Bonjour (use "avahi" on Linux)
+  mdns_backend = "dns-sd";   // macOS Bonjour (use "avahi" on Linux)
   interpolation = "basic";
   ignore_volume_control = "yes";
 };

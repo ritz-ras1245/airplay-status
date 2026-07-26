@@ -28,7 +28,10 @@ if [[ ! -d "$VENDOR/.git" ]]; then
   git clone --depth 1 https://github.com/mikebrady/shairport-sync-metadata-reader.git "$VENDOR"
 fi
 
-make -C "$VENDOR"
+make -C "$VENDOR" 2>/dev/null || {
+  echo "    Running autoreconf/configure..."
+  (cd "$VENDOR" && autoreconf -i -f && ./configure && make)
+}
 
 echo ""
 echo "==> Installing shairport-sync config..."
