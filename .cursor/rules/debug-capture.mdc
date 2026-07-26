@@ -1,27 +1,15 @@
 ---
-description: Use debug capture (run-debug.sh, test marks, docs/debug-capture.md) when debugging live AirPlay metadata behavior
+description: Use debug capture when debugging live AirPlay metadata behavior
 globs: src/**/*.{js,ejs},bin/*.sh,docs/debug-capture.md
 alwaysApply: false
 ---
 
 # AirPlay Status — debug capture
 
-When debugging pause, resume, track change, disconnect, progress sync, or UI state:
+**Normal:** `./bin/run-local.sh` — `/debug` and `/?debug=1` redirect to `/`.
 
-1. Read `docs/debug-capture.md`.
-2. Ask user to run `./bin/run-debug.sh` (Terminal 2) + `./bin/run-shairport.sh` (Terminal 1 if needed).
-3. Open `http://localhost:3003?debug=1` — use numbered buttons **before** each iPhone action.
-4. After user says **done**, read `/tmp/airplay-status-debug.log` with `grep -a`.
+**Debug:** `./bin/run-local.sh --debug` — verbose logs + marker UI at `/debug`.
 
-## Event semantics (Apple Music / Classic AirPlay)
+When debugging: read `docs/debug-capture.md`, user runs with `--debug`, taps markers at `/debug`, says **done**, agent reads `/tmp/airplay-status-debug.log`.
 
-- `pend` while session active = **paused** (keep metadata) — ignore only within 3s of `pbeg` (connect handshake).
-- `aend` = **session ended** → clear UI — ignore only within 12s of an ignored connect-time `pend`.
-- Ignore `prsm` within 2s of `pfls` (buffer flush, not user resume).
-- Do not use `core/caps` for play/pause — values flip during metadata bursts.
-
-## Agent must
-
-- Prefer log evidence over assumptions.
-- Add test markers when introducing new state transitions.
-- Keep `>>> TEST MARK` logging always available via `/api/debug/mark`.
+Event semantics: `pend` = paused (keep UI), `aend` = disconnect (clear), ignore `prsm` after `pfls`, ignore connect-time spurious `pend`/`aend`.

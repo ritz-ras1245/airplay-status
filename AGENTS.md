@@ -84,14 +84,11 @@ See `docs/spec.md`. Key fields: `isPlaying`, `title`, `artist`, `album`, `albumA
 
 When debugging pause, resume, disconnect, or progress sync:
 
-1. `./bin/run-shairport.sh` (terminal 1)
-2. `./bin/run-debug.sh` (terminal 2) — tee to `/tmp/airplay-status-debug.log`
-3. Open `http://localhost:3003?debug=1` — tap UI markers before each iPhone action
-4. User says **done** → agent reads log with `grep -a`
+1. `./bin/run-local.sh --debug`
+2. Open `http://localhost:3003/debug` — tap UI markers before each iPhone action
+3. User says **done** → agent reads `/tmp/airplay-status-debug.log`
 
-See **`docs/debug-capture.md`**. Cursor skill: `event-log-capture` (personal). Project rule: `.cursor/rules/debug-capture.mdc`.
-
-Key event semantics: `pend` = paused (keep UI), `aend` = disconnect (clear UI), ignore `prsm` after `pfls`.
+See **`docs/debug-capture.md`**. Normal `./bin/run-local.sh` — `/debug` and `/?debug=1` redirect to `/`.
 
 ## GitHub Setup (Next Step After Phase 1)
 

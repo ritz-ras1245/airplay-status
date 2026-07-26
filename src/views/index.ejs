@@ -72,7 +72,7 @@
 
       <% if (showDebugCapture) { %>
       <div id="debug-bar" class="debug-bar">
-        <p class="debug-bar__hint">Tap before each iPhone action — logged as <code>&gt;&gt;&gt; TEST MARK</code><% if (!metadataDebug) { %> (add <code>?debug=1</code> or use <code>./bin/run-debug.sh</code> for verbose pipe logs)<% } %></p>
+        <p class="debug-bar__hint">Debug capture — tap before each iPhone action</p>
         <div class="debug-bar__buttons">
           <button type="button" class="debug-btn" data-mark="1 connect + start playing">1 Play</button>
           <button type="button" class="debug-btn" data-mark="2 pause">2 Pause</button>
@@ -82,6 +82,7 @@
           <button type="button" class="debug-btn" data-mark="6 disconnect AirPlay Status">6 Disconnect</button>
         </div>
       </div>
+      <script src="/js/debug-markers.js" type="module"></script>
       <% } %>
       <script src="/js/live.js" type="module"></script>
     <% } else { %>
@@ -132,12 +133,6 @@
       </div>
     <% } %>
 
-    <p style="text-align: center;">
-      <span class="phase-tag"><%= live ? 'Live · AirPlay' : 'Mock preview' %></span>
-      <% if (live) { %>
-        <a href="/?mock=true" class="phase-tag" style="margin-left:0.5rem;text-decoration:none;">Mock</a>
-      <% } %>
-    </p>
   </div>
 </body>
 </html>

@@ -83,6 +83,10 @@ app.get('/api/events', (req, res) => {
 });
 
 app.post('/api/debug/mark', (req, res) => {
+  if (!METADATA_DEBUG) {
+    res.status(404).json({ ok: false, error: 'debug mode not enabled' });
+    return;
+  }
   const label = String(req.body?.label ?? 'step').trim().slice(0, 120);
   if (!label) {
     res.status(400).json({ ok: false, error: 'label required' });
@@ -92,20 +96,34 @@ app.post('/api/debug/mark', (req, res) => {
   res.json({ ok: true, label });
 });
 
-app.get('/', async (req, res) => {
+const renderDashboard = async (req, res, { showDebugCapture = false } = {}) => {
   const { playback, forceNothingPlaying, live } = await resolvePlayback(req);
 
   res.render('index', {
     playback,
     forceNothingPlaying,
     live,
-    showDebugCapture: METADATA_DEBUG || req.query.debug === '1',
-    metadataDebug: METADATA_DEBUG,
+    showDebugCapture,
     formatMs,
   });
-});
+};
+
+const handleDashboard = (req, res) => {
+  const wantsDebug = req.path === '/debug' || req.query.debug === '1';
+  if (wantsDebug && !METADATA_DEBUG) {
+    res.redirect('/');
+    return;
+  }
+  renderDashboard(req, res, { showDebugCapture: wantsDebug && METADATA_DEBUG });
+};
+
+app.get('/', handleDashboard);
+app.get('/debug', handleDashboard);
 
 app.listen(PORT, () => {
   const mode = USE_MOCK ? 'mock' : 'live';
   console.log(`AirPlay Status (${mode}) at http://localhost:${PORT}`);
+  if (METADATA_DEBUG) {
+    console.log(`Debug capture UI at http://localhost:${PORT}/debug`);
+  }
 });
