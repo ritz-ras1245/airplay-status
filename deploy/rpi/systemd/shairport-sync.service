@@ -1,0 +1,15 @@
+[Unit]
+Description=shairport-sync AirPlay 2 receiver (metadata only)
+Documentation=https://github.com/mikebrady/shairport-sync
+After=network-online.target nqptp.service avahi-daemon.service
+Wants=network-online.target
+Requires=nqptp.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/shairport-sync -c /etc/shairport-sync.conf
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

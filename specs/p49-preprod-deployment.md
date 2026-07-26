@@ -1,6 +1,6 @@
 # Phase P49 — Pre-Prod / Local Beta (RPi4)
 
-**Status:** Spec (pre-implementation) — **priority raised** after AirPlay 1 macOS limitation  
+**Status:** Implementation on `feat/cursor/p49-rpi-deployment-0a02` — human beta sign-off pending  
 **Depends on:** P0 live dashboard ✅; benefits from any merged feature phases (P2 Tidbyt, P6 Echo, …)  
 **Precedes:** P99 production readiness  
 **Related:** [P5 deployment](./p5-deployment.md) (general platforms), [multi-room-airplay.md](../docs/multi-room-airplay.md) (why Pi is required for iPhone multi-speaker)
