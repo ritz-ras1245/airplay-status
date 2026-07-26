@@ -74,6 +74,31 @@ gh pr create --base main
 
 Enforced locally (`.githooks/`) and in CI (`.github/workflows/branch-policy.yml`). GitHub ruleset API for branch names is not available on this plan — naming is validated on push/PR instead.
 
+---
+
+## Cursor Cloud Agents — branch prefix
+
+Cloud Agents auto-create a branch **before** the agent reads repo rules. The default `cursor/<slug>` **fails** CI (missing `{action}/` segment).
+
+Configure **Branch prefix** once (account-level, not in this repo):
+
+| Where | Path |
+|-------|------|
+| Cursor editor | **Settings → Cloud Agents → Branch prefix** |
+| Web dashboard | [cursor.com/dashboard/cloud-agents#my-defaults](https://cursor.com/dashboard/cloud-agents#my-defaults) |
+
+**Recommended default:** `feat/cursor` (no trailing slash). Cursor adds `/` + slug → `feat/cursor/my-change` ✓
+
+| Task type | Set prefix to |
+|-----------|---------------|
+| Features (default) | `feat/cursor` |
+| Documentation | `doc/cursor` |
+| Bug fixes | `fix/cursor` |
+
+The prefix is **static** — it cannot switch between `feat/` and `fix/` per task automatically ([Cursor forum](https://forum.cursor.com/t/cloud-agent-custom-branch-prefix-feat-fix-instead-of-cursor-and-commit-author-attribution/163698)). Change it in settings before launching a doc/fix agent, or start the agent on an existing compliant branch instead.
+
+Repo rule: [`.cursor/rules/branch-policy.mdc`](../.cursor/rules/branch-policy.mdc)
+
 | Ruleset | Target | Rules |
 |---------|--------|-------|
 | **Protect main** | `main` | Require PR; block force-push & deletion; **`ritz-ras1245` bypass** (merge without PR) |

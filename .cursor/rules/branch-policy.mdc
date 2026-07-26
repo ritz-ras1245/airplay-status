@@ -1,0 +1,51 @@
+---
+description: Branch naming — required format for all git branches and Cloud Agents
+alwaysApply: true
+---
+
+# Branch policy
+
+**Full doc:** [.github/BRANCH_POLICY.md](../../.github/BRANCH_POLICY.md)
+
+## Required format
+
+```
+{action}/{user}/{description}
+```
+
+| Segment | Values |
+|---------|--------|
+| **action** | `feat`, `fix`, `doc`, `chore`, `refactor`, `test`, `ci`, `spec`, `hotfix` |
+| **user** | GitHub login or tool name — e.g. `ritz-ras1245`, `cursor`, `dependabot` |
+| **description** | kebab-case slug |
+
+**Examples:** `feat/cursor/p49-docker-spike`, `doc/cursor/cloud-setup`, `fix/cursor/session-end-clear`
+
+**Exception:** `release/N.x` only (RVS patch lines).
+
+## Rules
+
+- **Never commit on `main`** — work on a named branch; merge to `main` only
+- **Cloud / bot agents:** open a **PR** — do not merge to `main`
+- **Local agents:** before `git checkout -b`, use `{action}/cursor/{description}` (or `ritz-ras1245` when acting as owner)
+
+## Cursor Cloud Agents — branch prefix (required)
+
+Cloud Agents create the branch **before** this rule runs. Repo rules cannot override the platform prefix.
+
+Set **Branch prefix** once in Cursor:
+
+1. **Cursor Settings → Cloud Agents → Branch prefix**, or
+2. [Cloud Agents dashboard → My defaults](https://cursor.com/dashboard/cloud-agents#my-defaults)
+
+Use **`feat/cursor`** (no trailing slash). Cursor appends `/` + a slug → e.g. `feat/cursor/p49-docker-spike`, which passes CI.
+
+| Work type | Prefix to use | Example result |
+|-----------|---------------|----------------|
+| Features (default) | `feat/cursor` | `feat/cursor/add-health-endpoint` |
+| Docs only | `doc/cursor` | `doc/cursor/update-agents-md` |
+| Fixes | `fix/cursor` | `fix/cursor/session-end-clear` |
+
+Change the prefix in dashboard before starting a doc/fix Cloud Agent if you need the correct `action` segment.
+
+**Alternative:** start the agent on an existing compliant branch (API: `workOnCurrentBranch: true` + `startingRef`).
