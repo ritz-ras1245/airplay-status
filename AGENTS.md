@@ -52,7 +52,7 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 - Node.js v20+, ES Modules, Express + EJS
 - No `.env` for secrets (Keychain later if needed)
 - Spec-driven — phase numbering in [specs/README.md](specs/README.md)
-- **Global RVS** (semver, P100/P200, GitHub/Jira/ClickUp): `~/.standards/release-and-versioning.md` + Cursor rule — **not in this repo**
+- **Global RVS** (semver, P100/P200, GitHub/Jira/ClickUp): Cursor rule `~/.cursor/rules/release-and-versioning.mdc` — **not in this repo**
 - **This repo:** [docs/versioning.md](docs/versioning.md), [docs/releases/](docs/releases/)
 - **Branches:** never commit on `main` — use `{action}/{user}/{description}` ([.github/BRANCH_POLICY.md](.github/BRANCH_POLICY.md)). Owner merges without PR; bots/agents/others **must open a PR**.
 - Minimal scope; match existing code style
@@ -71,7 +71,7 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 | **P201–P248** | Line 3 features |
 | **P249 / P299 / P300** | Line 3 beta / prod readiness / **3.0.0** release |
 
-**Patches:** `1.0.x` on `release/1.x` while `main` is `2.0.0-dev`. Global rules: `~/.standards/release-and-versioning.md`.
+**Patches:** `1.0.x` on `release/1.x` while `main` is `2.0.0-dev`. Global rules: `~/.cursor/rules/release-and-versioning.mdc`.
 
 ## Dev → beta → prod pipeline
 
@@ -84,7 +84,7 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 
 **Dev caveat (permanent):** On iPhone from Mac receiver, select **only AirPlay Status**. Multi-room validated on **P49** only. [docs/multi-room-airplay.md](docs/multi-room-airplay.md)
 
-**Versioning:** Pre-P100 = **0.y.z** (now **0.1.0**). [docs/versioning.md](docs/versioning.md) · global RVS: `~/.standards/`
+**Versioning:** Pre-P100 = **0.y.z** (now **0.1.0**). [docs/versioning.md](docs/versioning.md) · global RVS: Cursor rule `~/.cursor/rules/release-and-versioning.mdc`
 
 **Guideline:** [specs/guidelines/mac-dev-linux-beta.md](specs/guidelines/mac-dev-linux-beta.md)
 
@@ -92,7 +92,7 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 
 | Scope | Location |
 |-------|----------|
-| **Global** — RVS, privacy rules | `~/.standards/`, `~/.cursor/rules/` (future: private GitHub sync) |
+| **Global** — RVS, privacy rules | `~/.cursor/rules/` (local symlinks; not in this repo) |
 | **This repo** — phases, API, ship records | [specs/README.md](specs/README.md), [docs/versioning.md](docs/versioning.md), [docs/releases/](docs/releases/) |
 
 ## Versioning and deploy identity

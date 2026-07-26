@@ -36,7 +36,7 @@ Details: **[docs/shairport-setup.md](docs/shairport-setup.md)**. Debug playback 
 
 ## Phases
 
-Phase numbering: [specs/README.md](specs/README.md). Pre-P100: **0.y.z**; **P100** → **1.0.0**. Global RVS: `~/.standards/` (not in repo).
+Phase numbering: [specs/README.md](specs/README.md). Pre-P100: **0.y.z**; **P100** → **1.0.0**. Global RVS: Cursor rules (`~/.cursor/rules/`) — not in this repo.
 
 | Phase | Status | Description |
 |-------|--------|-------------|

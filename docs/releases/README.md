@@ -1,6 +1,6 @@
 # Release records (airplay-status)
 
-Per-ship YAML files for each semver (e.g. `1.0.0.yaml`). Schema matches **CanonicalReleaseRecord** in `~/.standards/release-and-versioning.md` §3.
+Per-ship YAML files for each semver (e.g. `1.0.0.yaml`). Schema matches **CanonicalReleaseRecord** in global RVS (Cursor rule `~/.cursor/rules/release-and-versioning.mdc` §3).
 
 **When to add:** first **P100** prod ship and every patch (`1.0.1`, …).
 

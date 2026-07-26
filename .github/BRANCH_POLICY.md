@@ -79,4 +79,4 @@ Enforced locally (`.githooks/`) and in CI (`.github/workflows/branch-policy.yml`
 | **Protect main** | `main` | Require PR; block force-push & deletion; **`ritz-ras1245` bypass** (merge without PR) |
 | **Branch naming** | non-`main` | CI + local hooks — `{action}/{user}/{description}` or `release/N.x` |
 
-Global release semver rules: `~/.standards/release-and-versioning.md`.
+Global release semver rules: `~/.cursor/rules/release-and-versioning.mdc`.

@@ -1,6 +1,6 @@
 # airplay-status — semver & API reference
 
-**Global RVS** (phases, GitHub/Jira/ClickUp, patches): `~/.standards/release-and-versioning.md` — not in this repo.  
+**Global RVS** (phases, GitHub/Jira/ClickUp, patches): Cursor rule `~/.cursor/rules/release-and-versioning.mdc` — not in this repo.  
 **This file:** project-specific semver, deploy env, and `/api/version`.
 
 ---
@@ -25,7 +25,7 @@
 | **P200** | **P199** | **2.0.0** |
 | Patches | — | **1.0.x** on **`release/1.x`** |
 
-Full phase index: [specs/README.md](../specs/README.md). Global rules: `~/.standards/release-and-versioning.md`.
+Full phase index: [specs/README.md](../specs/README.md).
 
 ---
 

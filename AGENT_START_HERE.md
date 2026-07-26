@@ -22,7 +22,9 @@ Do not commit unless user asks. Match existing code style. No secrets in repo.
 
 Verify: GET /api/version with DEPLOY_PHASE=p49; ./bin/check-version.sh http://<pi>:3003
 
-Global standards: ~/.standards/AGENTS_START_HERE.md (local, not in repo).
+Branch naming: {action}/{user}/{description} — see .github/BRANCH_POLICY.md in this repo.
+
+Cloud agent: open a PR when done; do not merge to main. Owner's global standards are local-only (not in this repo).
 ```
 
 ---
@@ -59,14 +61,15 @@ Mac dev (AP1, features) → P49 beta (RPi4, AP2) → P99 prod readiness → P100
 
 - **P6 Echo Show** — `feat/p6-echo-show` — leave alone
 
-### Global standards (local machine)
+### Branch policy (this repo)
 
-| Doc | Path |
-|-----|------|
-| AI standards entry | `~/.standards/AGENTS_START_HERE.md` |
-| Full checkpoint | `~/.standards/STANDARDS_CHECKPOINT.md` |
-| RVS / semver | `~/.standards/release-and-versioning.md` |
+| Rule | Value |
+|------|-------|
 | Branch naming | `{action}/{user}/{description}` |
+| Policy doc | [.github/BRANCH_POLICY.md](.github/BRANCH_POLICY.md) |
+| Cloud agents | Open a **PR** — do not merge to `main` |
+
+Owner's global engineering standards live on their local machine only — not in this public repo.
 
 ---
 
@@ -142,7 +145,13 @@ From `specs/p49-preprod-deployment.md`:
 
 ---
 
-## Open new Cursor window
+## Open cloud agent
+
+1. Push branch `feat/ritz-ras1245/p49-rpi-beta` to GitHub.
+2. Start Cursor Cloud Agent on this repo + branch.
+3. Tell the agent: **Read `AGENT_START_HERE.md` and follow the pickup prompt.**
+
+## Open new local Cursor window
 
 1. Checkout this branch: `git checkout feat/ritz-ras1245/p49-rpi-beta`
 2. Open workspace file: [airplay-status-p49.code-workspace](airplay-status-p49.code-workspace)  

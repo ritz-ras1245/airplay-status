@@ -11,7 +11,7 @@ All phase specs live in `specs/p*.md`. Numbering is intentional and permanent.
 | **P49, P149, P249…** | **Beta / pre-prod** on real hardware before prod-readiness |
 | **P0–P48, P101–P148…** | Features (Mac dev with documented caveats) |
 
-**Semver ↔ phases:** [docs/versioning.md](../docs/versioning.md) (this repo) · global RVS: `~/.standards/release-and-versioning.md`
+**Semver ↔ phases:** [docs/versioning.md](../docs/versioning.md) (this repo) · global RVS: `~/.cursor/rules/release-and-versioning.mdc`
 
 | Release gate | Prod readiness | Semver shipped |
 |--------------|----------------|----------------|
@@ -19,7 +19,7 @@ All phase specs live in `specs/p*.md`. Numbering is intentional and permanent.
 | **P200** | **P199** | **2.0.0** (patches **2.0.x**) |
 | **P300** | **P299** | **3.0.0** (patches **3.0.x**) |
 
-**Current repo:** building towards **P100** → semver **0.y.z** (now **0.1.0**). **Next milestone: P49** (RPi4 beta). Patches on shipped prod use **`release/N.x`** — see `~/.standards/`.
+**Current repo:** building towards **P100** → semver **0.y.z** (now **0.1.0**). **Next milestone: P49** (RPi4 beta). Patches on shipped prod use **`release/N.x`** — see global RVS (Cursor rule `~/.cursor/rules/release-and-versioning.mdc`).
 
 ---
 
@@ -58,7 +58,7 @@ Do **not** call this “P0 hardening”.
 
 ## Runtime versioning
 
-**This repo:** [docs/versioning.md](../docs/versioning.md) + **`GET /api/version`**. Global field naming: `~/.standards/release-and-versioning.md`.
+**This repo:** [docs/versioning.md](../docs/versioning.md) + **`GET /api/version`**. Global field naming: `~/.cursor/rules/release-and-versioning.mdc`.
 
 Record `version` + `gitCommit` at P49 / P99 / P100 and every patch deploy.
 
