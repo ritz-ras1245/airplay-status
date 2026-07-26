@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Validate branch name: {action}/{user}/{description} or release/N.x
+set -euo pipefail
+
+branch="$(git symbolic-ref --quiet HEAD 2>/dev/null || true)"
+branch="${branch#refs/heads/}"
+
+if [[ -z "${branch}" ]]; then
+  exit 0
+fi
+
+if [[ "${branch}" == "main" ]]; then
+  exit 0
+fi
+
+pattern='^(feat|fix|doc|chore|refactor|test|ci|spec|hotfix)/[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+$|^release/[0-9]+\.x$'
+
+if [[ ! "${branch}" =~ ${pattern} ]]; then
+  echo "pre-push: invalid branch name '${branch}'." >&2
+  echo "Use: {action}/{user}/{description}  e.g. feat/ritz-ras1245/my-change" >&2
+  echo "Policy: .github/BRANCH_POLICY.md" >&2
+  exit 1
+fi
+
+exit 0

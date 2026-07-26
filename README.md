@@ -53,6 +53,7 @@ See [specs/p0-airplay-status.md](specs/p0-airplay-status.md) for the full P0 tec
 
 ## Project Docs
 
+- [.github/BRANCH_POLICY.md](.github/BRANCH_POLICY.md) — branch naming, main protection, PR rules
 - [docs/versioning.md](docs/versioning.md) — semver, `/api/version`, deploy env
 - [specs/p0-airplay-status.md](specs/p0-airplay-status.md) — architecture, data model, API, P0 status
 - [specs/](specs/) — phase specs · [AGENTS.md](AGENTS.md) — context for AI assistants

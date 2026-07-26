@@ -54,6 +54,7 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 - Spec-driven — phase numbering in [specs/README.md](specs/README.md)
 - **Global RVS** (semver, P100/P200, GitHub/Jira/ClickUp): `~/.standards/release-and-versioning.md` + Cursor rule — **not in this repo**
 - **This repo:** [docs/versioning.md](docs/versioning.md), [docs/releases/](docs/releases/)
+- **Branches:** never commit on `main` — use `{action}/{user}/{description}` ([.github/BRANCH_POLICY.md](.github/BRANCH_POLICY.md)). Owner merges without PR; bots/agents/others **must open a PR**.
 - Minimal scope; match existing code style
 - Do not commit unless user asks
 

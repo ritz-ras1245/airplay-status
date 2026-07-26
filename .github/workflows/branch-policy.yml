@@ -1,0 +1,22 @@
+name: Branch policy
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches-ignore: [main]
+
+jobs:
+  branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate branch name
+        run: |
+          BRANCH="${{ github.head_ref || github.ref_name }}"
+          PATTERN='^(feat|fix|doc|chore|refactor|test|ci|spec|hotfix)/[a-zA-Z0-9._-]+/[a-zA-Z0-9._-]+$|^release/[0-9]+\.x$'
+          if [[ ! "${BRANCH}" =~ ${PATTERN} ]]; then
+            echo "Invalid branch: ${BRANCH}"
+            echo "Required: {action}/{user}/{description} — see .github/BRANCH_POLICY.md"
+            exit 1
+          fi
+          echo "OK: ${BRANCH}"

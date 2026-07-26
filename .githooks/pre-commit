@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Reject commits on main — all work must use a named branch.
+set -euo pipefail
+
+branch="$(git symbolic-ref --quiet HEAD 2>/dev/null || true)"
+branch="${branch#refs/heads/}"
+
+if [[ "${branch}" == "main" ]]; then
+  echo "pre-commit: refusing commit on 'main'." >&2
+  echo "Create a branch: git checkout -b feat/YOUR_USER/short-description" >&2
+  echo "Policy: .github/BRANCH_POLICY.md" >&2
+  exit 1
+fi
+
+exit 0
