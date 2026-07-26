@@ -33,7 +33,7 @@ npm install
 
 # Start the dashboard (Phase 2+)
 npm start
-# → http://localhost:3000
+# → http://localhost:3003
 ```
 
 ## Running with Live AirPlay Metadata (Phase 3+)
@@ -84,7 +84,7 @@ Or use the wrapper script (Phase 5):
 
 ### 5. Play music
 
-On your iPhone or Mac, start playback and select **both** your real speakers and **AirPlay Status** as outputs. Open http://localhost:3000 to see the track info.
+On your iPhone or Mac, start playback and select **both** your real speakers and **AirPlay Status** as outputs. Open http://localhost:3003 to see the track info.
 
 ## Development Phases
 

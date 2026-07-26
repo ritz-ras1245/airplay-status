@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AirPlay Status</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>📡 AirPlay Status</h1>
+      <p>Now playing on your speakers</p>
+    </header>
+
+    <% if (!playback.isPlaying) { %>
+      <div class="card card--empty">
+        <div class="empty-icon">🔇</div>
+        <h2 class="empty-title">Nothing playing</h2>
+        <p class="empty-subtitle">
+          Select <strong>AirPlay Status</strong> as an output alongside your speakers to see track info here.
+        </p>
+      </div>
+    <% } else { %>
+      <div class="card">
+        <img
+          class="album-art"
+          src="<%= playback.albumArt %>"
+          alt="Album art for <%= playback.album %>"
+        >
+
+        <div class="track-info">
+          <h2 class="track-title"><%= playback.title %></h2>
+          <p class="track-artist"><%= playback.artist %></p>
+          <p class="track-album"><%= playback.album %></p>
+        </div>
+
+        <div class="progress-section">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              style="width: <%= Math.round((playback.progressMs / playback.durationMs) * 100) %>%"
+            ></div>
+          </div>
+          <div class="progress-times">
+            <span><%= formatMs(playback.progressMs) %></span>
+            <span><%= formatMs(playback.durationMs) %></span>
+          </div>
+        </div>
+
+        <div class="status-row">
+          <span class="status-badge">▶ Playing</span>
+          <span class="source-info">
+            <img src="/images/airplay-icon.png" alt="" class="airplay-icon" aria-hidden="true">
+            <%= playback.source %>
+          </span>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="toggle-section">
+      <% if (forceNothingPlaying) { %>
+        <a href="/" class="toggle-btn">▶ Show Now Playing</a>
+      <% } else { %>
+        <a href="/?state=nothing" class="toggle-btn">🔇 Show Nothing Playing</a>
+      <% } %>
+    </div>
+
+    <p style="text-align: center;">
+      <span class="phase-tag">Phase 2 · Wireframe</span>
+    </p>
+  </div>
+</body>
+</html>
