@@ -179,3 +179,14 @@ See `docs/debug-capture.md`. Normal mode redirects `/debug` to `/`. For prod iss
 
 - shairport-sync metadata: https://github.com/mikebrady/shairport-sync-metadata-reader
 - iOS DACP limits: https://github.com/mikebrady/shairport-sync/issues/1858
+
+## Cursor Cloud specific instructions
+
+For a headless Linux cloud VM (no iPhone/Mac sender, no shairport-sync, no mDNS):
+
+- **Run the dashboard in mock mode** — no AirPlay hardware or sidecar needed:
+  `USE_MOCK=true SKIP_SHAIRPORT_CHECK=1 npm start` → http://localhost:3003 (already the `dashboard` terminal in `.cursor/environment.json`). In mock mode `/api/events` (SSE) returns 404 by design; the page shows fixed mock data.
+- **Test the real live path without hardware:** run live mode (`SKIP_SHAIRPORT_CHECK=1 npm start`), create the metadata FIFO (`mkfifo /tmp/shairport-sync-metadata`), then write shairport-sync-style XML `<item>` records (type `636f7265`/`73736e63`, base64 `<data>`, each terminated by `</item>\n`) into the pipe. This exercises pipe reader → parser → SSE → UI, which is otherwise only reachable via a real AirPlay sender. `METADATA_PIPE` overrides the pipe path.
+- **No test/lint/build tooling exists** (no `test`/`lint` scripts, no dev deps, no bundler). `npm run demo` runs `src/bin/demo-metadata.js` to exercise the metadata parser end-to-end without hardware.
+- **`.cursor/cloud-bootstrap.sh`** only symlinks Cursor rules from the sibling `engineering-standards` multi-repo checkout; it is not required to run or test the app. It `exit 1`s if that sibling repo is absent, so run `npm ci` on its own if the bootstrap step is unavailable.
+- `bin/setup-sidecar.sh` is macOS/Homebrew-only and does not apply on Linux cloud VMs; use mock/pipe testing above instead.
