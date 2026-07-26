@@ -1,0 +1,31 @@
+// AirPlay Status — shairport-sync configuration
+// Copy to: ~/.config/shairport-sync/shairport-sync.conf
+// Verify backends: shairport-sync -h
+
+general =
+{
+  name = "AirPlay Status";
+  output_backend = "pipe";
+  mdns_backend = "dns_sd";   // macOS Bonjour (use "avahi" on Linux)
+  interpolation = "basic";
+  ignore_volume_control = "yes";
+};
+
+// Discard audio — metadata only
+pipe =
+{
+  name = "/dev/null";
+};
+
+metadata =
+{
+  enabled = "yes";
+  include_cover_art = "yes";
+  pipe_name = "/tmp/shairport-sync-metadata";
+  pipe_timeout = 5000;
+};
+
+diagnostics =
+{
+  log_verbosity = 1;
+};

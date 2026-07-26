@@ -38,6 +38,20 @@ npm start
 
 ## Running with Live AirPlay Metadata (Phase 3+)
 
+See **[docs/shairport-setup.md](docs/shairport-setup.md)** for the full guide.
+
+### Quick start
+
+```bash
+chmod +x bin/*.sh
+./bin/setup-sidecar.sh          # one-time: install shairport-sync + build metadata reader
+
+./bin/run-shairport.sh          # terminal 1: start AirPlay receiver
+./bin/read-metadata.sh          # terminal 2: human-readable metadata
+# or
+npm run watch:metadata          # terminal 2: JSON playback state stream
+```
+
 ### 1. Install shairport-sync
 
 ```bash
