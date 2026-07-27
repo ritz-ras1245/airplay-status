@@ -16,6 +16,7 @@ import {
 import { APP_VERSION, getVersionInfo } from './lib/appVersion.js';
 import { getDeployStage } from './lib/deployStage.js';
 import { registerSetupRoutes } from './routes/setupRoutes.js';
+import { registerEinkRoutes } from './routes/einkRoutes.js';
 import { readSetupToken } from './lib/setupToken.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -110,6 +111,13 @@ app.post('/api/debug/mark', (req, res) => {
 });
 
 registerSetupRoutes(app);
+
+registerEinkRoutes(app, {
+  resolvePlayback,
+  deployStage,
+  onPlaybackChange,
+  useMock: USE_MOCK,
+});
 
 const renderDashboard = async (req, res, { showDebugCapture = false } = {}) => {
   const { playback, forceNothingPlaying, live } = await resolvePlayback(req);

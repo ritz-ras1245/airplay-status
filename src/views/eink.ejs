@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="<%= refreshRateSec %>">
+  <title>eInk — <%= hasTrack ? playback.title : 'Nothing playing' %></title>
+  <link rel="stylesheet" href="/css/eink.css">
+</head>
+<body>
+  <main class="eink">
+    <% if (!hasTrack) { %>
+      <section class="eink-empty">
+        <h1>Nothing playing</h1>
+        <p>Select <strong><%= airplayReceiverName %></strong> as an AirPlay output to see track info here.</p>
+      </section>
+    <% } else { %>
+      <section class="eink-track">
+        <% if (playback.albumArt) { %>
+          <img
+            class="eink-art"
+            src="<%= playback.albumArt %>"
+            alt=""
+            width="120"
+            height="120"
+            onerror="this.style.display='none'"
+          >
+        <% } %>
+
+        <h1 class="eink-title"><%= playback.title %></h1>
+        <% if (playback.artist) { %>
+          <p class="eink-artist"><%= playback.artist %></p>
+        <% } %>
+        <% if (playback.album) { %>
+          <p class="eink-album"><%= playback.album %></p>
+        <% } %>
+
+        <p class="eink-status"><%= playingLabel %></p>
+
+        <% if (progressText) { %>
+          <p class="eink-progress-text"><%= progressText %></p>
+        <% } %>
+
+        <% if (showProgressBar && segmentCount > 0) { %>
+          <div class="eink-segments" style="--segment-count: <%= segmentCount %>;">
+            <% for (let i = 0; i < segmentCount; i++) { %>
+              <span class="eink-segment<%= i < filledSegments ? ' eink-segment--filled' : '' %>"></span>
+            <% } %>
+          </div>
+        <% } %>
+      </section>
+    <% } %>
+
+    <% if (showDebug) { %>
+      <footer class="eink-debug">device: <%= deviceId %> (<%= deviceLabel %>)</footer>
+    <% } %>
+  </main>
+</body>
+</html>
