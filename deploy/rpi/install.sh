@@ -38,6 +38,7 @@ install_apt_deps() {
     libsodium-dev \
     libgcrypt-dev \
     libconfig-dev \
+    libpopt-dev \
     libasound2-dev \
     libavcodec-dev \
     libavformat-dev \
@@ -50,7 +51,8 @@ install_apt_deps() {
     libmbedtls-dev \
     libfftw3-dev \
     libuuid1 \
-    rsync
+    rsync \
+    xxd
   systemctl enable --now avahi-daemon
 }
 
@@ -65,8 +67,8 @@ install_node() {
 }
 
 build_nqptp() {
-  if [[ -x /usr/local/sbin/nqptp ]]; then
-    log "nqptp already installed at /usr/local/sbin/nqptp"
+  if command -v nqptp >/dev/null; then
+    log "nqptp already installed: $(command -v nqptp)"
     return 0
   fi
   log "Building nqptp ${NQPTP_VERSION}..."
@@ -75,30 +77,40 @@ build_nqptp() {
   if [[ ! -d "$src/.git" ]]; then
     git clone --depth 1 --branch "$NQPTP_VERSION" https://github.com/mikebrady/nqptp.git "$src"
   fi
-  make -C "$src" clean all
-  make -C "$src" install
+  (
+    cd "$src"
+    if [[ ! -f Makefile ]]; then
+      autoreconf -fi
+      ./configure --with-systemd-startup
+    fi
+    make -j"$(nproc)"
+    make install
+  )
 }
 
 build_shairport_sync() {
   if command -v shairport-sync >/dev/null; then
-    if shairport-sync -V 2>&1 | grep -Eiq 'airplay-2|airplay_2|airplay2'; then
-      log "shairport-sync with AirPlay 2 already installed"
+    local ver
+    ver="$(shairport-sync -V 2>&1 || true)"
+    if echo "$ver" | grep -Eiq 'airplay.?2|airplay_2|airplay2' && echo "$ver" | grep -iq 'pipe'; then
+      log "shairport-sync with AirPlay 2 + pipe backend already installed"
       return 0
     fi
-    log "Existing shairport-sync lacks AirPlay 2 — rebuilding..."
+    if echo "$ver" | grep -Eiq 'airplay.?2|airplay_2|airplay2'; then
+      log "Existing shairport-sync lacks pipe backend — rebuilding..."
+    fi
   fi
   log "Building shairport-sync ${SHAIRPORT_VERSION} with AirPlay 2..."
   mkdir -p "$BUILD_DIR"
   local src="$BUILD_DIR/shairport-sync"
-  if [[ ! -d "$src/.git" ]]; then
-    git clone --depth 1 --branch "$SHAIRPORT_VERSION" https://github.com/mikebrady/shairport-sync.git "$src"
-  fi
+  rm -rf "$src"
+  git clone --depth 1 --branch "$SHAIRPORT_VERSION" https://github.com/mikebrady/shairport-sync.git "$src"
   (
     cd "$src"
     autoreconf -fi
     ./configure \
       --with-airplay-2 \
-      --with-ffmpeg \
+      --with-pipe \
       --with-metadata \
       --with-avahi \
       --with-ssl=mbedtls \
@@ -119,9 +131,9 @@ install_app() {
     --exclude .env \
     --exclude vendor \
     "$ROOT/" "$INSTALL_ROOT/"
+  chown -R "$SERVICE_USER:$SERVICE_USER" "$INSTALL_ROOT"
   cd "$INSTALL_ROOT"
   sudo -u "$SERVICE_USER" npm ci --omit=dev
-  chown -R "$SERVICE_USER:$SERVICE_USER" "$INSTALL_ROOT"
 }
 
 install_config() {
@@ -175,7 +187,10 @@ P49 bare-metal install complete (Path B).
 Services:
   sudo systemctl status nqptp shairport-sync airplay-status
 
-Beta checklist: docs/p49-docker-spike.md (human sign-off section)
+Sanity:     ./bin/check-p49-beta.sh
+
+Beta checklist: docs/p49-docker-spike.md
+Lessons:    docs/p49-rpi-bare-metal-lessons.md
 Next: copy Tidbyt secrets to ${INSTALL_ROOT}/.env if using P2 integrations.
 
 EOF

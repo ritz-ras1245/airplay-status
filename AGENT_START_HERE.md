@@ -162,6 +162,7 @@ Check off in a PR comment when done.
 | [deploy/rpi/install.sh](deploy/rpi/install.sh) | Bare-metal install (fallback) |
 | [bin/p49-up.sh](bin/p49-up.sh) / [bin/p49-down.sh](bin/p49-down.sh) | Start/stop stack |
 | [docs/p49-docker-spike.md](docs/p49-docker-spike.md) | Spike log |
+| [docs/p49-rpi-bare-metal-lessons.md](docs/p49-rpi-bare-metal-lessons.md) | Bare-metal bring-up lessons |
 | [config/deploy/beta.env.example](config/deploy/beta.env.example) | Pi `.env` template |
 
 ---

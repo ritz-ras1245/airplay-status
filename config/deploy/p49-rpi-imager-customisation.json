@@ -1,5 +1,6 @@
 {
-  "_purpose": "P49 Phase 0 — enter these values in Raspberry Pi Imager customisation wizard (Imager 2.x). Replace <<RITZ_FILL_HERE>> before flashing.",
+  "_purpose": "P49 — enter these values in Raspberry Pi Imager customisation wizard (Imager 2.x). Replace <<RITZ_FILL_HERE>> before flashing.",
+  "_boot_partition_files": "After write, before first boot: bootfs/network-config (Wi-Fi), bootfs/user-data (user, SSH, hostname). See docs/p49-rpi-bare-metal-lessons.md",
   "_plan": "docs/p49-beta-remote-deploy.md",
   "_pr": "https://github.com/ritz-ras1245/airplay-status/pull/4",
   "_after_boot": "ssh pi@airplay-beta.local → git clone … → git checkout feat/cursor/p49-rpi-deployment-0a02 → cp config/deploy/beta.env.example .env → sudo ./deploy/rpi/install.sh",

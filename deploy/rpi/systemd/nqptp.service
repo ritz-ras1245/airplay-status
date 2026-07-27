@@ -6,7 +6,7 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/sbin/nqptp
+ExecStart=/usr/local/bin/nqptp
 Restart=on-failure
 RestartSec=5
 
