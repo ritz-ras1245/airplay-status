@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AirPlay Status Echo Show integration (Tier B webhook + Alexa skill)
+
+Globals:
+  Function:
+    Runtime: nodejs20.x
+    Timeout: 30
+    MemorySize: 256
+    Architectures:
+      - x86_64
+
+Parameters:
+  EchoPushSecret:
+    Type: String
+    NoEcho: true
+    Description: Shared secret for X-Echo-Push-Secret header validation
+  AlexaRoutineTriggerName:
+    Type: String
+    Default: AirPlayStatusNowPlaying
+  AlexaTargetUserId:
+    Type: String
+    Default: ''
+    Description: amzn1.ask.account.… for UNICAST trigger
+  AlexaTargetBearerToken:
+    Type: String
+    NoEcho: true
+    Default: ''
+    Description: Per-user LWA token (alex a::routines:triggerinstances:write)
+  EchoDisplayUrl:
+    Type: String
+    Default: http://airplay-status.home.arpa:3003/echo
+
+Resources:
+  EchoApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: prod
+      Cors:
+        AllowMethods: "'POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Echo-Push-Secret'"
+        AllowOrigin: "'*'"
+
+  TriggerFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: airplay-status-echo-trigger
+      Description: Validates webhook and fires Alexa Routines custom trigger
+      CodeUri: lambda/trigger/
+      Handler: index.handler
+      Environment:
+        Variables:
+          ECHO_PUSH_SECRET: !Ref EchoPushSecret
+          ALEXA_ROUTINE_TRIGGER_NAME: !Ref AlexaRoutineTriggerName
+          ALEXA_TARGET_USER_ID: !Ref AlexaTargetUserId
+          ALEXA_TARGET_BEARER_TOKEN: !Ref AlexaTargetBearerToken
+      Events:
+        PostTrigger:
+          Type: Api
+          Properties:
+            RestApiId: !Ref EchoApi
+            Path: /trigger
+            Method: post
+
+  SkillFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: airplay-status-echo-skill
+      Description: Alexa skill handler — OpenURL APL + Routines SPI
+      CodeUri: lambda/skill/
+      Handler: index.handler
+      Environment:
+        Variables:
+          ECHO_DISPLAY_URL: !Ref EchoDisplayUrl
+          ALEXA_ROUTINE_TRIGGER_NAME: !Ref AlexaRoutineTriggerName
+
+Outputs:
+  EchoWebhookUrl:
+    Description: POST this URL from airplay-status ECHO_PUSH_WEBHOOK_URL
+    Value: !Sub 'https://${EchoApi}.execute-api.${AWS::Region}.amazonaws.com/prod/trigger'
+  TriggerFunctionArn:
+    Description: Lambda ARN for trigger handler
+    Value: !GetAtt TriggerFunction.Arn
+  SkillFunctionArn:
+    Description: Lambda ARN to wire in Alexa Developer Console
+    Value: !GetAtt SkillFunction.Arn

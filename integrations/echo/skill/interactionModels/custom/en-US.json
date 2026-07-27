@@ -1,0 +1,34 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "airplay status",
+      "intents": [
+        {
+          "name": "OpenNowPlayingIntent",
+          "samples": [
+            "open now playing",
+            "open airplay now playing",
+            "show now playing",
+            "show airplay status"
+          ]
+        },
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        }
+      ]
+    }
+  }
+}

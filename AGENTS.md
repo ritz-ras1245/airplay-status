@@ -130,12 +130,13 @@ P99 runs **after P49 beta**, **before P100** release (`1.0.0`). P199 before P200
 | **P3** — eInk display | 📄 Spec | `specs/p3-eink-display.md` (+ P3.1 profiles, on-demand PNG) |
 | **P4** — eInk controls | 📄 Spec | `specs/p4-eink-controls.md` |
 | **P5** — Deployment | 📄 Spec | `specs/p5-deployment.md` — Pi, Docker (reference) |
+| **P6** — Echo Show | 📄 PR | `specs/p6-echo-show.md`, `integrations/echo/` — Tier B push-on-play |
 | **P49** — Pre-prod beta | 📄 Spec — **next** | `specs/p49-preprod-deployment.md` — RPi4, AP2, Docker→bare metal |
 | **P99** — Prod readiness | 📄 Spec | `specs/p99-prod-readiness.md` — see permanent definition above |
 
 **Implementation order:** Features on **Mac dev** → **P49** beta → **P99** → **P100** release `1.0.0` → line 2 on `main` as `2.0.0-dev`.
 
-Feature work on other branches (e.g. P6 Echo Show on `feat/p6-echo-show`) merges independently; P99 applies to whatever is on `main` at ship time.
+Feature work on other branches (e.g. P6 Echo Show on `feat/cursor/p6-echo-show`) merges independently; P99 applies to whatever is on `main` at ship time.
 
 ## Data Model
 
