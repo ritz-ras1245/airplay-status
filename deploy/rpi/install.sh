@@ -8,6 +8,7 @@ INSTALL_ROOT="${INSTALL_ROOT:-/opt/airplay-status}"
 NQPTP_VERSION="${NQPTP_VERSION:-1.2.4}"
 SHAIRPORT_VERSION="${SHAIRPORT_VERSION:-4.3.6}"
 BUILD_DIR="${BUILD_DIR:-/tmp/airplay-status-build}"
+SERVICE_USER="${SERVICE_USER:-airplay-status}"
 PIXLET_VERSION="${PIXLET_VERSION:-0.34.0}"
 
 log() { echo "==> $*"; }
