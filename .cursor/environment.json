@@ -7,5 +7,10 @@
       "command": "USE_MOCK=true SKIP_SHAIRPORT_CHECK=1 npm start"
     }
   ],
-  "ports": [3003]
+  "ports": [
+    {
+      "name": "dashboard",
+      "port": 3003
+    }
+  ]
 }
