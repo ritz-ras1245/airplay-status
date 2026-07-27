@@ -148,7 +148,7 @@ Metadata pipe format is binary/XML-style, decoded by `shairport-sync-metadata-re
 
 **P0 is complete.** Production polish (launchd, structured logs, Grafana, agent/human debugging SOPs) lives in **[P99 — prod readiness](./p99-prod-readiness.md)**, implemented last in iteration 1.
 
-## Roadmap (P1–P6, P99)
+## Roadmap (P1–P10, P99)
 
 Future work extends the same playback state from `/api/status`. Specs live in this directory:
 
@@ -159,8 +159,15 @@ Future work extends the same playback state from `/api/status`. Specs live in th
 | **P3** | Kindle/eInk read-only display | Spec | [p3-eink-display.md](./p3-eink-display.md) (incl. [P3.1 device profiles](./p3-eink-display.md#p31-side-quest--device-profiles)) |
 | **P4** | eInk transport controls | Spec | [p4-eink-controls.md](./p4-eink-controls.md) |
 | **P5** | Cross-platform deployment (Pi, Docker, Synology) | Spec | [p5-deployment.md](./p5-deployment.md) |
+| **P6** | Echo Show Tier B (push → Silk) | Spec | [p6-echo-show.md](./p6-echo-show.md) |
+| **P7** | Android always-on WebView console | Idea | [p7-android-always-on.md](./p7-android-always-on.md) |
+| **P8** | DeskThing / Car Thing always-on | Idea | [p8-deskthing-carthing.md](./p8-deskthing-carthing.md) |
+| **P9** | iPad always-on fallback client | Idea | [p9-ipad-always-on.md](./p9-ipad-always-on.md) |
+| **P10** | Local service fallback gateway | Idea | [p10-local-service-fallback.md](./p10-local-service-fallback.md) |
 | **P49** | Pre-prod / local beta (RPi4, AirPlay 2) | Spec | [p49-preprod-deployment.md](./p49-preprod-deployment.md) |
 | **P99** | Production readiness | Spec | [p99-prod-readiness.md](./p99-prod-readiness.md) |
+
+Always-on client shared rules: [guidelines/always-on-display-client.md](./guidelines/always-on-display-client.md).
 
 ### Feasibility summary (P1–P5)
 
