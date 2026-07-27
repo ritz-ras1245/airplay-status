@@ -11,6 +11,9 @@ Group=airplay-status
 WorkingDirectory=/opt/airplay-status
 EnvironmentFile=-/opt/airplay-status/.env
 Environment=SKIP_SHAIRPORT_CHECK=1
+# Bind PORT=80 without running as root
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
 ExecStart=/usr/bin/node src/index.js
 Restart=on-failure
 RestartSec=5

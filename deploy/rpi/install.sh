@@ -208,14 +208,18 @@ start_services() {
 }
 
 print_summary() {
-  local ip token
+  local ip token port
   ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
+  port=80
+  if [[ -f "$INSTALL_ROOT/.env" ]] && grep -qE '^PORT=' "$INSTALL_ROOT/.env"; then
+    port="$(grep -E '^PORT=' "$INSTALL_ROOT/.env" | tail -1 | cut -d= -f2- | tr -d '"')"
+  fi
   cat <<EOF
 
 P49 bare-metal install complete (Path B).
 
-  Dashboard:  http://${ip:-<pi-ip>}:3003
-  Version:    curl -s http://localhost:3003/api/version | python3 -m json.tool
+  Dashboard:  http://${ip:-<pi-ip>}:${port}
+  Version:    curl -s http://localhost:${port}/api/version | python3 -m json.tool
 
 Services:
   sudo systemctl status nqptp shairport-sync airplay-status
@@ -227,7 +231,7 @@ EOF
   if [[ -f "$INSTALL_ROOT/.setup-token" ]]; then
     token="$(cat "$INSTALL_ROOT/.setup-token")"
     cat <<EOF
-  Setup URL:  http://${ip:-<pi-ip>}:3003/setup?token=${token}
+  Setup URL:  http://${ip:-<pi-ip>}:${port}/setup?token=${token}
   Or:         scp tidbyt.env airplay@<pi> && sudo ${INSTALL_ROOT}/bin/apply-secrets-file.sh ~/tidbyt.env
 
 EOF

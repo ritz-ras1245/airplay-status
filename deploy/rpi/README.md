@@ -26,11 +26,11 @@ Install takes **~15–25 minutes** (shairport-sync compile). `.env` is created f
 | App | `/opt/airplay-status` |
 | shairport config | `/etc/shairport-sync.conf` |
 | Metadata pipe | `/tmp/shairport-sync-metadata` |
-| Dashboard | `http://<pi-ip>:3003` |
+| Dashboard | `http://<pi-ip>/` (port **80**) |
 
 ```bash
 sudo systemctl status nqptp shairport-sync airplay-status
-./bin/check-version.sh http://localhost:3003
+./bin/check-version.sh http://localhost
 ```
 
 ## Docker (optional)

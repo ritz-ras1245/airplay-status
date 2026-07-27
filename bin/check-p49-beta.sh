@@ -3,7 +3,19 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-PORT="${PORT:-3003}"
+PI_ENV="${PI_ENV:-/opt/airplay-status/.env}"
+if [[ -f "$PI_ENV" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "$PI_ENV"
+  set +a
+elif [[ -f "$ROOT/.env" ]]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$ROOT/.env"
+  set +a
+fi
+PORT="${PORT:-80}"
 BASE="http://127.0.0.1:${PORT}"
 FAIL=0
 
