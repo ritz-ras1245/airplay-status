@@ -126,10 +126,26 @@ Use `DISABLE_TIDBYT=1` separately in `.env` or systemd if you need to suppress p
 
 ---
 
+## Known limitation (P49 beta)
+
+**iPhone file upload alone is not enough.** The `/setup` page requires the full URL including `?token=…`. That token is only shown at:
+
+- `install.sh` terminal output, or
+- SSH (`sudo cat /opt/airplay-status/.setup-token`), or
+- Mac `./bin/tidbyt-creds-mac.sh --upload` (skips iPhone entirely)
+
+There is **no** QR code or phone-discoverable setup link yet. Save the URL at install time (Notes, AirDrop) if you want iPhone upload; otherwise use Mac `--upload`.
+
+**Power loss:** not an issue — systemd restarts the stack on boot; `.env` and an unused `.setup-token` persist on disk.
+
+**Deferred to P99:** LAN setup URL on the dashboard (e.g. QR when setup is pending) so iPhone provisioning needs no SSH. See [specs/p99-prod-readiness.md](../specs/p99-prod-readiness.md).
+
+---
+
 ## Future (not implemented)
 
 - Interactive SSH wizard (`bin/setup-tidbyt-creds.sh` prompts)
-- QR code on Pi HDMI showing setup URL
+- **`bin/pi-setup-url.sh`** — Mac helper to print full setup URL over SSH
 - Keychain / 1Password CLI pull on Mac during `p49-install-rpi.sh`
 - CI/CD deploy so Pi picks up code without manual patching
 
