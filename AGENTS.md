@@ -64,6 +64,7 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 |-------|---------|
 | **P0–P48** | Line 1 features |
 | **P49** | Line 1 beta (RPi4) |
+| **P50** | Line 1 **beta soak + observability** (Pi quiet; Mac Grafana/Loki) |
 | **P99** | Line 1 **prod readiness** → release at **P100** = **1.0.0** |
 | **P101–P148** | Line 2 features (after P100) |
 | **P149** | Line 2 beta |
@@ -78,8 +79,9 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 | Tier | Host | This project |
 |------|------|--------------|
 | **Dev** | Mac Studio | AirPlay **1**; `./bin/run-local.sh`; all features **except** iPhone multi-speaker + HomePods |
-| **Pre-prod (P49)** | RPi4 | AirPlay **2** + nqptp; **beta sign-off** |
-| **Prod readiness (P99)** | RPi4 | launchd, logs, Grafana, SOPs |
+| **Pre-prod (P49)** | RPi4 | AirPlay **2** + nqptp; **beta live** |
+| **Soak (P50)** | RPi4 | **No deploy churn**; Pi logs → Mac Grafana/Loki |
+| **Prod readiness (P99)** | RPi4 | Structured logs, SOPs, health polish |
 | **Release (P100)** | Prod | Tag **v1.0.0**; **`release/1.x`** for **1.0.x** patches |
 
 **Dev caveat (permanent):** On iPhone from Mac receiver, select **only AirPlay Status**. Multi-room validated on **P49** only. [docs/multi-room-airplay.md](docs/multi-room-airplay.md)
@@ -118,7 +120,7 @@ Whenever a spec says **hardening** or **prod readiness**, it means **all** of th
 
 **Deep metadata debug** stays separate: `./bin/run-local.sh --debug` + [docs/debug-capture.md](docs/debug-capture.md) (not 24/7 prod).
 
-P99 runs **after P49 beta**, **before P100** release (`1.0.0`). P199 before P200, etc.
+P99 runs **after P50 soak sign-off**, **before P100** release (`1.0.0`). P199 before P200, etc.
 
 ## Phase Plan
 
@@ -130,10 +132,11 @@ P99 runs **after P49 beta**, **before P100** release (`1.0.0`). P199 before P200
 | **P3** — eInk display | 📄 Spec | `specs/p3-eink-display.md` (+ P3.1 profiles, on-demand PNG) |
 | **P4** — eInk controls | 📄 Spec | `specs/p4-eink-controls.md` |
 | **P5** — Deployment | 📄 Spec | `specs/p5-deployment.md` — Pi, Docker (reference) |
-| **P49** — Pre-prod beta | 📄 Spec — **next** | `specs/p49-preprod-deployment.md` — RPi4, AP2, Docker→bare metal |
+| **P49** — Pre-prod beta | ✅ Done | `specs/p49-preprod-deployment.md` — RPi4, AP2, bare metal |
+| **P50** — Beta soak + observability | 📄 Active | `specs/p50-beta-soak-observability.md` — soak Pi; Mac Loki/Grafana |
 | **P99** — Prod readiness | 📄 Spec | `specs/p99-prod-readiness.md` — see permanent definition above |
 
-**Implementation order:** Features on **Mac dev** → **P49** beta → **P99** → **P100** release `1.0.0` → line 2 on `main` as `2.0.0-dev`.
+**Implementation order:** Features on **Mac dev** → **P49** beta → **P50** soak → **P99** → **P100** release `1.0.0` → line 2 on `main` as `2.0.0-dev`.
 
 Feature work on other branches (e.g. P6 Echo Show on `feat/p6-echo-show`) merges independently; P99 applies to whatever is on `main` at ship time.
 

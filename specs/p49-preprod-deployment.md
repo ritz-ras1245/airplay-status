@@ -2,7 +2,7 @@
 
 **Status:** Implementation on `feat/cursor/p49-rpi-deployment-0a02` — human beta sign-off pending  
 **Depends on:** P0 live dashboard ✅; benefits from any merged feature phases (P2 Tidbyt, P6 Echo, …)  
-**Precedes:** P99 production readiness  
+**Precedes:** P50 beta soak + observability → P99 production readiness  
 **Related:** [P5 deployment](./p5-deployment.md) (general platforms), [multi-room-airplay.md](../docs/multi-room-airplay.md) (why Pi is required for iPhone multi-speaker)
 
 ## Goal
@@ -42,18 +42,19 @@ When a feature set matches **P0-complete or milestone** (e.g. P2 + P6 merged), p
 ## Deployment pipeline (iteration 1)
 
 ```
-Mac dev (AP1)  →  P49 pre-prod (RPi4, AP2)  →  P99 prod readiness  →  P100 release 1.0.0
+Mac dev (AP1)  →  P49 pre-prod (RPi4, AP2)  →  P50 soak + observability  →  P99  →  P100 release 1.0.0
      ↑                      ↑                         ↑
-  all features          beta sign-off            then prod patches 1.0.x on release/1.x
-  except multi-room     multi-room + soak        while main → 2.0.0-dev
+  all features          beta live               logs on Mac; no Pi churn
+  except multi-room     multi-room validated    unless blocker
 ```
 
 | Phase | When |
 |-------|------|
 | Mac dev | Continuous during feature work |
-| **P49** | Milestone ready for beta; RPi4 on home LAN |
-| **P99** | Beta passed; launchd/systemd, logs, Grafana, SOPs |
-| Prod | P99 complete; optional fleet scale 1–4 nodes |
+| **P49** | RPi4 on home LAN; beta validated |
+| **P50** | Soak working beta; Pi Promtail → Mac Grafana/Loki |
+| **P99** | Beta + soak passed; structured logs, SOPs, health |
+| Prod | P99 complete |
 
 ---
 

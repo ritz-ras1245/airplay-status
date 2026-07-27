@@ -77,6 +77,8 @@ Implement `src/lib/logger.js` — thin wrapper used by services; no heavy deps r
 
 ### 4. Grafana + Loki (optional stack, spec’d for home lab)
 
+**P50** delivers the MVP stack (Pi Promtail → Mac Loki/Grafana) — see [p50-beta-soak-observability.md](./p50-beta-soak-observability.md). **P99** completes structured logging, SOPs, and dashboard polish.
+
 Self-hosted observability — **not** Grafana Cloud / SaaS.
 
 ```

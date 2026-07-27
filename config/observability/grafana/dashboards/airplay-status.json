@@ -1,0 +1,103 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": { "type": "loki", "uid": "Loki" },
+      "gridPos": { "h": 16, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": true,
+        "showTime": true,
+        "sortOrder": "Ascending",
+        "wrapLogMessage": true
+      },
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "Loki" },
+          "expr": "{host=~\"$host\", unit=~\"$unit\"} |= \"$search\"",
+          "refId": "A"
+        }
+      ],
+      "title": "AirPlay logs (Pi + Mac)",
+      "type": "logs"
+    },
+    {
+      "datasource": { "type": "loki", "uid": "Loki" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "stacking": { "mode": "normal" }
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+      "id": 2,
+      "targets": [
+        {
+          "datasource": { "type": "loki", "uid": "Loki" },
+          "expr": "sum by (unit) (count_over_time({host=~\"$host\", unit=~\"$unit\"} [$__interval]))",
+          "legendFormat": "{{unit}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Log volume by unit",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "tags": ["airplay-status", "p50"],
+  "templating": {
+    "list": [
+      {
+        "current": { "selected": true, "text": "airplay-beta|mac-dev", "value": "airplay-beta|mac-dev" },
+        "name": "host",
+        "options": [
+          { "selected": true, "text": "airplay-beta|mac-dev", "value": "airplay-beta|mac-dev" },
+          { "selected": false, "text": "airplay-beta", "value": "airplay-beta" },
+          { "selected": false, "text": "mac-dev", "value": "mac-dev" }
+        ],
+        "query": "airplay-beta,mac-dev,airplay-beta|mac-dev",
+        "type": "custom"
+      },
+      {
+        "current": { "selected": true, "text": ".*", "value": ".*" },
+        "name": "unit",
+        "options": [
+          { "selected": true, "text": "all units", "value": ".*" },
+          { "selected": false, "text": "airplay-status", "value": "airplay-status.service" },
+          { "selected": false, "text": "shairport-sync", "value": "shairport-sync.service" },
+          { "selected": false, "text": "nqptp", "value": "nqptp.service" }
+        ],
+        "query": ".*,airplay-status.service,shairport-sync.service,nqptp.service",
+        "type": "custom"
+      },
+      {
+        "current": { "selected": false, "text": "", "value": "" },
+        "name": "search",
+        "options": [{ "selected": true, "text": "", "value": "" }],
+        "query": "",
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "AirPlay Status Logs",
+  "uid": "airplay-status-logs",
+  "version": 1
+}

@@ -9,6 +9,7 @@ const stages = JSON.parse(
 
 const STAGE_ALIASES = {
   p49: 'beta',
+  p50: 'beta',
   p99: 'beta',
   p100: 'prod',
   p101: 'prod',

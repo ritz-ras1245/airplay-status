@@ -65,3 +65,7 @@ Preserves `/opt/airplay-status/.env` (rsync excludes it). After update, use the 
 ```bash
 sudo systemctl restart airplay-status
 ```
+
+## Log shipping (optional)
+
+P50 observability — stream Pi journal logs to **Grafana/Loki on Mac**: [docs/p50-observability.md](../../docs/p50-observability.md).

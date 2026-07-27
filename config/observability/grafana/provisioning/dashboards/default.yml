@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: airplay-status
+    orgId: 1
+    folder: AirPlay Status
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 30
+    options:
+      path: /var/lib/grafana/dashboards
