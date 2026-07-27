@@ -236,7 +236,8 @@ src/lib/
 ## References
 
 - [p0-airplay-status.md](./p0-airplay-status.md) — core dashboard (done)
-- [p5-deployment.md](./p5-deployment.md) — Pi/Docker deployment
+- [p5-deployment.md](./p5-deployment.md) — Pi bare metal / Docker platform reference
+- [p49-rpi-bare-metal-lessons.md](../docs/p49-rpi-bare-metal-lessons.md) — P49 beta bring-up
 - [debug-capture.md](../docs/debug-capture.md) — deep metadata debug
 - `bin/check-sidecar.sh`, `bin/run-local.sh`
 - Event-log-capture skill — test marker workflow for agents

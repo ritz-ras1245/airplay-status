@@ -1,5 +1,7 @@
 # Deploy (P49)
 
-**Docker:** [docker/README-WARN.md](./docker/README-WARN.md)
+**Bare metal (default):** [rpi/README.md](./rpi/README.md) — `sudo ./deploy/rpi/install.sh`
 
-Host bootstrap script (nqptp / deps before compose): [rpi/install.sh](./rpi/install.sh)
+**Docker (optional):** [docker/README-WARN.md](./docker/README-WARN.md)
+
+Platform reference: [specs/p5-deployment.md](../specs/p5-deployment.md) · Lessons: [docs/p49-rpi-bare-metal-lessons.md](../docs/p49-rpi-bare-metal-lessons.md)

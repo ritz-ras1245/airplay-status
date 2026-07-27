@@ -45,7 +45,7 @@ Phase numbering: [specs/README.md](specs/README.md). Pre-P100: **0.y.z**; **P100
 | **P2** — Tidbyt | MVP done | [p2-tidbyt.md](specs/p2-tidbyt.md) — [integrations/tidbyt/](integrations/tidbyt/) |
 | **P3** — eInk display | Spec | [p3-eink-display.md](specs/p3-eink-display.md) |
 | **P4** — eInk controls | Spec | [p4-eink-controls.md](specs/p4-eink-controls.md) |
-| **P5** — Deployment | Spec | [p5-deployment.md](specs/p5-deployment.md) |
+| **P5** — Deployment | Reference | [p5-deployment.md](specs/p5-deployment.md) — Pi bare metal, Docker tradeoffs |
 | **P49** — Pre-prod beta | **Next** | [p49-preprod-deployment.md](specs/p49-preprod-deployment.md) — RPi4, AirPlay 2 |
 | **P99** — Prod readiness | Spec | [p99-prod-readiness.md](specs/p99-prod-readiness.md) — logs, Grafana, SOPs, launchd |
 

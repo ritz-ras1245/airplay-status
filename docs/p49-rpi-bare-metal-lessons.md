@@ -1,7 +1,7 @@
 # P49 RPi bare-metal — lessons learned (2026-07-26)
 
 First successful bring-up on **Raspberry Pi 4**, **Raspberry Pi OS Lite 64-bit (Trixie)**, hostname `airplay-beta`.  
-Validated stack: nqptp + shairport-sync AP2 + airplay-status systemd → `http://airplay-beta.local:3003`.
+Validated stack: nqptp + shairport-sync AP2 + airplay-status systemd → `http://airplay-beta.local/` (port **80**).
 
 ---
 
@@ -111,10 +111,10 @@ git checkout feat/cursor/p49-rpi-deployment-0a02
 
 sudo ./deploy/rpi/install.sh          # ~15–25 min
 ./bin/check-p49-beta.sh
-./bin/check-version.sh http://localhost:3003
+./bin/check-version.sh http://localhost
 ```
 
-From Mac: `./bin/check-version.sh http://airplay-beta.local:3003`
+From Mac: `./bin/check-version.sh http://airplay-beta.local`
 
 ---
 
@@ -141,6 +141,7 @@ Automated checks do not replace iPhone + HomePods multi-room test. See [AGENT_ST
 
 | Doc | Purpose |
 |-----|---------|
+| [specs/p5-deployment.md](../specs/p5-deployment.md) | Platform reference — Pi, Docker, Synology |
 | [deploy/rpi/README.md](../deploy/rpi/README.md) | Bare-metal quick start |
 | [deploy/rpi/install.sh](../deploy/rpi/install.sh) | Idempotent installer |
 | [bin/check-p49-beta.sh](../bin/check-p49-beta.sh) | Post-install sanity script |
