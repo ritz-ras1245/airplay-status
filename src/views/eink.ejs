@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="<%= refreshRateSec %>">
+  <title>AirPlay Status — eInk</title>
+  <link rel="stylesheet" href="/css/eink.css">
+</head>
+<body>
+  <main class="eink-page">
+    <% if (controlFlash) { %>
+      <p class="control-flash control-flash--<%= controlFlash %>" role="status">
+        <%= controlFlashMessage %>
+      </p>
+    <% } %>
+
+    <% if (!playback.title) { %>
+      <section class="eink-empty">
+        <h1>Nothing playing</h1>
+        <p>Select <strong><%= airplayReceiverName %></strong> as an AirPlay output to see track info here.</p>
+      </section>
+    <% } else { %>
+      <section class="eink-track">
+        <div class="eink-art-row">
+          <% if (playback.albumArt) { %>
+            <img class="eink-art" src="<%= playback.albumArt %>" alt="">
+          <% } %>
+          <div class="eink-meta">
+            <h1 class="eink-title"><%= playback.title %></h1>
+            <p class="eink-artist"><%= playback.artist || '' %></p>
+            <p class="eink-album"><%= playback.album || '' %></p>
+            <p class="eink-progress-text">
+              <%= progressText %>
+              · <%= playback.isPlaying ? '⏸ Playing' : '▶ Paused' %>
+            </p>
+          </div>
+        </div>
+
+        <% if (showProgressBar && segmentCount > 0) { %>
+          <div class="eink-segments" aria-hidden="true">
+            <% for (let i = 0; i < segmentCount; i++) { %>
+              <span class="eink-segment<%= i < filledSegments ? ' eink-segment--filled' : '' %>"></span>
+            <% } %>
+          </div>
+        <% } %>
+      </section>
+    <% } %>
+
+    <section class="eink-controls" aria-label="Transport controls">
+      <div class="eink-controls__row">
+        <form method="POST" action="/api/control/prev<%= deviceQuery %>" class="eink-control-form">
+          <button
+            type="submit"
+            class="eink-control-btn"
+            aria-label="Previous track"
+            <%= controlsDisabled ? 'disabled' : '' %>
+          >◀◀</button>
+          <span class="eink-control-label">Prev</span>
+        </form>
+
+        <form method="POST" action="/api/control/<%= playback.isPlaying ? 'pause' : 'play' %><%= deviceQuery %>" class="eink-control-form">
+          <button
+            type="submit"
+            class="eink-control-btn eink-control-btn--primary"
+            aria-label="<%= playback.isPlaying ? 'Pause' : 'Play' %>"
+            <%= controlsDisabled ? 'disabled' : '' %>
+          ><%= playback.isPlaying ? '⏸' : '▶' %></button>
+          <span class="eink-control-label"><%= playback.isPlaying ? 'Pause' : 'Play' %></span>
+        </form>
+
+        <form method="POST" action="/api/control/next<%= deviceQuery %>" class="eink-control-form">
+          <button
+            type="submit"
+            class="eink-control-btn"
+            aria-label="Next track"
+            <%= controlsDisabled ? 'disabled' : '' %>
+          >▶▶</button>
+          <span class="eink-control-label">Next</span>
+        </form>
+      </div>
+
+      <% if (controlReasonMessage) { %>
+        <p class="eink-control-reason"><%= controlReasonMessage %></p>
+      <% } %>
+    </section>
+
+    <% if (showDebugFooter) { %>
+      <footer class="eink-debug">device: <%= deviceId %> (<%= deviceLabel %>)</footer>
+    <% } %>
+  </main>
+</body>
+</html>
