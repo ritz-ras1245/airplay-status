@@ -21,6 +21,9 @@ const CODE = {
   DISCONNECT: 0x64697363,
   ACTIVE_BEGIN: 0x61626567,
   ACTIVE_END: 0x61656e64,
+  DAID: 0x64616964,
+  DAPO: 0x6461706f,
+  CLIP: 0x636c6970,
 };
 
 const SAMPLE_RATE = 44100;
@@ -94,6 +97,16 @@ export const itemToUpdate = (item) => {
           value: { progressMs: rtpToMs(current - start), durationMs: rtpToMs(end - start) },
         };
       }
+    }
+    if (code === CODE.DAID && data) {
+      return { type: 'field', field: 'dacpId', value: data.toString('utf8') };
+    }
+    if (code === CODE.DAPO && data) {
+      const port = readUInt32Be(data);
+      return port > 0 ? { type: 'field', field: 'dacpPort', value: port } : null;
+    }
+    if (code === CODE.CLIP && data) {
+      return { type: 'field', field: 'clientIp', value: data.toString('utf8') };
     }
     if (code === CODE.DISCONNECT) return { type: 'event', event: 'disconnect' };
     if (code === CODE.ACTIVE_BEGIN) return { type: 'event', event: 'active_begin' };

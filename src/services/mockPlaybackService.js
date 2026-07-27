@@ -13,6 +13,8 @@ export const getPlaybackState = async (forceNothingPlaying = false) => {
       durationMs: 0,
       source: null,
       updatedAt: null,
+      controlAvailable: false,
+      controlReason: 'no_session',
     };
   }
 
@@ -26,5 +28,7 @@ export const getPlaybackState = async (forceNothingPlaying = false) => {
     durationMs: 191000,
     source: 'Mock Player',
     updatedAt: new Date().toISOString(),
+    controlAvailable: true,
+    controlReason: null,
   };
 };

@@ -11,6 +11,11 @@ import {
   itemToUpdate,
   saveArtwork,
 } from '../lib/metadataPipeReader.js';
+import {
+  clearControlSession,
+  getControlState,
+  updateControlSessionField,
+} from './playbackControlService.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '../..');
@@ -54,7 +59,7 @@ const clearArtworkFiles = () => {
 };
 
 const notify = () => {
-  const publicState = toPublicState(state);
+  const publicState = { ...toPublicState(state), ...getControlState() };
   for (const listener of listeners) listener(publicState);
 };
 
@@ -74,6 +79,7 @@ const applyUpdate = (update) => {
     }
 
     clearArtworkFiles();
+    clearControlSession();
     state = createEmptyPlaybackState();
     lastIgnoredConnectPendAt = 0;
     if (DEBUG) logDebug('state', 'title=∅ playing=false connected=false (session ended)');
@@ -83,6 +89,24 @@ const applyUpdate = (update) => {
 
   if (update?.type === 'event' && update.event === 'play') {
     lastPbegAt = Date.now();
+  }
+
+  if (update?.type === 'field') {
+    if (update.field === 'dacpId') {
+      updateControlSessionField('dacpId', update.value);
+      notify();
+      return;
+    }
+    if (update.field === 'dacpPort') {
+      updateControlSessionField('dacpPort', update.value);
+      notify();
+      return;
+    }
+    if (update.field === 'clientIp') {
+      updateControlSessionField('clientIp', update.value);
+      notify();
+      return;
+    }
   }
 
   const prev = JSON.stringify(toPublicState(state));
@@ -168,7 +192,7 @@ export const onPlaybackChange = (listener) => {
   return () => listeners.delete(listener);
 };
 
-export const getPlaybackState = () => toPublicState(state);
+export const getPlaybackState = () => ({ ...toPublicState(state), ...getControlState() });
 
 export const startMetadataWatcher = () => {
   if (watcherStarted) return;

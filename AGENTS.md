@@ -128,7 +128,7 @@ P99 runs **after P49 beta**, **before P100** release (`1.0.0`). P199 before P200
 | **P1** — Remote control | 📄 Spec | `specs/p1-remote-control.md` — DACP via Node |
 | **P2** — Tidbyt | ✅ MVP | `specs/p2-tidbyt.md`, `integrations/tidbyt/` |
 | **P3** — eInk display | 📄 Spec | `specs/p3-eink-display.md` (+ P3.1 profiles, on-demand PNG) |
-| **P4** — eInk controls | 📄 Spec | `specs/p4-eink-controls.md` |
+| **P4** — eInk controls | 📄 Spec → PR | `specs/p4-eink-controls.md` — HTML forms on `/eink` |
 | **P5** — Deployment | 📄 Spec | `specs/p5-deployment.md` — Pi, Docker (reference) |
 | **P49** — Pre-prod beta | 📄 Spec — **next** | `specs/p49-preprod-deployment.md` — RPi4, AP2, Docker→bare metal |
 | **P99** — Prod readiness | 📄 Spec | `specs/p99-prod-readiness.md` — see permanent definition above |
