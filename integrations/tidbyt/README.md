@@ -18,22 +18,24 @@ Pushes only when a track has a title or artist. Progress updates re-push in ~5% 
 
 2. **Tidbyt credentials** — in the Tidbyt mobile app: **Settings → Get API Key**. Note your **Device ID** and **API token**.
 
-3. **Local `.env` file** (gitignored):
+3. **Tidbyt credentials** (gitignored) — Tidbyt app: **Settings → Get API Key**
 
    ```bash
-   cp .env.example .env
-   # Edit .env — set TIDBYT_DEVICE_ID and TIDBYT_API_TOKEN
+   cp config/deploy/tidbyt.env.example .local/tidbyt.env
+   # Edit .local/tidbyt.env — keeps working if .env is refreshed for P49/beta
    ```
 
-4. **Dashboard running** — `./bin/run-local.sh` (or mock mode for layout testing).
+   Or put `TIDBYT_*` in repo `.env` (easier to overwrite by mistake).
+
+4. **Dashboard running** — `./bin/run-local.sh` (loads `.env` + `.local/tidbyt.env`).
 
 ## Manual push (testing)
 
 With music playing (or mock data):
 
 ```bash
-cp .env.example .env   # if you haven't already
-# Fill in TIDBYT_DEVICE_ID and TIDBYT_API_TOKEN in .env
+cp config/deploy/tidbyt.env.example .local/tidbyt.env
+# Fill in TIDBYT_DEVICE_ID and TIDBYT_API_TOKEN
 ./bin/push-tidbyt.sh
 ```
 

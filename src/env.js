@@ -1,3 +1,3 @@
-import { loadEnvFile } from './lib/loadEnv.js';
+import { loadMacEnv } from './lib/loadEnv.js';
 
-loadEnvFile();
+loadMacEnv();

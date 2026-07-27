@@ -11,8 +11,9 @@ usage() {
   cat <<EOF
 Usage: tidbyt-creds-mac.sh [--upload SETUP_URL]
 
-  Mac-only helper for P49 Tidbyt creds. Requires TIDBYT_DEVICE_ID and
-  TIDBYT_API_TOKEN (env, or sourced from repo .env if present).
+  Mac-only helper for P49 Tidbyt creds. Reads TIDBYT_DEVICE_ID and
+  TIDBYT_API_TOKEN from (in order): environment, repo .env, .local/tidbyt.env
+  (or TIDBYT_ENV_FILE).
 
   Always writes: ${OUT_FILE}  (gitignored — AirDrop or iCloud to iPhone)
 
@@ -59,15 +60,28 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -f "$ROOT/.env" ]]; then
-  set -a
-  # shellcheck disable=SC1091
-  source "$ROOT/.env"
-  set +a
-fi
+# shellcheck source=load-mac-env.sh
+source "$ROOT/bin/load-mac-env.sh"
 
-: "${TIDBYT_DEVICE_ID:?Set TIDBYT_DEVICE_ID (Tidbyt app)}"
-: "${TIDBYT_API_TOKEN:?Set TIDBYT_API_TOKEN (Tidbyt app)}"
+if [[ -z "${TIDBYT_DEVICE_ID:-}" || -z "${TIDBYT_API_TOKEN:-}" ]]; then
+  echo "TIDBYT_DEVICE_ID and TIDBYT_API_TOKEN required." >&2
+  echo "" >&2
+  if [[ -f "$ROOT/.env" ]] && ! grep -qE '^[[:space:]]*TIDBYT_DEVICE_ID=' "$ROOT/.env" \
+    && [[ ! -f "${TIDBYT_ENV_FILE:-$ROOT/.local/tidbyt.env}" ]]; then
+    echo "  Add Tidbyt creds to .local/tidbyt.env (see config/deploy/tidbyt.env.example)." >&2
+  elif [[ -f "${TIDBYT_ENV_FILE:-$ROOT/.local/tidbyt.env}" ]] \
+    && [[ -z "${TIDBYT_DEVICE_ID:-}" || -z "${TIDBYT_API_TOKEN:-}" ]]; then
+    echo "  .local/tidbyt.env exists but TIDBYT_DEVICE_ID or TIDBYT_API_TOKEN is empty." >&2
+  elif [[ -f "$ROOT/.env" ]] && ! grep -qE '^[[:space:]]*TIDBYT_DEVICE_ID=' "$ROOT/.env"; then
+    echo "  .env has no Tidbyt vars — use .local/tidbyt.env for Mac dev (see tidbyt.env.example)." >&2
+  elif [[ ! -f "$ROOT/.env" ]]; then
+    echo "  No $ROOT/.env — copy config/deploy/tidbyt.env.example → .env or .local/tidbyt.env" >&2
+  else
+    echo "  TIDBYT_DEVICE_ID or TIDBYT_API_TOKEN is empty in .env." >&2
+  fi
+  echo "  Or: export TIDBYT_DEVICE_ID=… TIDBYT_API_TOKEN=…" >&2
+  exit 1
+fi
 INSTALLATION_ID="${TIDBYT_INSTALLATION_ID:-airplaystatus}"
 
 mkdir -p "$LOCAL_DIR"
