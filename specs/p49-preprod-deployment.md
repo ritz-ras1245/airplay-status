@@ -66,43 +66,18 @@ Mac dev (AP1)  →  P49 pre-prod (RPi4, AP2)  →  P99 prod readiness  →  P100
 
 ---
 
-## Packaging strategy (decision order)
+## Packaging — Docker
 
-### Path A — Docker on Pi (try first)
+See [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) (includes **limitations**).
 
-| Component | Container / host | Notes |
-|-----------|------------------|-------|
-| **nqptp** | Host systemd **or** privileged sidecar | Needs UDP 319/320 exclusive |
-| **shairport-sync AP2** | `network_mode: host` | mDNS + RAOP; see P5 |
-| **Node airplay-status** | Host network or host process | Metadata pipe bind-mount |
-| **Metadata FIFO** | Volume: `/tmp/shairport-sync-metadata` or `/run/airplay-status/` |
+| Component | Where |
+|-----------|--------|
+| nqptp | Host (`deploy/rpi/install.sh` before compose) |
+| shairport-sync AP2 | Container, `network_mode: host` |
+| Node app | Container, `network_mode: host` |
+| Metadata FIFO | `/tmp/shairport-sync-metadata` on host |
 
-Deliverables:
-
-- `deploy/docker/docker-compose.yml` (host network)
-- `deploy/docker/Dockerfile` (Node app)
-- `deploy/docker/shairport/` — AP2 config mount
-- `bin/p49-up.sh` / `bin/p49-down.sh`
-- Spike doc: `docs/p49-docker-spike.md` with pass/fail criteria
-
-**Accept spike as failed if:** after 1 day effort, iPhone cannot discover receiver or AP2 multi-room fails with host-network compose → fall through to Path B.
-
-### Path B — Bare Raspberry Pi OS (fallback / likely for nqptp)
-
-| Component | Install |
-|-----------|---------|
-| nqptp | Build from [nqptp](https://github.com/mikebrady/nqptp) or distro package if available |
-| shairport-sync | Build with `--with-airplay-2 --with-ffmpeg --with-metadata` |
-| Node app | `git clone` + `npm ci` + systemd unit |
-| Config | `config/shairport-sync-airplay2.conf.example` |
-
-Deliverables:
-
-- `deploy/rpi/install.sh` — idempotent apt + build steps
-- `deploy/rpi/systemd/` — `nqptp.service`, `shairport-sync.service`, `airplay-status.service`
-- `bin/p49-install-rpi.sh` — rsync/scp helper from dev Mac (optional)
-
----
+Deliverables: `deploy/docker/*`, `bin/p49-up.sh`, `bin/p49-down.sh`, `deploy/rpi/install.sh` (host bootstrap).
 
 ## Fleet / remote management (1–4 instances)
 
@@ -147,7 +122,7 @@ Display URL for Echo/Tidbyt on beta: `http://<pi-lan-ip>:3003/…`
 - [ ] `(ops)` **`GET /api/version`** returns expected `version`, `gitCommit`, `deployPhase=p49`
 - [ ] `(soak)` 24h uptime without manual restart
 - [ ] `(ops)` Reboot Pi → all services auto-start
-- [ ] `(doc)` `deploy/rpi/README.md` or `deploy/docker/README.md` — fresh Pi install from scratch
+- [ ] `(doc)` [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) — fresh Pi install
 
 ---
 
@@ -170,7 +145,7 @@ bin/
 ├── p49-down.sh
 └── p49-install-rpi.sh   # optional
 docs/
-└── p49-docker-spike.md
+└── (see deploy/docker/README-WARN.md)
 ```
 
 ---
@@ -187,11 +162,9 @@ docs/
 
 ## Implementation order (suggested)
 
-1. **Spike:** Docker host-network on RPi4 → document in `p49-docker-spike.md`
-2. **Path B if needed:** `deploy/rpi/install.sh` + systemd + AP2 config
-3. **Wire:** `.env.example` + deploy README for beta checklist
-4. **Soak test** on home LAN → sign off beta criteria
-5. **Then:** P99 prod readiness on same Pi
+1. Pi: host bootstrap + `./bin/p49-up.sh docker` — [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md)
+2. Soak + beta sign-off on LAN
+3. P99
 
 ---
 

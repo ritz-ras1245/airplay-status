@@ -1,11 +1,5 @@
-# Deploy layout (P49)
+# Deploy (P49)
 
-| Path | Purpose |
-|------|---------|
-| [rpi/](./rpi/) | **Path B** — bare Raspberry Pi OS (default MVP after Docker spike) |
-| [docker/](./docker/) | **Path A** — Docker host-network spike on Pi |
-| [balena/](./balena/) | Optional P49.1+ fleet notes |
+**Docker:** [docker/README-WARN.md](./docker/README-WARN.md)
 
-**Plan:** [docs/p49-beta-remote-deploy.md](../docs/p49-beta-remote-deploy.md)
-
-Implementation scaffolds on `doc/ritz-ras1245/p49-release`; full scripts land via cloud agent PR on `feat/ritz-ras1245/p49-rpi-beta`.
+Host bootstrap script (nqptp / deps before compose): [rpi/install.sh](./rpi/install.sh)

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# P49 — start pre-prod stack (Docker Path A or systemd Path B).
+# P49 — start Docker stack.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -9,12 +9,10 @@ usage() {
   cat <<EOF
 Usage: p49-up.sh [docker|rpi]
 
-  docker  Docker Compose host-network stack (default)
-  rpi     systemd services (bare-metal Path B; run on Pi as root)
+  docker  Docker Compose (default) — see deploy/docker/README-WARN.md
+  rpi     systemd on Pi (unusual; README documents Docker)
 
-Prerequisites:
-  Docker: nqptp on host, .env with DEPLOY_STAGE=beta
-  RPi:    sudo ./deploy/rpi/install.sh (first time)
+Prerequisites: deploy/docker/README-WARN.md
 EOF
 }
 
@@ -37,13 +35,13 @@ ensure_nqptp() {
     if ! systemctl is-active --quiet nqptp 2>/dev/null; then
       echo "Starting host nqptp (required for AirPlay 2)..."
       sudo systemctl start nqptp || {
-        echo "nqptp not installed. Install via deploy/rpi/install.sh or deploy/docker/README.md" >&2
+        echo "nqptp not installed. Install via deploy/rpi/install.sh or deploy/docker/README-WARN.md" >&2
         exit 1
       }
     fi
   elif ! pgrep -x nqptp >/dev/null 2>&1; then
     echo "WARNING: nqptp does not appear to be running. AirPlay 2 will not work." >&2
-    echo "See deploy/docker/README.md or deploy/rpi/README.md" >&2
+    echo "See deploy/docker/README-WARN.md or deploy/rpi/README.md" >&2
   fi
 }
 
@@ -55,6 +53,10 @@ ensure_metadata_dir() {
 }
 
 up_docker() {
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    echo "NOTE: see deploy/docker/README-WARN.md (Mac limitations)." >&2
+    echo "" >&2
+  fi
   ensure_nqptp
   ensure_metadata_dir
 
@@ -75,7 +77,8 @@ up_docker() {
   echo ""
   echo "Dashboard: http://localhost:${port}"
   echo "Version:   ./bin/check-version.sh http://localhost:${port}"
-  echo "Logs:      docker compose -f deploy/docker/docker-compose.yml logs -f"
+  echo "Logs:      docker compose -f deploy/docker/docker-compose.yml logs -f --tail=100"
+  echo "            (from repo root; add service name: ... logs -f --tail=100 airplay-status)"
 }
 
 up_rpi() {

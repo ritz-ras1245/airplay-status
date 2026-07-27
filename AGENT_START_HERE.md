@@ -29,9 +29,9 @@ Step 0 — Smoke tests (run before writing deploy code; stop and report if any f
 Step 1 — Read AGENT_START_HERE.md (this file) and specs/p49-preprod-deployment.md end to end.
 
 Step 2 — Implement P49 deliverables:
-  1. Try Docker host-network on Pi first (deploy/docker/); document spike in docs/p49-docker-spike.md.
-  2. If spike fails, ship bare-metal Path B (deploy/rpi/install.sh, systemd, nqptp + shairport-sync AP2).
-  3. Enable iPhone multi-speaker: real HomePods + AirPlay Status together (not possible on Mac AP1).
+  1. Docker deploy — deploy/docker/README-WARN.md (includes limitations).
+  2. Pi host bootstrap: deploy/rpi/install.sh (nqptp before compose).
+  3. iPhone multi-speaker on Pi LAN (not Mac Docker).
 
 Constraints:
 - Do not commit unless user asks. Match existing code style. No secrets in repo.
@@ -126,26 +126,12 @@ Global engineering standards load via cloud bootstrap (`~/.cursor/rules/` symlin
 
 ## Implementation deliverables (from spec)
 
-### Path A — Docker (try first)
-
 ```
-deploy/docker/docker-compose.yml    # host network
+deploy/docker/docker-compose.yml
 deploy/docker/Dockerfile
-deploy/docker/README.md
-bin/p49-up.sh
-bin/p49-down.sh
-docs/p49-docker-spike.md            # pass/fail; 1-day spike limit
-```
-
-**Spike fails if:** iPhone cannot discover receiver or AP2 multi-room fails → Path B.
-
-### Path B — Bare Pi (fallback / likely for nqptp)
-
-```
-deploy/rpi/install.sh
-deploy/rpi/systemd/                 # nqptp, shairport-sync, airplay-status
-deploy/rpi/README.md
-bin/p49-install-rpi.sh             # optional rsync from Mac
+deploy/docker/README-WARN.md          # deploy + limitations
+deploy/rpi/install.sh            # host bootstrap (nqptp) before compose
+bin/p49-up.sh / bin/p49-down.sh
 ```
 
 ### Beta env on Pi
@@ -176,18 +162,16 @@ From `specs/p49-preprod-deployment.md`:
 - [ ] Dashboard live metadata within 5s
 - [ ] `GET /api/version` → `deployPhase=p49`, correct semver/commit
 - [ ] 24h soak, reboot auto-start
-- [ ] Fresh Pi install doc works (`deploy/rpi/README.md` or docker README)
+- [ ] Fresh Pi install follows [deploy/docker/README-WARN.md](deploy/docker/README-WARN.md)
 
 ---
 
 ## Suggested implementation order
 
 1. **Smoke tests** (Step 0 above)
-2. Spike Docker on RPi4 → `docs/p49-docker-spike.md` (artifacts + human steps)
-3. Path B if needed → systemd + AP2
-4. `.env` on Pi (not committed) + deploy README
-5. Re-run cloud smoke tests; open PR
-6. Human soak + sign-off on Pi → then P99
+2. Pi: `sudo ./deploy/rpi/install.sh` then `./bin/p49-up.sh docker` — [deploy/docker/README-WARN.md](deploy/docker/README-WARN.md)
+3. `.env` on Pi + beta sign-off checklist
+4. Open PR; then P99
 
 ---
 
@@ -197,6 +181,7 @@ From `specs/p49-preprod-deployment.md`:
 |-----|------|
 | **P49 spec** | [specs/p49-preprod-deployment.md](specs/p49-preprod-deployment.md) |
 | **P49 remote deploy plan** | [docs/p49-beta-remote-deploy.md](docs/p49-beta-remote-deploy.md) |
+| **P49 deploy** | [deploy/docker/README-WARN.md](deploy/docker/README-WARN.md) |
 | Multi-room / AP1 vs AP2 | [docs/multi-room-airplay.md](docs/multi-room-airplay.md) |
 | Versioning (repo) | [docs/versioning.md](docs/versioning.md) |
 | P5 deployment (reference) | [specs/p5-deployment.md](specs/p5-deployment.md) |

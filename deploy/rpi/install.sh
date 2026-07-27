@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# P49 Path B — idempotent Raspberry Pi OS install (nqptp + shairport-sync AP2 + Node).
+# Host bootstrap for Docker (nqptp + deps on Pi).
 # SCAFFOLD: replaced by cloud agent on feat/ritz-ras1245/p49-rpi-beta.
 set -euo pipefail
 

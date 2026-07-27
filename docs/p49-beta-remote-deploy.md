@@ -64,14 +64,13 @@ Do once; do not remove the SD card for routine updates.
 | 1 | Flash **Raspberry Pi OS 64-bit Lite** |
 | 2 | Enable **SSH**; create user; Wi‑Fi or Ethernet (**Ethernet preferred** for mDNS) |
 | 3 | Static IP or reliable hostname (e.g. `airplay-beta.local`) |
-| 4 | Clone repo; checkout `feat/ritz-ras1245/p49-rpi-beta` (or `main` after P49 PR merges) |
-| 5 | Run [`deploy/rpi/install.sh`](../deploy/rpi/install.sh) — **scaffold until cloud PR**; see [deploy/rpi/README.md](../deploy/rpi/README.md) for manual bootstrap |
-| 6 | `cp config/deploy/beta.env.example .env` → `./bin/render-shairport-config.sh --stage beta` |
-| 7 | Enable systemd: `nqptp`, `shairport-sync`, `airplay-status` |
-| 8 | From Mac: `./bin/check-version.sh http://<pi>:3003` → `deployStage=beta`, `deployPhase=p49` |
-| 9 | iPhone beta checklist — HomePods + **AirPlay Status (Beta)** together |
+| 4 | Clone repo; checkout PR branch or `main` |
+| 5 | `sudo ./deploy/rpi/install.sh` (host bootstrap — nqptp) |
+| 6 | `cp config/deploy/beta.env.example .env` → render shairport config → `./bin/p49-up.sh docker` |
+| 7 | From Mac: `./bin/check-version.sh http://<pi>:3003` |
+| 8 | iPhone beta checklist — HomePods + **AirPlay Status (Beta)** together |
 
-Full first-boot SOP: [deploy/rpi/README.md](../deploy/rpi/README.md).
+Full steps: [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md).
 
 ---
 
@@ -120,11 +119,11 @@ This branch **scaffolds** paths the cloud agent is building on `feat/ritz-ras124
 | `deploy/rpi/install.sh` | Scaffold | Idempotent apt + nqptp/shairport build |
 | `deploy/rpi/systemd/*.service` | Scaffold | Production units |
 | `deploy/rpi/README.md` | **Phase 0 SOP** (usable now) | Merge cloud agent first-boot details |
-| `deploy/docker/*` | Scaffold | Docker spike (Path A) |
-| `docs/p49-docker-spike.md` | Scaffold template | Spike results |
+| `deploy/docker/*` | Docker deploy | [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) |
+| `deploy/rpi/install.sh` | Host bootstrap | nqptp before compose |
 | `bin/p49-deploy.sh` | Scaffold | SSH remote deploy + health gate |
 | `bin/p49-install-rpi.sh` | Scaffold | Optional Mac bootstrap helper |
-| `bin/p49-up.sh` / `p49-down.sh` | Scaffold | Docker compose helpers |
+| `bin/p49-up.sh` / `p49-down.sh` | PR #4 | `./bin/p49-up.sh docker` |
 | `.github/workflows/p49-deploy-beta.yml` | Scaffold workflow | Wire secrets after Pi SSH works |
 
 After the cloud agent PR merges to `main`, re-run Phase 0 step 4–7 if `install.sh` was scaffold-only, then use Phase 1 for all updates.
@@ -146,7 +145,7 @@ After the cloud agent PR merges to `main`, re-run Phase 0 step 4–7 if `install
 - [ ] Dashboard live metadata within 5s
 - [ ] `GET /api/version` → `deployPhase=p49`, correct semver/commit
 - [ ] 24h soak; reboot → services auto-start
-- [ ] Fresh install doc works ([deploy/rpi/README.md](../deploy/rpi/README.md))
+- [ ] Fresh install follows [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md)
 
 Then proceed to **P99** prod readiness on the same Pi tier.
 
@@ -160,3 +159,4 @@ Then proceed to **P99** prod readiness on the same Pi tier.
 | Agent handoff | [AGENT_START_HERE.md](../AGENT_START_HERE.md) |
 | Deploy stages | [config/deploy/README.md](../config/deploy/README.md) |
 | Multi-room | [docs/multi-room-airplay.md](./multi-room-airplay.md) |
+| P49 deploy | [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) |
