@@ -11,12 +11,12 @@ import {
 import { getPlaybackState as getMockPlaybackState } from './services/mockPlaybackService.js';
 import { formatMs } from './utils/formatTime.js';
 import {
-  printTidbytStartupStatus,
-  resolveTidbytStartup,
-  startTidbytPushService,
+  configureTidbytPush,
 } from './services/tidbytPushService.js';
 import { APP_VERSION, getVersionInfo } from './lib/appVersion.js';
 import { getDeployStage } from './lib/deployStage.js';
+import { registerSetupRoutes } from './routes/setupRoutes.js';
+import { readSetupToken } from './lib/setupToken.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -109,6 +109,8 @@ app.post('/api/debug/mark', (req, res) => {
   res.json({ ok: true, label });
 });
 
+registerSetupRoutes(app);
+
 const renderDashboard = async (req, res, { showDebugCapture = false } = {}) => {
   const { playback, forceNothingPlaying, live } = await resolvePlayback(req);
 
@@ -145,20 +147,23 @@ app.listen(PORT, () => {
     console.log(`Debug capture UI at http://localhost:${PORT}/debug`);
   }
 
-  const tidbyt = resolveTidbytStartup();
-  printTidbytStartupStatus(tidbyt);
+  const setupToken = readSetupToken();
+  if (setupToken) {
+    console.log('');
+    console.log('Tidbyt/secrets setup (one-time): open /setup?token=… from install summary');
+    console.log('');
+  }
 
-  if (tidbyt.shouldStart) {
-    startTidbytPushService({
-      baseUrl: `http://localhost:${PORT}`,
-      deviceId: tidbyt.deviceId,
-      apiToken: tidbyt.apiToken,
-      installationId: tidbyt.installationId,
-      getPlaybackState: async () => {
-        if (USE_MOCK) return getMockPlaybackState();
-        return getLivePlaybackState();
-      },
-      onPlaybackChange: USE_MOCK ? null : onPlaybackChange,
-    });
+  const tidbyt = configureTidbytPush({
+    baseUrl: `http://localhost:${PORT}`,
+    getPlaybackState: async () => {
+      if (USE_MOCK) return getMockPlaybackState();
+      return getLivePlaybackState();
+    },
+    onPlaybackChange: USE_MOCK ? null : onPlaybackChange,
+  });
+
+  if (!tidbyt.shouldStart && setupToken) {
+    console.log('Upload Tidbyt creds at /setup?token=… — push starts immediately (no restart).');
   }
 });

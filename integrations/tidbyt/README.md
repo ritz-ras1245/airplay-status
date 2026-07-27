@@ -18,22 +18,24 @@ Pushes only when a track has a title or artist. Progress updates re-push in ~5% 
 
 2. **Tidbyt credentials** — in the Tidbyt mobile app: **Settings → Get API Key**. Note your **Device ID** and **API token**.
 
-3. **Local `.env` file** (gitignored):
+3. **Tidbyt credentials** (gitignored) — Tidbyt app: **Settings → Get API Key**
 
    ```bash
-   cp .env.example .env
-   # Edit .env — set TIDBYT_DEVICE_ID and TIDBYT_API_TOKEN
+   cp config/deploy/tidbyt.env.example .local/tidbyt.env
+   # Edit .local/tidbyt.env — keeps working if .env is refreshed for P49/beta
    ```
 
-4. **Dashboard running** — `./bin/run-local.sh` (or mock mode for layout testing).
+   Or put `TIDBYT_*` in repo `.env` (easier to overwrite by mistake).
+
+4. **Dashboard running** — `./bin/run-local.sh` (loads `.env` + `.local/tidbyt.env`).
 
 ## Manual push (testing)
 
 With music playing (or mock data):
 
 ```bash
-cp .env.example .env   # if you haven't already
-# Fill in TIDBYT_DEVICE_ID and TIDBYT_API_TOKEN in .env
+cp config/deploy/tidbyt.env.example .local/tidbyt.env
+# Fill in TIDBYT_DEVICE_ID and TIDBYT_API_TOKEN
 ./bin/push-tidbyt.sh
 ```
 
@@ -64,14 +66,16 @@ At startup you'll see either:
 
 or a warning explaining what's missing (e.g. pixlet not installed) — the dashboard still runs.
 
-Set `TIDBYT_ENABLED=0` in `.env` to skip Tidbyt entirely and hide the startup warning.
+Set `DISABLE_TIDBYT=1` in `.env` or the environment to skip Tidbyt entirely.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `TIDBYT_DEVICE_ID` | — | Required for push |
 | `TIDBYT_API_TOKEN` | — | Required for push |
-| `TIDBYT_ENABLED` | auto | Set to `0` to disable |
 | `TIDBYT_INSTALLATION_ID` | `airplaystatus` | Alphanumeric only; persists in Tidbyt app rotation |
+| `DISABLE_TIDBYT` | off | Set to `1` to force off while creds remain in `.env` |
+
+Push **auto-starts** when both `TIDBYT_DEVICE_ID` and `TIDBYT_API_TOKEN` are set (no `TIDBYT_ENABLED`).
 
 Pushes while a track is playing; **deletes the installation** when the session ends so it leaves Tidbyt rotation entirely.
 

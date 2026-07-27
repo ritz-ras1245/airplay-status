@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# P49 — start Docker stack.
+# P49 — start Docker stack (or systemd on Pi).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -10,7 +10,7 @@ usage() {
 Usage: p49-up.sh [docker|rpi]
 
   docker  Docker Compose (default) — see deploy/docker/README-WARN.md
-  rpi     systemd on Pi (unusual; README documents Docker)
+  rpi     systemd on Pi (fallback; see deploy/rpi/README.md)
 
 Prerequisites: deploy/docker/README-WARN.md
 EOF

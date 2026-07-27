@@ -120,6 +120,12 @@ Self-hosted observability — **not** Grafana Cloud / SaaS.
 - `bin/check-version.sh http://<host>:3003` for deploy verification
 - `bin/check-sidecar.sh` remains quick CLI probe; SOP references both
 
+### 5b. Pi secrets UX (Tidbyt — deferred from P49)
+
+P49 ships one-time `/setup?token=…` upload but the token is only visible via install output or SSH ([docs/p49-tidbyt-credentials.md](../docs/p49-tidbyt-credentials.md) — **Known limitation**).
+
+**P99 deliverable:** When `.setup-token` exists, dashboard shows LAN-only setup URL (e.g. banner + QR on `/` or `/setup`) so iPhone file upload needs no Mac/SSH. Power-loss already OK (token persists on disk until upload).
+
 ### 6. Troubleshooting runbook (`docs/prod-troubleshooting.md`)
 
 Symptom → cause → fix (link to SOPs):
@@ -216,6 +222,7 @@ src/lib/
 - [ ] `docs/sop/debugging-humans.md` + `docs/sop/debugging-agents.md` + index exist and cross-link debug capture
 - [ ] `docs/prod-troubleshooting.md` linked from README
 - [ ] `(optional)` `bin/observability-up.sh` brings up Grafana; dashboard shows live logs from node
+- [ ] `(Pi)` Pending Tidbyt setup: dashboard shows setup URL or QR (no SSH to read token)
 - [ ] No secrets in repo or committed log examples
 
 ---

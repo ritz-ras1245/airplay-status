@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AirPlay Status — one-time setup</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 32rem; margin: 2rem auto; padding: 0 1rem; }
+    label { display: block; margin: 1rem 0 0.25rem; font-weight: 600; }
+    input[type=file] { width: 100%; }
+    button { margin-top: 1rem; padding: 0.6rem 1.2rem; font-size: 1rem; }
+    pre { background: #f4f4f4; padding: 0.75rem; overflow-x: auto; font-size: 0.85rem; }
+    .ok { color: #060; }
+    .err { color: #900; }
+    .hint { color: #555; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <h1>One-time secrets setup</h1>
+  <p class="hint">Upload a <code>tidbyt.env</code> file from iPhone Files or Mac. Keys are merged into <code>.env</code> on the Pi only — never committed to git.</p>
+  <p class="hint">Allowed keys: <%= allowedKeys.join(', ') %></p>
+
+  <pre>TIDBYT_DEVICE_ID=…
+TIDBYT_API_TOKEN=…
+TIDBYT_INSTALLATION_ID=airplaystatus</pre>
+
+  <p class="hint">Tidbyt push enables automatically when both ID and token are set. Use <code>DISABLE_TIDBYT=1</code> in .env to turn off.</p>
+
+  <label for="secrets">Secrets file</label>
+  <input id="secrets" type="file" accept=".env,text/plain">
+
+  <button type="button" id="upload">Upload</button>
+  <p id="status"></p>
+
+  <script>
+    const token = <%- JSON.stringify(token) %>;
+    document.getElementById('upload').addEventListener('click', async () => {
+      const input = document.getElementById('secrets');
+      const status = document.getElementById('status');
+      if (!input.files?.length) {
+        status.className = 'err';
+        status.textContent = 'Choose a file first.';
+        return;
+      }
+      const content = await input.files[0].text();
+      status.className = '';
+      status.textContent = 'Uploading…';
+      try {
+        const res = await fetch('/api/setup/secrets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, content }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || res.statusText);
+        status.className = 'ok';
+        status.textContent =
+          'Applied: ' +
+          data.applied.join(', ') +
+          '. Tidbyt: ' +
+          (data.tidbyt === 'enabled' ? 'enabled now — play music to push.' : data.tidbyt);
+      } catch (e) {
+        status.className = 'err';
+        status.textContent = e.message;
+      }
+    });
+  </script>
+</body>
+</html>

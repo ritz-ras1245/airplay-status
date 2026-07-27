@@ -7,12 +7,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-if [[ -f "$ROOT/.env" ]]; then
-  set -a
-  # shellcheck disable=SC1091
-  source "$ROOT/.env"
-  set +a
-fi
+# shellcheck source=load-mac-env.sh
+source "$ROOT/bin/load-mac-env.sh"
 
 PORT="${PORT:-3003}"
 BASE_URL="http://localhost:${PORT}"

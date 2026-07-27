@@ -11,7 +11,7 @@
     "label": "Beta",
     "airplayReceiverName": "AirPlay Status (Beta)",
     "dashboardTitle": "AirPlay Status (Beta)",
-    "port": 3003,
+    "port": 80,
     "logLevel": "info",
     "shairportLogVerbosity": 1,
     "deployPhase": "p49"

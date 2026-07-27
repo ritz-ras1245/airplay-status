@@ -65,12 +65,12 @@ Do once; do not remove the SD card for routine updates.
 | 2 | Enable **SSH**; create user; Wi‑Fi or Ethernet (**Ethernet preferred** for mDNS) |
 | 3 | Static IP or reliable hostname (e.g. `airplay-beta.local`) |
 | 4 | Clone repo; checkout PR branch or `main` |
-| 5 | `sudo ./deploy/rpi/install.sh` (host bootstrap — nqptp) |
-| 6 | `cp config/deploy/beta.env.example .env` → render shairport config → `./bin/p49-up.sh docker` |
+| 5 | `sudo ./deploy/rpi/install.sh` (bare metal — ~20 min) |
+| 6 | `./bin/check-p49-beta.sh` |
 | 7 | From Mac: `./bin/check-version.sh http://<pi>:3003` |
 | 8 | iPhone beta checklist — HomePods + **AirPlay Status (Beta)** together |
 
-Full steps: [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md).
+Full steps: [docs/p49-rpi-bare-metal-lessons.md](./p49-rpi-bare-metal-lessons.md) · [deploy/rpi/README.md](../deploy/rpi/README.md).
 
 ---
 

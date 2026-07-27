@@ -27,7 +27,6 @@ const log = (...args) => console.log('[tidbyt]', ...args);
 const logError = (...args) => console.error('[tidbyt]', ...args);
 
 const truthyEnv = (value) => value === '1' || value === 'true';
-const falsyEnv = (value) => value === '0' || value === 'false';
 
 const terminalColorsEnabled = () =>
   !process.env.NO_COLOR && Boolean(process.stderr?.isTTY);
@@ -54,7 +53,7 @@ const printTidbytSetupWarning = (issues) => {
   }
   write('');
   write(`${dim}  Dashboard is running — only Tidbyt push is skipped.${reset}`);
-  write(`${cyan}  To hide this warning: set TIDBYT_ENABLED=0 in .env${reset}`);
+  write(`${cyan}  To disable: set DISABLE_TIDBYT=1 in .env or environment${reset}`);
   write(`${boldYellow}${bar}${reset}`);
   write('');
 };
@@ -94,25 +93,31 @@ export const pushStateKey = (playback) => {
 export const resolveTidbytStartup = ({
   deviceId = process.env.TIDBYT_DEVICE_ID?.trim(),
   apiToken = process.env.TIDBYT_API_TOKEN?.trim(),
-  enabledFlag = process.env.TIDBYT_ENABLED,
+  disabledFlag = process.env.DISABLE_TIDBYT,
   installationId = process.env.TIDBYT_INSTALLATION_ID?.trim() || DEFAULT_TIDBYT_INSTALLATION_ID,
 } = {}) => {
   const hasCreds = Boolean(deviceId && apiToken);
   const pixletPath = findPixlet();
-  const explicitlyDisabled = falsyEnv(enabledFlag);
-  const explicitlyEnabled = truthyEnv(enabledFlag);
-  const requested = !explicitlyDisabled && (explicitlyEnabled || hasCreds);
+  const forceDisabled = truthyEnv(disabledFlag);
 
-  if (!requested) {
-    return { shouldStart: false, reason: 'not configured' };
+  if (forceDisabled) {
+    return {
+      shouldStart: false,
+      reason: 'disabled',
+      requested: hasCreds,
+      issues: hasCreds ? ['DISABLE_TIDBYT=1 — Tidbyt push suppressed'] : undefined,
+    };
+  }
+
+  if (!hasCreds) {
+    return { shouldStart: false, reason: 'not configured', requested: false };
   }
 
   const issues = [];
-  if (!hasCreds) {
-    issues.push('Set TIDBYT_DEVICE_ID and TIDBYT_API_TOKEN in .env');
-  }
   if (!pixletPath) {
-    issues.push('pixlet not found — install: brew install tidbyt/tidbyt/pixlet');
+    issues.push(
+      'pixlet not found — Pi: reinstall deploy/rpi/install.sh; Mac: brew install tidbyt/tidbyt/pixlet',
+    );
   }
   if (!INSTALLATION_ID_PATTERN.test(installationId)) {
     issues.push(
@@ -145,6 +150,13 @@ export const resolveTidbytStartup = ({
 };
 
 export const printTidbytStartupStatus = (status) => {
+  if (status.reason === 'disabled' && status.requested) {
+    console.log('');
+    console.log('ℹ  Tidbyt push disabled (DISABLE_TIDBYT=1)');
+    console.log('');
+    return;
+  }
+
   if (!status.requested) return;
 
   if (status.shouldStart) {
@@ -251,6 +263,11 @@ export const startTidbytPushService = ({
     logError('getPlaybackState callback is required');
     return () => {};
   }
+
+  disabled = false;
+  consecutiveFailures = 0;
+  lastPushKey = null;
+  pushAgainAfterCurrent = false;
 
   const pushNow = async (reason = 'manual', { force = false } = {}) => {
     if (disabled) return;
@@ -361,4 +378,35 @@ export const startTidbytPushService = ({
   pushNow('startup');
 
   return stop;
+};
+
+let tidbytStopFn = null;
+let tidbytRuntime = null;
+
+export const configureTidbytPush = (runtime) => {
+  tidbytRuntime = runtime;
+  return applyTidbytPush();
+};
+
+export const reloadTidbytPush = () => applyTidbytPush();
+
+const applyTidbytPush = () => {
+  if (tidbytStopFn) {
+    tidbytStopFn();
+    tidbytStopFn = null;
+  }
+
+  const status = resolveTidbytStartup();
+  printTidbytStartupStatus(status);
+
+  if (status.shouldStart && tidbytRuntime) {
+    tidbytStopFn = startTidbytPushService({
+      ...tidbytRuntime,
+      deviceId: status.deviceId,
+      apiToken: status.apiToken,
+      installationId: status.installationId,
+    });
+  }
+
+  return status;
 };

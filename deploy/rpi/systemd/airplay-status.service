@@ -1,17 +1,22 @@
-# SCAFFOLD — airplay-status Node app. Cloud agent replaces on feat/ritz-ras1245/p49-rpi-beta.
-# Replace %i / paths with actual deploy user and WorkingDirectory in cloud PR.
-
 [Unit]
-Description=AirPlay Status dashboard — scaffold
+Description=AirPlay Status dashboard (Node)
+Documentation=https://github.com/ritz-ras1245/airplay-status
 After=network-online.target shairport-sync.service
 Wants=shairport-sync.service
 
 [Service]
 Type=simple
-WorkingDirectory=/home/%i/airplay-status
-EnvironmentFile=/home/%i/airplay-status/.env
-ExecStart=/usr/bin/npm start
+User=airplay-status
+Group=airplay-status
+WorkingDirectory=/opt/airplay-status
+EnvironmentFile=-/opt/airplay-status/.env
+Environment=SKIP_SHAIRPORT_CHECK=1
+# Bind PORT=80 without running as root
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+ExecStart=/usr/bin/node src/index.js
 Restart=on-failure
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target

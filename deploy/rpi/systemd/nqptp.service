@@ -1,15 +1,14 @@
-# SCAFFOLD — nqptp systemd unit. Cloud agent replaces on feat/ritz-ras1245/p49-rpi-beta.
-# See deploy/rpi/README.md and docs/p49-beta-remote-deploy.md.
-
 [Unit]
-Description=nqptp (AirPlay 2 PTP) — scaffold
+Description=nqptp — AirPlay 2 timing daemon
+Documentation=https://github.com/mikebrady/nqptp
 After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/sbin/nqptp
+ExecStart=/usr/local/bin/nqptp
 Restart=on-failure
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
