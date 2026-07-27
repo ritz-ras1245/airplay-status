@@ -6,7 +6,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ENV_FILE="${ENV_FILE:-$ROOT/.env}"
 SECRETS_FILE="${1:-}"
 
-ALLOWED_RE='^(TIDBYT_DEVICE_ID|TIDBYT_API_TOKEN|TIDBYT_INSTALLATION_ID|TIDBYT_ENABLED)='
+ALLOWED_RE='^(TIDBYT_DEVICE_ID|TIDBYT_API_TOKEN|TIDBYT_INSTALLATION_ID)='
 
 usage() {
   cat <<EOF
@@ -45,7 +45,7 @@ trap 'rm -f "$tmp"' EXIT
 python3 <<'PY' "$ENV_FILE" "$SECRETS_FILE" "$tmp"
 import re, sys
 env_path, secrets_path, out_path = sys.argv[1:4]
-allowed = {"TIDBYT_DEVICE_ID", "TIDBYT_API_TOKEN", "TIDBYT_INSTALLATION_ID", "TIDBYT_ENABLED"}
+allowed = {"TIDBYT_DEVICE_ID", "TIDBYT_API_TOKEN", "TIDBYT_INSTALLATION_ID"}
 
 def parse(path):
     entries = {}

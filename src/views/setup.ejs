@@ -22,8 +22,9 @@
 
   <pre>TIDBYT_DEVICE_ID=…
 TIDBYT_API_TOKEN=…
-TIDBYT_INSTALLATION_ID=airplaystatus
-TIDBYT_ENABLED=1</pre>
+TIDBYT_INSTALLATION_ID=airplaystatus</pre>
+
+  <p class="hint">Tidbyt push enables automatically when both ID and token are set. Use <code>DISABLE_TIDBYT=1</code> in .env to turn off.</p>
 
   <label for="secrets">Secrets file</label>
   <input id="secrets" type="file" accept=".env,text/plain">
@@ -53,7 +54,11 @@ TIDBYT_ENABLED=1</pre>
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || res.statusText);
         status.className = 'ok';
-        status.textContent = 'Applied: ' + data.applied.join(', ') + '. Run on Pi: ' + data.restart;
+        status.textContent =
+          'Applied: ' +
+          data.applied.join(', ') +
+          '. Tidbyt: ' +
+          (data.tidbyt === 'enabled' ? 'enabled now — play music to push.' : data.tidbyt);
       } catch (e) {
         status.className = 'err';
         status.textContent = e.message;

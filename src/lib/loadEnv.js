@@ -32,3 +32,20 @@ export const loadEnvFile = (envPath = path.join(projectRoot, '.env')) => {
     }
   }
 };
+
+/** Re-read .env and overwrite process.env (used after one-time secrets upload). */
+export const reloadEnvFile = (envPath = path.join(projectRoot, '.env')) => {
+  if (!fs.existsSync(envPath)) return;
+
+  for (const line of fs.readFileSync(envPath, 'utf8').split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+
+    const eq = trimmed.indexOf('=');
+    if (eq <= 0) continue;
+
+    const key = trimmed.slice(0, eq).trim();
+    const value = parseValue(trimmed.slice(eq + 1));
+    process.env[key] = value;
+  }
+};

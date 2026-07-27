@@ -1,9 +1,8 @@
-/** Keys allowed in one-time setup upload / apply-secrets-file (never commit values). */
+/** Keys allowed in one-time setup upload / apply-secrets-file (Tidbyt creds only). */
 export const ALLOWED_SECRET_KEYS = new Set([
   'TIDBYT_DEVICE_ID',
   'TIDBYT_API_TOKEN',
   'TIDBYT_INSTALLATION_ID',
-  'TIDBYT_ENABLED',
 ]);
 
 export const parseEnvLines = (text) => {

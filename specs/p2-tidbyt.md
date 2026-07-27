@@ -71,10 +71,12 @@ Environment variables (no `.env` file in repo; inject at runtime per project con
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `TIDBYT_ENABLED` | No | `1` to start push loop |
-| `TIDBYT_DEVICE_ID` | Yes if enabled | Device ID from Tidbyt app |
-| `TIDBYT_API_TOKEN` | Yes if enabled | API token from Tidbyt app |
+| `TIDBYT_DEVICE_ID` | Yes | From Tidbyt app |
+| `TIDBYT_API_TOKEN` | Yes | From Tidbyt app |
 | `TIDBYT_INSTALLATION_ID` | No | Default `airplaystatus` (alphanumeric only) |
+| `DISABLE_TIDBYT` | No | Set to `1` to force off |
+
+Auto-starts when `TIDBYT_DEVICE_ID` + `TIDBYT_API_TOKEN` are set.
 
 Future: macOS Keychain storage for token (same pattern as planned Spotify pivot).
 
@@ -107,7 +109,7 @@ Future: macOS Keychain storage for token (same pattern as planned Spotify pivot)
 
 - Log push failures; do not crash Node process
 - Exponential backoff on repeated API errors (max 5 min)
-- Disable after N consecutive failures until `TIDBYT_ENABLED` restart
+- Disable after N consecutive failures until process restart
 
 ## CLI helper
 
@@ -123,12 +125,10 @@ pixlet push --installation-id airplaystatus "$TIDBYT_DEVICE_ID" /tmp/tidbyt.webp
 
 ## Integration with `run-local.sh`
 
-Optional flag (future): `TIDBYT_ENABLED=1 ./bin/run-local.sh`
-
-Or document as separate env when starting:
+With creds in `.env` or the environment:
 
 ```bash
-TIDBYT_ENABLED=1 TIDBYT_DEVICE_ID=... TIDBYT_API_TOKEN=... ./bin/run-local.sh
+TIDBYT_DEVICE_ID=... TIDBYT_API_TOKEN=... ./bin/run-local.sh
 ```
 
 ## File structure (planned)

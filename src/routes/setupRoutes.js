@@ -11,6 +11,8 @@ import {
   readSetupToken,
   validateSetupToken,
 } from '../lib/setupToken.js';
+import { reloadEnvFile } from '../lib/loadEnv.js';
+import { reloadTidbytPush } from '../services/tidbytPushService.js';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const ENV_FILE = path.join(projectRoot, '.env');
@@ -81,11 +83,15 @@ export const registerSetupRoutes = (app) => {
       mode: 0o600,
     });
     clearSetupToken();
+    reloadEnvFile();
+    const tidbyt = reloadTidbytPush();
 
     res.json({
       ok: true,
       applied: entries.map((e) => e.key),
-      restart: 'sudo systemctl restart airplay-status',
+      tidbyt: tidbyt.shouldStart
+        ? 'enabled'
+        : tidbyt.reason || tidbyt.issues?.join('; ') || 'not started',
     });
   });
 };

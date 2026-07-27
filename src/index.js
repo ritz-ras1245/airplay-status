@@ -11,9 +11,7 @@ import {
 import { getPlaybackState as getMockPlaybackState } from './services/mockPlaybackService.js';
 import { formatMs } from './utils/formatTime.js';
 import {
-  printTidbytStartupStatus,
-  resolveTidbytStartup,
-  startTidbytPushService,
+  configureTidbytPush,
 } from './services/tidbytPushService.js';
 import { APP_VERSION, getVersionInfo } from './lib/appVersion.js';
 import { getDeployStage } from './lib/deployStage.js';
@@ -156,20 +154,16 @@ app.listen(PORT, () => {
     console.log('');
   }
 
-  const tidbyt = resolveTidbytStartup();
-  printTidbytStartupStatus(tidbyt);
+  const tidbyt = configureTidbytPush({
+    baseUrl: `http://localhost:${PORT}`,
+    getPlaybackState: async () => {
+      if (USE_MOCK) return getMockPlaybackState();
+      return getLivePlaybackState();
+    },
+    onPlaybackChange: USE_MOCK ? null : onPlaybackChange,
+  });
 
-  if (tidbyt.shouldStart) {
-    startTidbytPushService({
-      baseUrl: `http://localhost:${PORT}`,
-      deviceId: tidbyt.deviceId,
-      apiToken: tidbyt.apiToken,
-      installationId: tidbyt.installationId,
-      getPlaybackState: async () => {
-        if (USE_MOCK) return getMockPlaybackState();
-        return getLivePlaybackState();
-      },
-      onPlaybackChange: USE_MOCK ? null : onPlaybackChange,
-    });
+  if (!tidbyt.shouldStart && setupToken) {
+    console.log('Upload Tidbyt creds at /setup?token=… — push starts immediately (no restart).');
   }
 });

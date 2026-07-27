@@ -64,14 +64,16 @@ At startup you'll see either:
 
 or a warning explaining what's missing (e.g. pixlet not installed) — the dashboard still runs.
 
-Set `TIDBYT_ENABLED=0` in `.env` to skip Tidbyt entirely and hide the startup warning.
+Set `DISABLE_TIDBYT=1` in `.env` or the environment to skip Tidbyt entirely.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `TIDBYT_DEVICE_ID` | — | Required for push |
 | `TIDBYT_API_TOKEN` | — | Required for push |
-| `TIDBYT_ENABLED` | auto | Set to `0` to disable |
 | `TIDBYT_INSTALLATION_ID` | `airplaystatus` | Alphanumeric only; persists in Tidbyt app rotation |
+| `DISABLE_TIDBYT` | off | Set to `1` to force off while creds remain in `.env` |
+
+Push **auto-starts** when both `TIDBYT_DEVICE_ID` and `TIDBYT_API_TOKEN` are set (no `TIDBYT_ENABLED`).
 
 Pushes while a track is playing; **deletes the installation** when the session ends so it leaves Tidbyt rotation entirely.
 
