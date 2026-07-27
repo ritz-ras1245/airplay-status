@@ -132,9 +132,16 @@ P99 runs **after P50 soak sign-off**, **before P100** release (`1.0.0`). P199 be
 | **P3** — eInk display | 📄 Spec | `specs/p3-eink-display.md` (+ P3.1 profiles, on-demand PNG) |
 | **P4** — eInk controls | 📄 Spec | `specs/p4-eink-controls.md` |
 | **P5** — Deployment | 📄 Spec | `specs/p5-deployment.md` — Pi, Docker (reference) |
+| **P6** — Echo Show | 📄 Spec | `specs/p6-echo-show.md` — Tier B push → Silk |
+| **P7** — Android always-on | 💡 Idea | `specs/p7-android-always-on.md` — WebView console; idle screen-off; tap-to-resume |
+| **P8** — DeskThing / Car Thing | 💡 Idea | `specs/p8-deskthing-carthing.md` — same always-on rules on Car Thing |
+| **P9** — iPad fallback client | 💡 Idea | `specs/p9-ipad-always-on.md` — iPad shell / Guided Access parity |
+| **P10** — Local service fallback | 💡 Idea | `specs/p10-local-service-fallback.md` — off-Pi gateway; probe ports; generic `.local` front |
 | **P49** — Pre-prod beta | ✅ Done | `specs/p49-preprod-deployment.md` — RPi4, AP2, bare metal |
 | **P50** — Beta soak + observability | 📄 Active | `specs/p50-beta-soak-observability.md` — soak Pi; Mac Loki/Grafana |
 | **P99** — Prod readiness | 📄 Spec | `specs/p99-prod-readiness.md` — see permanent definition above |
+
+**Shared client rules (P7–P9):** [specs/guidelines/always-on-display-client.md](specs/guidelines/always-on-display-client.md)
 
 **Implementation order:** Features on **Mac dev** → **P49** beta → **P50** soak → **P99** → **P100** release `1.0.0` → line 2 on `main` as `2.0.0-dev`.
 
