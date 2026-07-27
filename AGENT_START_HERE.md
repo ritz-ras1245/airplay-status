@@ -70,7 +70,7 @@ git checkout feat/cursor/p49-rpi-deployment-0a02
 cp config/deploy/beta.env.example .env
 ```
 
-Or sync from Mac: `./bin/p49-install-rpi.sh rasohoni@airplay-beta.local`
+Or sync from Mac: `./bin/p49-install-rpi.sh airplay@airplay-beta.local`
 
 ### Docker (default)
 
