@@ -4,18 +4,22 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PI_ENV="${PI_ENV:-/opt/airplay-status/.env}"
-if [[ -f "$PI_ENV" ]]; then
-  set -a
-  # shellcheck disable=SC1090
-  source "$PI_ENV"
-  set +a
-elif [[ -f "$ROOT/.env" ]]; then
-  set -a
-  # shellcheck disable=SC1091
-  source "$ROOT/.env"
-  set +a
-fi
-PORT="${PORT:-80}"
+
+read_env_port() {
+  local file="$1" line
+  if [[ -r "$file" ]]; then
+    line="$(grep -E '^PORT=' "$file" 2>/dev/null | tail -1 || true)"
+  elif [[ -f "$file" ]] && command -v sudo >/dev/null; then
+    line="$(sudo grep -E '^PORT=' "$file" 2>/dev/null | tail -1 || true)"
+  fi
+  if [[ -n "$line" ]]; then
+    echo "${line#PORT=}" | tr -d '"'
+  else
+    echo "80"
+  fi
+}
+
+PORT="$(read_env_port "$PI_ENV")"
 BASE="http://127.0.0.1:${PORT}"
 FAIL=0
 
