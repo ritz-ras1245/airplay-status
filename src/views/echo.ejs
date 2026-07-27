@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Now Playing — <%= deployStage.dashboardTitle %></title>
+  <link rel="stylesheet" href="/css/echo.css">
+</head>
+<body class="echo-body<%= profile ? ' echo-body--' + profile : '' %><%= kiosk ? ' echo-body--kiosk' : '' %>">
+  <main class="echo-shell">
+    <div id="echo-empty" class="echo-empty" <%= playback.title ? 'hidden' : '' %>>
+      <div class="echo-empty__icon" aria-hidden="true">🔇</div>
+      <h1 class="echo-empty__title">Nothing playing</h1>
+      <p class="echo-empty__hint">
+        Select <strong><%= deployStage.airplayReceiverName %></strong> as an AirPlay output to see track info here.
+      </p>
+    </div>
+
+    <div id="echo-playing" class="echo-playing" <%= playback.title ? '' : 'hidden' %>>
+      <div class="echo-art-wrap">
+        <img
+          id="echo-art"
+          class="echo-art"
+          src="<%= playback.albumArt || '' %>"
+          alt=""
+          <%= playback.albumArt ? '' : 'hidden' %>
+        >
+        <div id="echo-art-ph" class="echo-art echo-art--placeholder" <%= playback.albumArt ? 'hidden' : '' %>>🎵</div>
+      </div>
+
+      <div class="echo-meta">
+        <h1 id="echo-title" class="echo-title"><%= playback.title || '' %></h1>
+        <p id="echo-artist" class="echo-artist"><%= playback.artist || '' %></p>
+        <p id="echo-album" class="echo-album"><%= playback.album || '' %></p>
+      </div>
+
+      <div class="echo-progress">
+        <div class="echo-progress__bar" aria-hidden="true">
+          <div
+            id="echo-progress-fill"
+            class="echo-progress__fill"
+            style="width: <%= playback.durationMs ? Math.min(100, Math.round((playback.progressMs / playback.durationMs) * 100)) : 0 %>%"
+          ></div>
+        </div>
+        <div class="echo-progress__times">
+          <span id="echo-time-current"><%= formatMs(playback.progressMs) %></span>
+          <span id="echo-time-total"><%= formatMs(playback.durationMs) %></span>
+        </div>
+      </div>
+
+      <div class="echo-status">
+        <span id="echo-badge" class="echo-badge <%= playback.isPlaying ? '' : 'echo-badge--paused' %>">
+          <%= playback.isPlaying ? '▶ Playing' : '⏸ Paused' %>
+        </span>
+        <span class="echo-source">
+          <img src="/images/airplay-icon-white.png" alt="" class="echo-source__icon" aria-hidden="true">
+          <span id="echo-source"><%= playback.source || 'AirPlay' %></span>
+        </span>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/echo.js" type="module"></script>
+</body>
+</html>

@@ -13,6 +13,9 @@ import { formatMs } from './utils/formatTime.js';
 import {
   configureTidbytPush,
 } from './services/tidbytPushService.js';
+import {
+  configureEchoPush,
+} from './services/echoPushService.js';
 import { APP_VERSION, getVersionInfo } from './lib/appVersion.js';
 import { getDeployStage } from './lib/deployStage.js';
 import { registerSetupRoutes } from './routes/setupRoutes.js';
@@ -136,6 +139,20 @@ const handleDashboard = (req, res) => {
 app.get('/', handleDashboard);
 app.get('/debug', handleDashboard);
 
+app.get('/echo', async (req, res) => {
+  const { playback } = await resolvePlayback(req);
+  const profile = req.query.profile === 'spot' ? 'spot' : null;
+  const kiosk = req.query.kiosk === '1';
+
+  res.render('echo', {
+    playback,
+    formatMs,
+    deployStage,
+    profile,
+    kiosk,
+  });
+});
+
 app.listen(PORT, () => {
   const mode = USE_MOCK ? 'mock' : 'live';
   const { dashboardTitle, label, deployPhase } = deployStage;
@@ -166,4 +183,12 @@ app.listen(PORT, () => {
   if (!tidbyt.shouldStart && setupToken) {
     console.log('Upload Tidbyt creds at /setup?token=… — push starts immediately (no restart).');
   }
+
+  configureEchoPush({
+    getPlaybackState: async () => {
+      if (USE_MOCK) return getMockPlaybackState();
+      return getLivePlaybackState();
+    },
+    onPlaybackChange: USE_MOCK ? null : onPlaybackChange,
+  });
 });

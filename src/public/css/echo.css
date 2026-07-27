@@ -1,0 +1,251 @@
+:root {
+  color-scheme: dark;
+  --echo-bg: #0a0a0f;
+  --echo-surface: #14141c;
+  --echo-text: #f5f5f7;
+  --echo-muted: #9a9aa8;
+  --echo-accent: #5ac8fa;
+  --echo-progress: #5ac8fa;
+  --echo-progress-track: #2a2a36;
+  --echo-min-touch: 48px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--echo-bg);
+  color: var(--echo-text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.echo-body {
+  overflow: hidden;
+}
+
+.echo-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 48px);
+  text-align: center;
+}
+
+.echo-empty,
+.echo-playing {
+  width: min(100%, 960px);
+}
+
+.echo-empty__icon {
+  font-size: clamp(3rem, 12vw, 5rem);
+  margin-bottom: 1rem;
+}
+
+.echo-empty__title {
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+.echo-empty__hint {
+  color: var(--echo-muted);
+  font-size: clamp(1rem, 3vw, 1.25rem);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.echo-art-wrap {
+  margin: 0 auto 1.5rem;
+  max-width: min(70vw, 480px);
+}
+
+.echo-art {
+  display: block;
+  width: 100%;
+  max-height: 40vh;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+}
+
+.echo-art--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  max-height: 40vh;
+  margin: 0 auto;
+  background: var(--echo-surface);
+  font-size: clamp(3rem, 15vw, 6rem);
+}
+
+.echo-title {
+  font-size: clamp(1.5rem, 5vw, 2.75rem);
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  line-height: 1.2;
+}
+
+.echo-artist {
+  font-size: clamp(1.1rem, 3.5vw, 1.75rem);
+  color: var(--echo-accent);
+  margin: 0 0 0.35rem;
+}
+
+.echo-album {
+  font-size: clamp(0.95rem, 2.5vw, 1.25rem);
+  color: var(--echo-muted);
+  margin: 0 0 1.5rem;
+}
+
+.echo-progress {
+  width: min(100%, 640px);
+  margin: 0 auto 1.25rem;
+}
+
+.echo-progress__bar {
+  height: 8px;
+  background: var(--echo-progress-track);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.echo-progress__fill {
+  height: 100%;
+  background: var(--echo-progress);
+  transition: width 0.25s linear;
+}
+
+.echo-progress__times {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.5rem;
+  font-size: clamp(0.85rem, 2vw, 1rem);
+  color: var(--echo-muted);
+}
+
+.echo-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: var(--echo-min-touch);
+}
+
+.echo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--echo-min-touch);
+  padding: 0 1rem;
+  border-radius: 999px;
+  background: rgba(90, 200, 250, 0.15);
+  color: var(--echo-accent);
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+  font-weight: 600;
+}
+
+.echo-badge--paused {
+  background: rgba(154, 154, 168, 0.15);
+  color: var(--echo-muted);
+}
+
+.echo-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--echo-muted);
+  font-size: clamp(0.9rem, 2.2vw, 1rem);
+}
+
+.echo-source__icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.85;
+}
+
+/* Echo Show 5 — compact landscape */
+@media (max-width: 640px) and (orientation: landscape) {
+  .echo-shell {
+    flex-direction: row;
+    gap: 1.5rem;
+    text-align: left;
+  }
+
+  .echo-playing {
+    display: grid;
+    grid-template-columns: minmax(120px, 35vw) 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 0.75rem 1.25rem;
+    align-items: center;
+  }
+
+  .echo-art-wrap {
+    grid-row: 1 / span 3;
+    margin: 0;
+  }
+
+  .echo-meta {
+    grid-column: 2;
+  }
+
+  .echo-progress {
+    grid-column: 2;
+    margin: 0;
+  }
+
+  .echo-status {
+    grid-column: 2;
+    justify-content: flex-start;
+  }
+}
+
+/* Fire TV / large landscape */
+@media (min-width: 1280px) {
+  .echo-title {
+    font-size: 3rem;
+  }
+
+  .echo-art-wrap {
+    max-width: 520px;
+  }
+}
+
+/* Echo Spot (rook) — circular-safe profile */
+.echo-body--spot .echo-shell {
+  padding: 12%;
+}
+
+.echo-body--spot .echo-art-wrap {
+  max-width: min(55vw, 280px);
+}
+
+.echo-body--spot .echo-art,
+.echo-body--spot .echo-art--placeholder {
+  border-radius: 50%;
+  max-height: 32vh;
+}
+
+.echo-body--spot .echo-title {
+  font-size: clamp(1.1rem, 4vw, 1.5rem);
+}
+
+.echo-body--spot .echo-artist,
+.echo-body--spot .echo-album {
+  font-size: clamp(0.85rem, 3vw, 1rem);
+}
+
+[hidden] {
+  display: none !important;
+}

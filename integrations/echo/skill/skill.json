@@ -1,0 +1,66 @@
+{
+  "manifest": {
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "REPLACE_WITH_SKILL_LAMBDA_ARN"
+        },
+        "interfaces": [
+          {
+            "type": "ALEXA_PRESENTATION_APL"
+          }
+        ]
+      },
+      "routines": {
+        "customTriggers": [
+          {
+            "name": "AirPlayStatusNowPlaying",
+            "displayName": "Now Playing",
+            "description": "Fires when AirPlay playback starts or changes"
+          }
+        ]
+      }
+    },
+    "manifestVersion": "1.0",
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "name": "AirPlay Status",
+          "summary": "Opens the AirPlay Status now-playing dashboard on Echo Show",
+          "description": "Tier B integration — opens Silk to the LAN dashboard when AirPlay playback starts.",
+          "examplePhrases": [
+            "Alexa, open airplay now playing",
+            "Alexa, ask airplay status to open now playing"
+          ],
+          "keywords": [
+            "airplay",
+            "music",
+            "now playing"
+          ]
+        }
+      },
+      "isAvailableWorldwide": false,
+      "testingInstructions": "Dev skill only. Configure ECHO_DISPLAY_URL and LAN DNS before testing.",
+      "category": "SMART_HOME",
+      "distributionCountries": ["US"]
+    },
+    "permissions": [
+      {
+        "name": "alexa::routines:triggerinstances:write"
+      }
+    ],
+    "privacyAndCompliance": {
+      "allowsPurchases": false,
+      "usesPersonalInfo": false,
+      "isChildDirected": false,
+      "isExportCompliant": true,
+      "containsAds": false,
+      "locales": {
+        "en-US": {
+          "privacyPolicyUrl": "https://example.com/privacy",
+          "termsOfUseUrl": "https://example.com/terms"
+        }
+      }
+    }
+  }
+}
