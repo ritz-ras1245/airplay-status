@@ -10,7 +10,7 @@ usage() {
 Usage: p49-down.sh [docker|rpi]
 
   docker  Stop Docker Compose stack (default)
-  rpi     Stop systemd services (bare-metal)
+  rpi     Stop systemd services (legacy)
 EOF
 }
 

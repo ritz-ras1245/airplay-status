@@ -1,6 +1,5 @@
-# P49 beta — Docker host-network stack (Path A)
-# Prerequisite on Pi host: nqptp running (UDP 319/320) — see deploy/docker/README.md
-name: airplay-status-p49
+# P49 beta — Docker host-network stack
+# Prerequisite on Pi host: nqptp running (UDP 319/320) — see deploy/docker/README-WARN.md
 
 services:
   shairport-sync:
@@ -20,8 +19,7 @@ services:
     network_mode: host
     restart: unless-stopped
     env_file:
-      - path: ../../.env
-        required: false
+      - ../../.env
     environment:
       DEPLOY_STAGE: ${DEPLOY_STAGE:-beta}
       DEPLOY_PHASE: ${DEPLOY_PHASE:-p49}
