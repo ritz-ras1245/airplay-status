@@ -38,7 +38,7 @@ Iteration 1 uses **P49** for beta+pre-prod combined (no P149).
 
 ## Pipelines
 
-**Line 1 (now):** Mac dev → **P49** beta (RPi4) → **P99** → **P100** release `1.0.0`
+**Line 1 (now):** Mac dev → **P49** beta (RPi4) → **P50** soak + observability → **P99** → **P100** release `1.0.0`
 
 **Line 2+:** Mac dev → **P149** beta → **P199** → **P200** release `2.0.0`
 
@@ -77,6 +77,7 @@ Record `version` + `gitCommit` at P49 / P99 / P100 and every patch deploy.
 | [p0-airplay-status.md](./p0-airplay-status.md) | P0 |
 | [p1-remote-control.md](./p1-remote-control.md) – [p5-deployment.md](./p5-deployment.md) | P1–P5 features |
 | [p49-preprod-deployment.md](./p49-preprod-deployment.md) | P49 — line 1 beta |
+| [p50-beta-soak-observability.md](./p50-beta-soak-observability.md) | P50 — soak + Mac Grafana/Loki |
 | [p99-prod-readiness.md](./p99-prod-readiness.md) | P99 — line 1 prod readiness |
 | *(future)* | P149, P199, P100 release checklist |
 | [guidelines/mac-dev-linux-beta.md](./guidelines/mac-dev-linux-beta.md) | Cross-project |

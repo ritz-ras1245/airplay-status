@@ -1,0 +1,34 @@
+# Raspberry Pi — installed to /etc/promtail/promtail.yml by deploy/rpi/promtail/install-promtail.sh
+# Requires promtail -config.expand-env=true and LOKI_PUSH_URL in /etc/default/promtail
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /var/lib/promtail/positions.yaml
+
+clients:
+  - url: ${LOKI_PUSH_URL}
+    backoff_config:
+      min_period: 500ms
+      max_period: 5m
+      max_retries: 20
+    batchwait: 1s
+    batchsize: 1048576
+
+scrape_configs:
+  - job_name: airplay-pi-journal
+    journal:
+      max_age: 168h
+      labels:
+        job: systemd-journal
+        host: airplay-beta
+    relabel_configs:
+      - source_labels: ['__journal__systemd_unit']
+        regex: '(airplay-status|shairport-sync|nqptp)\.service'
+        action: keep
+      - source_labels: ['__journal__systemd_unit']
+        target_label: unit
+      - source_labels: ['__journal__priority']
+        target_label: priority

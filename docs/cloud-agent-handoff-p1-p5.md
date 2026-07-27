@@ -1,6 +1,6 @@
 # Cloud Agent handoff — P1–P6 (while P49 beta soaks)
 
-**Context:** P49 beta is **live on RPi4** (`airplay-beta.local`, HTTP **80**). **Do not modify the Pi** or P49 deploy paths unless fixing a beta blocker. Owner will review each PR **one by one** when back.
+**Context:** P49 beta is **live on RPi4**. **P50** = soak + observability — **do not modify the Pi** or P49 deploy paths unless fixing a beta blocker.
 
 **Repo:** https://github.com/ritz-ras1245/airplay-status  
 **Base branch:** `main`  
@@ -23,10 +23,11 @@
 
 ---
 
-## Do not touch (beta soak)
+## Do not touch (P50 soak)
 
 - Live Pi (`airplay-beta.local`) — no SSH deploys, no cred resets
-- `deploy/rpi/install.sh` unless P49 beta blocker
+- `deploy/rpi/install.sh` unless beta blocker
+- Observability: [docs/p50-observability.md](./p50-observability.md) (Promtail install is additive OK)
 
 ---
 
@@ -40,7 +41,8 @@
 | **P5** | [p5-deployment.md](../specs/p5-deployment.md) | `p5-deployment-docs` | P49 ✅ docs only |
 | **P6** | [p6-echo-show.md](../specs/p6-echo-show.md) | `p6-echo-show` | P0 ✅ |
 | ~~P2~~ | Tidbyt | — | Done |
-| ~~P49~~ | Beta | — | Soaking |
+| ~~P49~~ | Beta deploy | — | Done ✅ |
+| **P50** | Soak + observability | — | **Active** |
 
 ---
 
@@ -141,4 +143,4 @@ Do not commit secrets or ARNs.
 
 Review PRs **one at a time**: spec vs diff → Mac smoke → privacy check → merge.
 
-After soak: P49 sign-off → P99 → P100.
+After soak: P50 sign-off → P99 → P100.
