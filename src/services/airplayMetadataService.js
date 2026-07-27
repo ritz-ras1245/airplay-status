@@ -11,6 +11,13 @@ import {
   itemToUpdate,
   saveArtwork,
 } from '../lib/metadataPipeReader.js';
+import {
+  clearControlSession,
+  configurePlaybackControl,
+  getControlState,
+  notifyActivePlayback,
+  updateControlSession,
+} from './playbackControlService.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '../..');
@@ -54,9 +61,16 @@ const clearArtworkFiles = () => {
 };
 
 const notify = () => {
-  const publicState = toPublicState(state);
+  const publicState = getPlaybackState();
   for (const listener of listeners) listener(publicState);
 };
+
+configurePlaybackControl({
+  getPlaybackState: () => ({
+    isPlaying: state.isPlaying,
+    title: state.title,
+  }),
+});
 
 const applyUpdate = (update) => {
   const isProgressOnly = update?.type === 'field' && update.field === 'progress';
@@ -75,8 +89,16 @@ const applyUpdate = (update) => {
 
     clearArtworkFiles();
     state = createEmptyPlaybackState();
+    clearControlSession();
     lastIgnoredConnectPendAt = 0;
     if (DEBUG) logDebug('state', 'title=∅ playing=false connected=false (session ended)');
+    notify();
+    return;
+  }
+
+  if (update?.type === 'control') {
+    updateControlSession({ [update.field]: update.value });
+    if (DEBUG) logDebug('control session', update.field, update.value);
     notify();
     return;
   }
@@ -85,9 +107,18 @@ const applyUpdate = (update) => {
     lastPbegAt = Date.now();
   }
 
+  if (update?.type === 'event' && update.event === 'active_begin') {
+    notifyActivePlayback();
+  }
+
   const prev = JSON.stringify(toPublicState(state));
+  const prevTitle = state.title;
   state = applyMetadataUpdate(state, update);
   const next = JSON.stringify(toPublicState(state));
+
+  if (update?.type === 'field' && update.field === 'title' && state.title && state.title !== prevTitle) {
+    notifyActivePlayback();
+  }
 
   if (prev === next) return;
 
@@ -168,7 +199,10 @@ export const onPlaybackChange = (listener) => {
   return () => listeners.delete(listener);
 };
 
-export const getPlaybackState = () => toPublicState(state);
+export const getPlaybackState = () => ({
+  ...toPublicState(state),
+  ...getControlState(),
+});
 
 export const startMetadataWatcher = () => {
   if (watcherStarted) return;
