@@ -17,6 +17,8 @@ import {
 } from './services/tidbytPushService.js';
 import { APP_VERSION, getVersionInfo } from './lib/appVersion.js';
 import { getDeployStage } from './lib/deployStage.js';
+import { registerSetupRoutes } from './routes/setupRoutes.js';
+import { readSetupToken } from './lib/setupToken.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -109,6 +111,8 @@ app.post('/api/debug/mark', (req, res) => {
   res.json({ ok: true, label });
 });
 
+registerSetupRoutes(app);
+
 const renderDashboard = async (req, res, { showDebugCapture = false } = {}) => {
   const { playback, forceNothingPlaying, live } = await resolvePlayback(req);
 
@@ -143,6 +147,13 @@ app.listen(PORT, () => {
   console.log(`Version API: http://localhost:${PORT}/api/version`);
   if (METADATA_DEBUG) {
     console.log(`Debug capture UI at http://localhost:${PORT}/debug`);
+  }
+
+  const setupToken = readSetupToken();
+  if (setupToken) {
+    console.log('');
+    console.log('Tidbyt/secrets setup (one-time): open /setup?token=… from install summary');
+    console.log('');
   }
 
   const tidbyt = resolveTidbytStartup();

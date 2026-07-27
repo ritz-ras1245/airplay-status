@@ -15,7 +15,9 @@ sudo ./deploy/rpi/install.sh
 ./bin/check-p49-beta.sh
 ```
 
-Install takes **~15–25 minutes** (shairport-sync compile). `.env` is created from `config/deploy/beta.env.example` automatically.
+Install takes **~15–25 minutes** (shairport-sync compile). `.env` is created from `config/deploy/beta.env.example` automatically. **pixlet** is installed for Tidbyt.
+
+**Tidbyt credentials:** [docs/p49-tidbyt-credentials.md](../../docs/p49-tidbyt-credentials.md) — one-time web upload or `tidbyt.env` from iCloud.
 
 ## After install
 

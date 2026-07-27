@@ -148,3 +148,5 @@ Automated checks do not replace iPhone + HomePods multi-room test. See [AGENT_ST
 | [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) | Docker limitations |
 
 Study copy (Obsidian-friendly): [docs/study/p49-rpi-bare-metal-lessons-obsidian.md](./study/p49-rpi-bare-metal-lessons-obsidian.md)
+
+Tidbyt on Pi: [docs/p49-tidbyt-credentials.md](./p49-tidbyt-credentials.md)

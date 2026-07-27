@@ -8,7 +8,7 @@ INSTALL_ROOT="${INSTALL_ROOT:-/opt/airplay-status}"
 NQPTP_VERSION="${NQPTP_VERSION:-1.2.4}"
 SHAIRPORT_VERSION="${SHAIRPORT_VERSION:-4.3.6}"
 BUILD_DIR="${BUILD_DIR:-/tmp/airplay-status-build}"
-SERVICE_USER="${SERVICE_USER:-airplay-status}"
+PIXLET_VERSION="${PIXLET_VERSION:-0.34.0}"
 
 log() { echo "==> $*"; }
 
@@ -64,6 +64,22 @@ install_node() {
   log "Installing Node.js 20.x..."
   curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
   apt-get install -y nodejs
+}
+
+install_pixlet() {
+  if command -v pixlet >/dev/null; then
+    log "pixlet already installed: $(command -v pixlet)"
+    return 0
+  fi
+  log "Installing pixlet ${PIXLET_VERSION} (linux arm64)..."
+  local tmp archive="pixlet_${PIXLET_VERSION}_linux_arm64.tar.gz"
+  tmp="$(mktemp -d)"
+  curl -fsSL "https://github.com/tidbyt/pixlet/releases/download/v${PIXLET_VERSION}/${archive}" \
+    -o "$tmp/${archive}"
+  tar -xzf "$tmp/${archive}" -C "$tmp"
+  install -m 755 "$tmp/pixlet" /usr/local/bin/pixlet
+  rm -rf "$tmp"
+  log "pixlet: $(pixlet --version 2>/dev/null || command -v pixlet)"
 }
 
 build_nqptp() {
@@ -156,6 +172,22 @@ install_config() {
   (cd "$INSTALL_ROOT" && ./bin/render-shairport-config.sh --stage beta --output /etc/shairport-sync.conf)
 }
 
+ensure_setup_token() {
+  if [[ -f "$INSTALL_ROOT/.env" ]] \
+    && grep -qE '^TIDBYT_DEVICE_ID=.+' "$INSTALL_ROOT/.env" \
+    && grep -qE '^TIDBYT_API_TOKEN=.+' "$INSTALL_ROOT/.env"; then
+    log "Tidbyt credentials present — skipping setup token"
+    rm -f "$INSTALL_ROOT/.setup-token"
+    return 0
+  fi
+  log "Generating one-time secrets setup token (Tidbyt)..."
+  local token
+  token="$(openssl rand -hex 16)"
+  echo "$token" > "$INSTALL_ROOT/.setup-token"
+  chown "$SERVICE_USER:$SERVICE_USER" "$INSTALL_ROOT/.setup-token"
+  chmod 600 "$INSTALL_ROOT/.setup-token"
+}
+
 install_systemd() {
   log "Installing systemd units..."
   cp "$ROOT/deploy/rpi/systemd/nqptp.service" /etc/systemd/system/
@@ -175,7 +207,7 @@ start_services() {
 }
 
 print_summary() {
-  local ip
+  local ip token
   ip="$(hostname -I 2>/dev/null | awk '{print $1}')"
   cat <<EOF
 
@@ -189,9 +221,18 @@ Services:
 
 Sanity:     ./bin/check-p49-beta.sh
 
-Beta checklist: docs/p49-docker-spike.md
+Tidbyt:     docs/p49-tidbyt-credentials.md
+EOF
+  if [[ -f "$INSTALL_ROOT/.setup-token" ]]; then
+    token="$(cat "$INSTALL_ROOT/.setup-token")"
+    cat <<EOF
+  Setup URL:  http://${ip:-<pi-ip>}:3003/setup?token=${token}
+  Or:         scp tidbyt.env airplay@<pi> && sudo ${INSTALL_ROOT}/bin/apply-secrets-file.sh ~/tidbyt.env
+
+EOF
+  fi
+  cat <<EOF
 Lessons:    docs/p49-rpi-bare-metal-lessons.md
-Next: copy Tidbyt secrets to ${INSTALL_ROOT}/.env if using P2 integrations.
 
 EOF
 }
@@ -200,10 +241,12 @@ main() {
   require_root
   install_apt_deps
   install_node
+  install_pixlet
   build_nqptp
   build_shairport_sync
   install_app
   install_config
+  ensure_setup_token
   install_systemd
   start_services
   print_summary

@@ -112,7 +112,9 @@ export const resolveTidbytStartup = ({
     issues.push('Set TIDBYT_DEVICE_ID and TIDBYT_API_TOKEN in .env');
   }
   if (!pixletPath) {
-    issues.push('pixlet not found — install: brew install tidbyt/tidbyt/pixlet');
+    issues.push(
+      'pixlet not found — Pi: reinstall deploy/rpi/install.sh; Mac: brew install tidbyt/tidbyt/pixlet',
+    );
   }
   if (!INSTALLATION_ID_PATTERN.test(installationId)) {
     issues.push(

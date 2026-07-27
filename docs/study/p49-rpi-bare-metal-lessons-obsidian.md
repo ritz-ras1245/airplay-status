@@ -72,6 +72,12 @@ sudo ./deploy/rpi/install.sh
 
 iPhone + HomePods in one AirPlay group with **AirPlay Status (Beta)**.
 
+## Tidbyt on Pi
+
+- `install.sh` installs **pixlet**
+- Creds: `docs/p49-tidbyt-credentials.md` — web upload or `tidbyt.env` from iCloud
+- Template: `config/deploy/tidbyt.env.example`
+
 ## Links
 
 - Repo doc: `docs/p49-rpi-bare-metal-lessons.md`
