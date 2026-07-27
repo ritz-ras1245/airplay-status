@@ -1,0 +1,33 @@
+# P49 beta — Docker host-network stack (Path A)
+# Prerequisite on Pi host: nqptp running (UDP 319/320) — see deploy/docker/README.md
+name: airplay-status-p49
+
+services:
+  shairport-sync:
+    image: mikebrady/shairport-sync:latest
+    container_name: airplay-status-shairport
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ./shairport/shairport-sync.conf:/etc/shairport-sync.conf:ro
+    # AP2 requires nqptp on the host network namespace (not in this compose file).
+
+  airplay-status:
+    build:
+      context: ../..
+      dockerfile: deploy/docker/Dockerfile
+    container_name: airplay-status-app
+    network_mode: host
+    restart: unless-stopped
+    env_file:
+      - path: ../../.env
+        required: false
+    environment:
+      DEPLOY_STAGE: ${DEPLOY_STAGE:-beta}
+      DEPLOY_PHASE: ${DEPLOY_PHASE:-p49}
+      PORT: ${PORT:-3003}
+      METADATA_PIPE: /tmp/shairport-sync-metadata
+      SKIP_SHAIRPORT_CHECK: "1"
+      GIT_COMMIT: ${GIT_COMMIT:-}
+    depends_on:
+      - shairport-sync

@@ -1,0 +1,16 @@
+# SCAFFOLD — shairport-sync AP2 unit. Cloud agent replaces on feat/ritz-ras1245/p49-rpi-beta.
+
+[Unit]
+Description=shairport-sync AirPlay 2 receiver — scaffold
+After=network-online.target nqptp.service
+Wants=network-online.target
+Requires=nqptp.service
+
+[Service]
+Type=simple
+EnvironmentFile=-/home/%i/airplay-status/.env
+ExecStart=/usr/local/sbin/shairport-sync -c %h/.config/shairport-sync/shairport-sync.conf
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

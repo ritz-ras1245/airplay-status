@@ -1,0 +1,21 @@
+{
+  "_purpose": "P49 Phase 0 — enter these values in Raspberry Pi Imager customisation wizard (Imager 2.x). Replace <<RITZ_FILL_HERE>> before flashing.",
+  "_plan": "docs/p49-beta-remote-deploy.md",
+  "_pr": "https://github.com/ritz-ras1245/airplay-status/pull/4",
+  "_after_boot": "ssh pi@airplay-beta.local → git clone … → git checkout feat/cursor/p49-rpi-deployment-0a02 → cp config/deploy/beta.env.example .env → sudo ./deploy/rpi/install.sh",
+  "hostname": "airplay-beta",
+  "sshEnabled": true,
+  "sshPasswordAuth": true,
+  "sshUserName": "pi",
+  "sshUserPassword": "<<RITZ_FILL_HERE>>",
+  "wifiConfigured": true,
+  "wifiMode": "wpa-psk",
+  "wifiSSID": "<<RITZ_FILL_HERE>>",
+  "wifiPassword": "<<RITZ_FILL_HERE>>",
+  "wifiHidden": false,
+  "recommendedWifiCountry": "US",
+  "timezone": "America/Los_Angeles",
+  "keyboard": "us",
+  "piConnectEnabled": false,
+  "passwordlessSudo": false
+}

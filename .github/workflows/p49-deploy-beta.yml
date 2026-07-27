@@ -1,0 +1,52 @@
+# Deploy P49 beta to Raspberry Pi (scaffold)
+#
+# GitHub Free: workflow_dispatch + repository/environment secrets + SSH deploy — all allowed
+# on public repos. See docs/p49-beta-remote-deploy.md.
+#
+# SCAFFOLD: wire secrets and remote script after Pi Phase 0 SSH works.
+# Secrets (repo or environment "beta"):
+#   P49_SSH_PRIVATE_KEY — deploy key private half
+#   P49_HOST              — e.g. airplay-beta.local
+#   P49_SSH_USER          — SSH user on Pi
+#   P49_DEPLOY_PATH       — optional, default ~/airplay-status
+
+name: Deploy P49 beta
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref (SHA or branch) to deploy
+        required: true
+        default: main
+      stage:
+        description: Deploy stage
+        required: true
+        default: beta
+        type: choice
+        options:
+          - beta
+          - prod
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: beta
+    steps:
+      - name: Checkout (for metadata only)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Scaffold notice
+        run: |
+          echo "SCAFFOLD workflow — remote deploy not wired yet."
+          echo "Target ref: ${{ inputs.ref }} stage: ${{ inputs.stage }}"
+          echo "After cloud agent PR: SSH to Pi, git checkout, npm ci, systemd restart."
+          echo "See docs/p49-beta-remote-deploy.md and bin/p49-deploy.sh"
+          exit 0
+
+      # Cloud agent PR replaces scaffold with:
+      # - ssh deploy using secrets.P49_SSH_PRIVATE_KEY
+      # - remote: git fetch/checkout, npm ci, render-shairport-config, systemctl restart
+      # - health: curl /api/version on P49_HOST

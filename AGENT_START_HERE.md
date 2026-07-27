@@ -196,6 +196,7 @@ From `specs/p49-preprod-deployment.md`:
 | Doc | Path |
 |-----|------|
 | **P49 spec** | [specs/p49-preprod-deployment.md](specs/p49-preprod-deployment.md) |
+| **P49 remote deploy plan** | [docs/p49-beta-remote-deploy.md](docs/p49-beta-remote-deploy.md) |
 | Multi-room / AP1 vs AP2 | [docs/multi-room-airplay.md](docs/multi-room-airplay.md) |
 | Versioning (repo) | [docs/versioning.md](docs/versioning.md) |
 | P5 deployment (reference) | [specs/p5-deployment.md](specs/p5-deployment.md) |
