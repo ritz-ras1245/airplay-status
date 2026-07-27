@@ -7,7 +7,7 @@
 
 ## Goal
 
-Package airplay-status for **pre-production / local beta** on a **Raspberry Pi 4** (user-owned hardware), with **AirPlay 2** so iPhone can select **real speakers + AirPlay Status** together. Try **Docker on Linux/Pi first**; if mDNS/AP2/nqptp blockers remain, ship a **bare Raspberry Pi OS** install. Optionally manage **1–4 instances** with a free-tier fleet tool (Balena or plain systemd).
+Package airplay-status for **pre-production / local beta** on a **Raspberry Pi 4** (user-owned hardware), with **AirPlay 2** so iPhone can select **real speakers + AirPlay Status** together. **Default path: bare metal** (`deploy/rpi/install.sh`) — validated on Trixie; see [p49-rpi-bare-metal-lessons.md](../docs/p49-rpi-bare-metal-lessons.md). Docker on Pi is optional ([deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md)). Optionally manage **1–4 instances** with a free-tier fleet tool (Balena or plain systemd).
 
 This is the **first real-environment gate** before **P99** prod-readiness and **P100** release (`1.0.0`).
 
@@ -66,7 +66,20 @@ Mac dev (AP1)  →  P49 pre-prod (RPi4, AP2)  →  P99 prod readiness  →  P100
 
 ---
 
-## Packaging — Docker
+## Packaging — bare metal (default)
+
+See [deploy/rpi/README.md](../deploy/rpi/README.md) and [p5-deployment.md](./p5-deployment.md) (platform reference).
+
+| Component | Where |
+|-----------|--------|
+| nqptp | Host systemd (`deploy/rpi/install.sh`) |
+| shairport-sync AP2 | Host systemd, `/etc/shairport-sync.conf` |
+| Node app | Host systemd, `/opt/airplay-status`, port **80** |
+| Metadata FIFO | `/tmp/shairport-sync-metadata` |
+
+Deliverables: `deploy/rpi/*`, `bin/check-p49-beta.sh`, `config/shairport-sync-airplay2.conf.example`.
+
+## Packaging — Docker (optional)
 
 See [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) (includes **limitations**).
 
@@ -77,7 +90,7 @@ See [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) (includes **
 | Node app | Container, `network_mode: host` |
 | Metadata FIFO | `/tmp/shairport-sync-metadata` on host |
 
-Deliverables: `deploy/docker/*`, `bin/p49-up.sh`, `bin/p49-down.sh`, `deploy/rpi/install.sh` (host bootstrap).
+Deliverables: `deploy/docker/*`, `bin/p49-up.sh`, `bin/p49-down.sh`.
 
 ## Fleet / remote management (1–4 instances)
 
@@ -95,7 +108,7 @@ Requirements for any fleet choice:
 
 - Inject `.env` (Tidbyt, Echo webhook) without committing secrets
 - Restart services on deploy
-- Health check: `GET http://<pi>:3003/api/health` (P99 adds endpoint; stub OK for P49)
+- Health check: `GET http://<pi>/api/health` (port **80** on bare-metal beta; P99 adds endpoint; stub OK for P49)
 
 ---
 
@@ -104,12 +117,12 @@ Requirements for any fleet choice:
 | Variable / file | Purpose |
 |---------------|---------|
 | `config/shairport-sync-airplay2.conf.example` | AP2 receiver on Pi |
-| `.env` on Pi | `TIDBYT_*`, `ECHO_*`, `PORT=3003` |
+| `.env` on Pi | `TIDBYT_*`, `ECHO_*`, `PORT=80` (see `config/deploy/beta.env.example`) |
 | `DEPLOY_PHASE` | `p49` (see [versioning.md](../docs/versioning.md)) |
 | `GIT_COMMIT` / `BUILD_SHA` | Short sha at deploy time |
 | `METADATA_PIPE` | Default `/tmp/shairport-sync-metadata`; override for Docker volume |
 
-Display URL for Echo/Tidbyt on beta: `http://<pi-lan-ip>:3003/…`
+Display URL for Echo/Tidbyt on beta: `http://<pi-lan-ip>/…` (port **80**)
 
 ---
 
@@ -162,16 +175,20 @@ docs/
 
 ## Implementation order (suggested)
 
-1. Pi: host bootstrap + `./bin/p49-up.sh docker` — [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md)
+1. Pi: `sudo ./deploy/rpi/install.sh` — [deploy/rpi/README.md](../deploy/rpi/README.md), [p49-rpi-bare-metal-lessons.md](../docs/p49-rpi-bare-metal-lessons.md)
 2. Soak + beta sign-off on LAN
 3. P99
+
+Optional Docker path: `./bin/p49-up.sh docker` — [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md)
 
 ---
 
 ## References
 
 - [multi-room-airplay.md](../docs/multi-room-airplay.md)
-- [p5-deployment.md](./p5-deployment.md)
+- [p5-deployment.md](./p5-deployment.md) — platform tradeoffs (Pi bare metal, Docker, Synology)
+- [p49-rpi-bare-metal-lessons.md](../docs/p49-rpi-bare-metal-lessons.md) — first Pi bring-up
+- [deploy/rpi/README.md](../deploy/rpi/README.md) — bare-metal quick start
 - [p99-prod-readiness.md](./p99-prod-readiness.md)
 - [shairport-sync BUILD.md](https://github.com/mikebrady/shairport-sync/blob/master/BUILD.md)
 - [nqptp](https://github.com/mikebrady/nqptp)

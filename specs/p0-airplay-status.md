@@ -158,7 +158,7 @@ Future work extends the same playback state from `/api/status`. Specs live in th
 | **P2** | Tidbyt now-playing push | Spec | [p2-tidbyt.md](./p2-tidbyt.md) |
 | **P3** | Kindle/eInk read-only display | Spec | [p3-eink-display.md](./p3-eink-display.md) (incl. [P3.1 device profiles](./p3-eink-display.md#p31-side-quest--device-profiles)) |
 | **P4** | eInk transport controls | Spec | [p4-eink-controls.md](./p4-eink-controls.md) |
-| **P5** | Cross-platform deployment (Pi, Docker, Synology) | Spec | [p5-deployment.md](./p5-deployment.md) |
+| **P5** | Cross-platform deployment (Pi bare metal, Docker, Synology) | Reference | [p5-deployment.md](./p5-deployment.md) |
 | **P49** | Pre-prod / local beta (RPi4, AirPlay 2) | Spec | [p49-preprod-deployment.md](./p49-preprod-deployment.md) |
 | **P99** | Production readiness | Spec | [p99-prod-readiness.md](./p99-prod-readiness.md) |
 

@@ -129,7 +129,7 @@ P99 runs **after P49 beta**, **before P100** release (`1.0.0`). P199 before P200
 | **P2** — Tidbyt | ✅ MVP | `specs/p2-tidbyt.md`, `integrations/tidbyt/` |
 | **P3** — eInk display | 📄 Spec | `specs/p3-eink-display.md` (+ P3.1 profiles, on-demand PNG) |
 | **P4** — eInk controls | 📄 Spec | `specs/p4-eink-controls.md` |
-| **P5** — Deployment | 📄 Spec | `specs/p5-deployment.md` — Pi, Docker (reference) |
+| **P5** — Deployment | 📄 Reference | `specs/p5-deployment.md` — Pi bare metal (P49), Docker, Synology tradeoffs |
 | **P49** — Pre-prod beta | 📄 Spec — **next** | `specs/p49-preprod-deployment.md` — RPi4, AP2, Docker→bare metal |
 | **P99** — Prod readiness | 📄 Spec | `specs/p99-prod-readiness.md` — see permanent definition above |
 
