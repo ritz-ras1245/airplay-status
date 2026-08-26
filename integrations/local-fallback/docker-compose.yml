@@ -1,0 +1,16 @@
+services:
+  local-fallback:
+    build: .
+    image: airplay-status-local-fallback
+    container_name: local-fallback
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      GATEWAY_HTTP_PORT: "80"
+      SERVICES_CONFIG: /app/config/services.json
+      PROBE_TIMEOUT_MS: "2000"
+      PROBE_CACHE_MS: "3000"
+    volumes:
+      # Local, gitignored config with your LAN hosts/IPs (copy from the example).
+      - ./config/services.json:/app/config/services.json:ro
