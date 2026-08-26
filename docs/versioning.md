@@ -12,7 +12,7 @@
 | Semver | **`0.1.0`** (pre-**P100**) |
 | Next prod gate | **P100** → **`1.0.0`** |
 | Current milestone | **P49** — RPi4 beta (AirPlay 2) |
-| API | **`GET /api/version`** |
+| API | **`GET /api/version`** · **`GET /api/health`** (status, mode, uptime, watcher, nowPlaying) |
 | CLI | **`./bin/check-version.sh http://<host>:3003`** |
 
 ---

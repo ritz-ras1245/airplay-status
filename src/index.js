@@ -15,6 +15,7 @@ import {
 } from './services/tidbytPushService.js';
 import { APP_VERSION, getVersionInfo } from './lib/appVersion.js';
 import { getDeployStage } from './lib/deployStage.js';
+import { buildHealth } from './lib/health.js';
 import { registerSetupRoutes } from './routes/setupRoutes.js';
 import { readSetupToken } from './lib/setupToken.js';
 
@@ -22,6 +23,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const deployStage = getDeployStage();
+const STARTED_AT_MS = Date.now();
 const app = express();
 const PORT = Number(process.env.PORT || deployStage.port);
 const USE_MOCK = process.env.USE_MOCK === 'true';
@@ -73,6 +75,24 @@ app.get('/api/status', async (req, res) => {
 
 app.get('/api/version', (_req, res) => {
   res.json(getVersionInfo());
+});
+
+app.get('/api/health', (_req, res) => {
+  const info = getVersionInfo();
+  const live = USE_MOCK ? null : getLivePlaybackState();
+  const playing = !USE_MOCK && Boolean(live && (live.isPlaying || live.title));
+
+  res.json(
+    buildHealth({
+      startedAtMs: STARTED_AT_MS,
+      nowMs: Date.now(),
+      useMock: USE_MOCK,
+      playing,
+      version: info.version,
+      node: info.node,
+      stageId: deployStage.id,
+    }),
+  );
 });
 
 app.get('/api/events', (req, res) => {
