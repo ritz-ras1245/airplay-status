@@ -17,10 +17,18 @@ http://<host>:3003/display?client=deskthing
 http://<host>:3003/display?client=ipad
 ```
 
-`?client=` adds a `kiosk--<name>` body class for future per-client tweaks.
-Unknown values are ignored. In **mock mode** the page renders a fixed track and
-does not live-update (SSE is disabled in mock mode); in **live mode** it updates
-in real time.
+`?client=` adds a `kiosk--<name>` body class. Unknown values are ignored. In
+**mock mode** the page renders a fixed track and does not live-update (SSE is
+disabled in mock mode); in **live mode** it updates in real time.
+
+Each client gets conservative baseline tuning (device teams for P7–P9 refine
+once hardware is in hand):
+
+| `?client=` | Tuning |
+|------------|--------|
+| `ipad` | Honours notch / home-indicator **safe-area insets** (`viewport-fit=cover` + `env(safe-area-inset-*)`); larger resume tap target |
+| `deskthing` | Compact **art-beside-metadata** layout for the small 800×480 Car Thing landscape screen |
+| `android` | Immersive full-bleed; enlarged resume tap area |
 
 ## Behaviour (shared always-on contract)
 
