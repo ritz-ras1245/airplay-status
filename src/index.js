@@ -133,8 +133,25 @@ const handleDashboard = (req, res) => {
   renderDashboard(req, res, { showDebugCapture: wantsDebug && METADATA_DEBUG });
 };
 
+const KIOSK_CLIENTS = new Set(['android', 'deskthing', 'ipad']);
+
+const renderDisplay = async (req, res) => {
+  const { playback, live } = await resolvePlayback(req);
+  const clientRaw = String(req.query.client || '').toLowerCase();
+  const client = KIOSK_CLIENTS.has(clientRaw) ? clientRaw : '';
+
+  res.render('display', {
+    playback,
+    live,
+    formatMs,
+    deployStage,
+    client,
+  });
+};
+
 app.get('/', handleDashboard);
 app.get('/debug', handleDashboard);
+app.get('/display', renderDisplay);
 
 app.listen(PORT, () => {
   const mode = USE_MOCK ? 'mock' : 'live';

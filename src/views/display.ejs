@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0a0a0a">
+  <title><%= deployStage.dashboardTitle %> — Display</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/display.css">
+</head>
+<body class="kiosk<%= client ? ' kiosk--' + client : '' %>" data-live="<%= live %>">
+  <div
+    id="kiosk-bg"
+    class="kiosk-bg"
+    <% if (playback.albumArt) { %>style="background-image: url('<%= playback.albumArt %>')"<% } %>
+  ></div>
+
+  <main class="kiosk-stage">
+    <section id="kiosk-idle" class="kiosk-idle" <%= playback.title ? 'hidden' : '' %>>
+      <div class="kiosk-idle__icon">🔇</div>
+      <p class="kiosk-idle__text">Nothing playing</p>
+      <p class="kiosk-idle__sub">
+        Select <strong><%= deployStage.airplayReceiverName %></strong> as an output to begin.
+      </p>
+    </section>
+
+    <section id="kiosk-now" class="kiosk-now" <%= playback.title ? '' : 'hidden' %>>
+      <div class="kiosk-art-frame">
+        <img
+          id="kiosk-art"
+          class="kiosk-art"
+          src="<%= playback.albumArt || '' %>"
+          alt="Album art"
+          <%= playback.albumArt ? '' : 'hidden' %>
+        >
+        <div id="kiosk-art-ph" class="kiosk-art kiosk-art--ph" <%= playback.albumArt ? 'hidden' : '' %>>🎵</div>
+      </div>
+
+      <div class="kiosk-meta">
+        <h1 id="kiosk-title" class="kiosk-title"><%= playback.title || '' %></h1>
+        <p id="kiosk-artist" class="kiosk-artist"><%= playback.artist || '' %></p>
+        <p id="kiosk-album" class="kiosk-album"><%= playback.album || '' %></p>
+
+        <div class="kiosk-progress">
+          <div class="kiosk-progress__bar">
+            <div
+              id="kiosk-progress-fill"
+              class="kiosk-progress__fill"
+              style="width: <%= playback.durationMs ? Math.min(100, Math.round((playback.progressMs / playback.durationMs) * 100)) : 0 %>%"
+            ></div>
+          </div>
+          <div class="kiosk-progress__times">
+            <span id="kiosk-cur"><%= formatMs(playback.progressMs) %></span>
+            <span id="kiosk-tot"><%= formatMs(playback.durationMs) %></span>
+          </div>
+        </div>
+
+        <div class="kiosk-status">
+          <span id="kiosk-badge" class="kiosk-badge<%= playback.isPlaying ? '' : ' kiosk-badge--paused' %>">
+            <%= playback.isPlaying ? '▶ Playing' : '⏸ Paused' %>
+          </span>
+          <span id="kiosk-source" class="kiosk-source"><%= playback.source || 'AirPlay' %></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <button id="kiosk-resume" class="kiosk-resume" type="button" hidden aria-label="Tap to resume">
+    <span class="kiosk-resume__icon">▶</span>
+    <span class="kiosk-resume__text">Tap to resume</span>
+  </button>
+</body>
+</html>

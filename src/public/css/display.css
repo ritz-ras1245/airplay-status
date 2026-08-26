@@ -1,0 +1,167 @@
+/* Always-on kiosk display view — Phase 1 baseline (enriched in Phase 2). */
+.kiosk {
+  padding: 0;
+  overflow: hidden;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.kiosk-bg {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+.kiosk-stage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.kiosk-now[hidden],
+.kiosk-idle[hidden],
+.kiosk-art[hidden] {
+  display: none !important;
+}
+
+.kiosk-art-frame {
+  margin: 0 auto 1.5rem;
+  max-width: 60vmin;
+}
+
+.kiosk-art {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 16px;
+  object-fit: cover;
+  box-shadow: var(--shadow);
+}
+
+.kiosk-art--ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  background: var(--surface-raised);
+  opacity: 0.6;
+}
+
+.kiosk-title {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.kiosk-artist {
+  color: var(--text-muted);
+  font-size: 1.25rem;
+  margin-top: 0.35rem;
+}
+
+.kiosk-album {
+  color: var(--text-muted);
+  opacity: 0.7;
+  margin-top: 0.2rem;
+}
+
+.kiosk-progress {
+  margin: 1.5rem auto 0;
+  max-width: 60vmin;
+}
+
+.kiosk-progress__bar {
+  height: 6px;
+  background: var(--progress-bg);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.kiosk-progress__fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.8s linear;
+}
+
+.kiosk-progress__times {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.5rem;
+}
+
+.kiosk-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.kiosk-badge {
+  color: var(--accent);
+  font-weight: 500;
+}
+
+.kiosk-badge--paused {
+  color: var(--text-muted);
+}
+
+.kiosk-source {
+  color: var(--text-muted);
+}
+
+.kiosk-idle__icon {
+  font-size: 4rem;
+  opacity: 0.6;
+}
+
+.kiosk-idle__text {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+.kiosk-idle__sub {
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.kiosk-resume {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.85);
+  font-family: inherit;
+}
+
+.kiosk-resume[hidden] {
+  display: none;
+}
+
+.kiosk-resume__icon {
+  font-size: 4rem;
+  color: var(--accent);
+}
+
+.kiosk-resume__text {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
