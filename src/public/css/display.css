@@ -1,0 +1,264 @@
+/* Always-on kiosk display view.
+   Immersive, full-viewport "now playing" surface consumed by the P7-P9
+   always-on display clients. Reuses the design tokens from style.css. */
+
+.kiosk {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  transition: filter 0.6s ease, opacity 0.6s ease;
+}
+
+/* Idle screen-off grace: JS adds .kiosk--dimmed before releasing wake lock. */
+.kiosk--dimmed {
+  filter: brightness(0.05);
+}
+
+/* Blurred album-art backdrop for depth. */
+.kiosk-bg {
+  position: fixed;
+  inset: -10%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(60px) saturate(1.4) brightness(0.55);
+  transform: scale(1.1);
+  transition: background-image 0.5s ease, opacity 0.5s ease;
+  z-index: 0;
+}
+
+.kiosk-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+.kiosk-stage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 680px;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  text-align: center;
+}
+
+.kiosk-now[hidden],
+.kiosk-idle[hidden],
+.kiosk-art[hidden] {
+  display: none !important;
+}
+
+/* --- Now playing --- */
+.kiosk-now {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: kiosk-fade-in 0.5s ease;
+}
+
+.kiosk-art-frame {
+  width: min(56vmin, 420px);
+  margin-bottom: clamp(1.25rem, 3vh, 2rem);
+}
+
+.kiosk-art {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 20px;
+  object-fit: cover;
+  box-shadow: 0 32px 64px rgba(0, 0, 0, 0.6);
+}
+
+.kiosk-art--ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 6rem;
+  background: var(--surface-raised);
+  opacity: 0.7;
+}
+
+.kiosk-meta {
+  width: min(60vmin, 460px);
+}
+
+.kiosk-title {
+  font-size: clamp(1.75rem, 4.5vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+}
+
+.kiosk-artist {
+  color: var(--text);
+  opacity: 0.85;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  margin-top: 0.5rem;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.6);
+}
+
+.kiosk-album {
+  color: var(--text-muted);
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  margin-top: 0.25rem;
+}
+
+.kiosk-progress {
+  margin-top: clamp(1.25rem, 3vh, 2rem);
+}
+
+.kiosk-progress__bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.kiosk-progress__fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 3px;
+  transition: width 0.8s linear;
+}
+
+.kiosk-progress__times {
+  display: flex;
+  justify-content: space-between;
+  font-size: clamp(0.8rem, 1.6vw, 0.95rem);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.6rem;
+}
+
+.kiosk-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: clamp(1rem, 2.5vh, 1.5rem);
+  font-size: clamp(0.85rem, 1.8vw, 1rem);
+}
+
+.kiosk-badge {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.kiosk-badge--paused {
+  color: var(--text-muted);
+}
+
+.kiosk-source {
+  color: var(--text-muted);
+}
+
+/* --- Idle --- */
+.kiosk-idle {
+  animation: kiosk-fade-in 0.5s ease;
+}
+
+.kiosk-idle__icon {
+  font-size: clamp(3rem, 8vw, 5rem);
+  opacity: 0.5;
+}
+
+.kiosk-idle__text {
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+  font-weight: 600;
+  margin-top: 1rem;
+}
+
+.kiosk-idle__sub {
+  color: var(--text-muted);
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  margin-top: 0.75rem;
+}
+
+.kiosk-idle__sub strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* --- Resume nudge overlay (focus-before-idle) --- */
+.kiosk-resume {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(8px);
+  font-family: inherit;
+  animation: kiosk-fade-in 0.3s ease;
+}
+
+.kiosk-resume[hidden] {
+  display: none;
+}
+
+.kiosk-resume__icon {
+  font-size: clamp(3.5rem, 12vw, 6rem);
+  color: var(--accent);
+  animation: kiosk-pulse 1.8s ease-in-out infinite;
+}
+
+.kiosk-resume__text {
+  font-size: clamp(1.25rem, 4vw, 2rem);
+  font-weight: 600;
+}
+
+/* --- Landscape: art beside metadata for wide wall displays --- */
+@media (orientation: landscape) and (min-width: 720px) {
+  .kiosk-now {
+    flex-direction: row;
+    gap: clamp(2rem, 5vw, 4rem);
+    text-align: left;
+    max-width: 100%;
+  }
+
+  .kiosk-art-frame {
+    margin-bottom: 0;
+    flex: 0 0 auto;
+    width: min(48vmin, 380px);
+  }
+
+  .kiosk-meta {
+    flex: 1 1 auto;
+    width: auto;
+    max-width: 520px;
+  }
+
+  .kiosk-status {
+    justify-content: flex-start;
+  }
+}
+
+@keyframes kiosk-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes kiosk-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kiosk-now,
+  .kiosk-idle,
+  .kiosk-resume,
+  .kiosk-resume__icon { animation: none; }
+}
