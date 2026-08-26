@@ -130,7 +130,7 @@ P99 runs **after P50 soak sign-off**, **before P100** release (`1.0.0`). P199 be
 | **P1** — Remote control | 📄 Spec | `specs/p1-remote-control.md` — DACP via Node |
 | **P2** — Tidbyt | ✅ MVP | `specs/p2-tidbyt.md`, `integrations/tidbyt/` |
 | **P3** — eInk display | 📄 Spec | `specs/p3-eink-display.md` (+ P3.1 profiles, on-demand PNG) |
-| **P4** — eInk controls | 📄 Spec | `specs/p4-eink-controls.md` |
+| **P4** — eInk controls | 📄 Spec → PR | `specs/p4-eink-controls.md` — HTML forms on `/eink` |
 | **P5** — Deployment | 📄 Spec | `specs/p5-deployment.md` — Pi, Docker (reference) |
 | **P6** — Echo Show | 📄 Spec | `specs/p6-echo-show.md` — Tier B push → Silk |
 | **P7** — Android always-on | 💡 Idea | `specs/p7-android-always-on.md` — WebView console; idle screen-off; tap-to-resume |
