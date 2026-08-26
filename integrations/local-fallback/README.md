@@ -17,6 +17,7 @@ client → gateway (this)  ──healthy──▶  proxy to primary
                           ──down────▶  fallback status page (200) + probe matrix
 ```
 
+- `GET /_gateway` — human-friendly HTML status page (all services + live probe matrix, auto-refresh).
 - `GET /_gateway/health` — gateway's own health (`{ status, uptimeSec }`).
 - `GET /_gateway/services` — JSON probe matrix for every configured service.
 - Any other request — routed to a service by `Host` header (`hostname`), or the
