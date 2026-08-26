@@ -11,21 +11,29 @@ const base = {
 };
 
 test('buildHealth reports live service status', () => {
-  const h = buildHealth({ ...base, useMock: false, playing: true });
+  const h = buildHealth({ ...base, useMock: false, playing: true, sidecar: 'running' });
   assert.equal(h.status, 'ok');
   assert.equal(h.mode, 'live');
   assert.equal(h.stage, 'dev');
   assert.equal(h.uptimeSec, 42);
   assert.equal(h.metadataWatcher, 'watching');
+  assert.equal(h.sidecar, 'running');
   assert.equal(h.nowPlaying, true);
   assert.equal(h.version, '0.1.0');
   assert.equal(h.node, 'v22.14.0');
 });
 
-test('buildHealth reflects mock mode (watcher disabled, not playing)', () => {
-  const h = buildHealth({ ...base, useMock: true, playing: true });
+test('buildHealth passes through live sidecar state', () => {
+  assert.equal(buildHealth({ ...base, useMock: false, playing: false, sidecar: 'stopped' }).sidecar, 'stopped');
+  // defaults to n/a when not provided
+  assert.equal(buildHealth({ ...base, useMock: false, playing: false }).sidecar, 'n/a');
+});
+
+test('buildHealth reflects mock mode (watcher disabled, sidecar n/a)', () => {
+  const h = buildHealth({ ...base, useMock: true, playing: true, sidecar: 'running' });
   assert.equal(h.mode, 'mock');
   assert.equal(h.metadataWatcher, 'disabled');
+  assert.equal(h.sidecar, 'n/a'); // forced n/a under mock
   // playing is coerced to boolean; mock still reports the passed value
   assert.equal(h.nowPlaying, true);
 });
