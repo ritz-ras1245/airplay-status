@@ -1,6 +1,8 @@
 # Phase P9 — iPad always-on fallback client
 
-**Status:** Spec (idea — not Cloud-PR ready)  
+**Status:** MVP delivered (web path) — runbook at [../docs/ipad-guided-access.md](../docs/ipad-guided-access.md); reuses the kiosk view `GET /display?client=ipad`.  
+
+**Decision locked:** OD1 = B (Safari Home-Screen web app + Guided Access) for the MVP. Promote to OD1 = A (native WKWebView) only if a resume notification while the screen is fully off becomes mandatory (see limitations in the runbook).  
 **Depends on:** P0 live metadata (`/api/status`, `/api/events`)  
 **Optional dependency:** [P10 local service fallback](./p10-local-service-fallback.md)  
 **Shared behaviour:** [guidelines/always-on-display-client.md](./guidelines/always-on-display-client.md)  
