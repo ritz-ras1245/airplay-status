@@ -330,3 +330,61 @@ body {
   border-color: var(--accent);
   color: var(--accent);
 }
+
+.transport {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.transport-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.transport-row form {
+  display: inline;
+}
+
+.transport-btn {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface-raised);
+  color: var(--text);
+  font-size: 1.125rem;
+  cursor: pointer;
+}
+
+.transport-btn--play {
+  width: 3.75rem;
+  height: 3.75rem;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.transport-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.transport-btn.transport-btn--busy {
+  opacity: 0.7;
+}
+
+.transport-hint,
+.transport-flash {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.transport-flash {
+  color: #ffb340;
+}

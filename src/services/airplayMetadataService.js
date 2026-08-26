@@ -7,10 +7,10 @@ import {
   toPublicState,
 } from '../lib/metadataParser.js';
 import {
-  createPipeReader,
-  itemToUpdate,
-  saveArtwork,
-} from '../lib/metadataPipeReader.js';
+  getControlPublic,
+  noteInternalPlayback,
+  setControlChangeListener,
+} from './playbackControlService.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(__dirname, '../..');
@@ -54,7 +54,7 @@ const clearArtworkFiles = () => {
 };
 
 const notify = () => {
-  const publicState = toPublicState(state);
+  const publicState = toPublicState(state, getControlPublic());
   for (const listener of listeners) listener(publicState);
 };
 
@@ -76,6 +76,7 @@ const applyUpdate = (update) => {
     clearArtworkFiles();
     state = createEmptyPlaybackState();
     lastIgnoredConnectPendAt = 0;
+    noteInternalPlayback(state);
     if (DEBUG) logDebug('state', 'title=∅ playing=false connected=false (session ended)');
     notify();
     return;
@@ -85,9 +86,10 @@ const applyUpdate = (update) => {
     lastPbegAt = Date.now();
   }
 
-  const prev = JSON.stringify(toPublicState(state));
+  const prev = JSON.stringify(toPublicState(state, getControlPublic()));
   state = applyMetadataUpdate(state, update);
-  const next = JSON.stringify(toPublicState(state));
+  noteInternalPlayback(state);
+  const next = JSON.stringify(toPublicState(state, getControlPublic()));
 
   if (prev === next) return;
 
@@ -168,7 +170,7 @@ export const onPlaybackChange = (listener) => {
   return () => listeners.delete(listener);
 };
 
-export const getPlaybackState = () => toPublicState(state);
+export const getPlaybackState = () => toPublicState(state, getControlPublic());
 
 export const startMetadataWatcher = () => {
   if (watcherStarted) return;
@@ -180,4 +182,5 @@ export const startMetadataWatcher = () => {
 
   if (pipeHandle) pipeHandle.destroy();
   pipeHandle = createPipeReader(METADATA_PIPE, handleItem);
+  setControlChangeListener(notify);
 };

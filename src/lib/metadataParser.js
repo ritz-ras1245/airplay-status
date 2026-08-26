@@ -15,6 +15,10 @@ export const createEmptyPlaybackState = () => ({
   clientName: null,
   clientModel: null,
   senderApp: null,
+  dacpId: null,
+  dacpPort: null,
+  clientIp: null,
+  activeRemote: null,
   updatedAt: null,
 });
 
@@ -87,7 +91,7 @@ export const formatSource = (state) => {
   return 'AirPlay';
 };
 
-export const toPublicState = (state) => ({
+export const toPublicState = (state, control = {}) => ({
   isPlaying: state.isPlaying,
   connected: state.connected,
   title: state.title,
@@ -98,6 +102,8 @@ export const toPublicState = (state) => ({
   durationMs: state.durationMs,
   source: formatSource(state),
   updatedAt: state.updatedAt,
+  controlAvailable: Boolean(control.controlAvailable),
+  controlReason: control.controlAvailable ? null : (control.controlReason ?? 'no_session'),
 });
 
 export const applyMetadataUpdate = (state, update) => {

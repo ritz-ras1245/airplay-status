@@ -20,6 +20,9 @@ const els = {
   timeTotal: document.getElementById('progress-total'),
   badge: document.getElementById('status-badge'),
   source: document.getElementById('track-source'),
+  transport: document.getElementById('transport'),
+  transportHint: document.getElementById('transport-hint'),
+  transportBtns: document.querySelectorAll('.transport-btn[data-action]'),
 };
 
 let snapshot = null;
@@ -58,6 +61,33 @@ const updateProgress = (progressMs, durationMs) => {
   els.timeTotal.textContent = formatMs(durationMs);
 };
 
+const CONTROL_COPY = {
+  no_session: 'Select AirPlay Status as an output to enable transport controls.',
+  dacp_probe_failed: 'Remote control is unavailable for this session (DACP probe failed).',
+  ios_blocked: 'Your iPhone may ignore remote commands on iOS 17.4+ even when buttons send.',
+  ap2_unsupported:
+    'This session looks like AirPlay 2. Native iPhone/iPad Now Playing uses MRP, which this receiver does not implement.',
+  control_unavailable: 'Transport controls are not available right now.',
+};
+
+const controlMessage = (reason) => CONTROL_COPY[reason] || CONTROL_COPY.control_unavailable;
+
+const setTransport = (playback) => {
+  if (!els.transport) return;
+  const hasTrack = !!playback.title;
+  els.transport.hidden = !hasTrack;
+  const enabled = Boolean(playback.controlAvailable);
+  els.transportBtns.forEach((btn) => {
+    btn.disabled = !enabled;
+    if (btn.dataset.action === 'toggle') {
+      btn.textContent = playback.isPlaying ? '⏸' : '▶';
+    }
+  });
+  if (els.transportHint) {
+    els.transportHint.textContent = enabled ? '' : controlMessage(playback.controlReason);
+  }
+};
+
 const setBadge = (playing) => {
   els.badge.textContent = playing ? '▶ Playing' : '⏸ Paused';
   els.badge.classList.toggle('status-badge--paused', !playing);
@@ -80,6 +110,7 @@ const applySnapshot = (playback) => {
     if (els.artist.textContent) els.artist.textContent = '';
     if (els.album.textContent) els.album.textContent = '';
     updateProgress(0, 0);
+    setTransport({ title: null, controlAvailable: false, controlReason: 'no_session' });
     return;
   }
 
@@ -124,6 +155,7 @@ const applySnapshot = (playback) => {
   }
 
   setBadge(playback.isPlaying);
+  setTransport(playback);
 
   const sourceLabel = playback.source || 'AirPlay';
   if (els.source.textContent !== sourceLabel) {
@@ -138,6 +170,32 @@ const tickProgress = () => {
   const progressMs = Math.min(snapshot.durationMs, progressAnchor.ms + elapsed);
   updateProgress(progressMs, snapshot.durationMs);
 };
+
+const sendControl = async (action, btn) => {
+  if (!snapshot?.controlAvailable) return;
+  btn?.classList.add('transport-btn--busy');
+  try {
+    const res = await fetch(`/api/control/${action}`, {
+      method: 'POST',
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: '{}',
+    });
+    const body = await res.json().catch(() => ({ ok: false, reason: 'control_unavailable' }));
+    if (!body.ok && els.transportHint) {
+      els.transportHint.textContent = controlMessage(body.reason);
+    }
+  } catch {
+    if (els.transportHint) {
+      els.transportHint.textContent = controlMessage('dacp_probe_failed');
+    }
+  } finally {
+    btn?.classList.remove('transport-btn--busy');
+  }
+};
+
+els.transportBtns.forEach((btn) => {
+  btn.addEventListener('click', () => sendControl(btn.dataset.action, btn));
+});
 
 const source = new EventSource('/api/events');
 source.onmessage = (event) => {

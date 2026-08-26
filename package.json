@@ -1,6 +1,6 @@
 {
   "name": "airplay-status",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Local dashboard for AirPlay now-playing metadata",
   "main": "src/index.js",
   "type": "module",
@@ -9,7 +9,7 @@
     "dev": "node --watch src/index.js",
     "watch:metadata": "node src/bin/metadata-watcher.js",
     "demo": "node src/bin/demo-metadata.js",
-    "test": "node --test"
+    "test": "node --test tests/*.test.js"
   },
   "dependencies": {
     "ejs": "^3.1.9",
