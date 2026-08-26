@@ -1,0 +1,26 @@
+{
+  "name": "airplay-status-deskthing",
+  "version": "0.1.0",
+  "description": "DeskThing / Car Thing always-on now-playing client for airplay-status (P8)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@deskthing/client": "^0.11.0",
+    "@deskthing/server": "^0.11.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@deskthing/types": "^0.11.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.3"
+  },
+  "//": "Versions are indicative — verify against the DeskThing SDK release you target (OD5 version pin) at build time with `npm create deskthing@latest`."
+}
