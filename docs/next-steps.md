@@ -1,6 +1,6 @@
 # airplay-status — Next Steps Plan
 
-_Last updated 2026-08-26. A followable checklist to take the current work from "authored / in-review" to a shipped 1.0.0._
+_Last updated 2026-08-26 (refresh: #25/#26/#27 merged; #28 P11 validated in-VM and ready). A followable checklist to take the current work from "authored / in-review" to a shipped 1.0.0._
 
 Repo: https://github.com/ritz-ras1245/airplay-status · Base branch: `main`
 
@@ -19,25 +19,31 @@ Repo: https://github.com/ritz-ras1245/airplay-status · Base branch: `main`
 - P8 DeskThing/Car Thing app (`integrations/deskthing/`) — authored
 - P7 Android always-on app (`integrations/android/`) — authored
 
-**Open PRs — drafts from other agent runs (device/owner-pending)**
+**Open PRs**
 
-- #10 — P1 DACP remote control
-- #7 — P3 eInk read-only display
-- #9 — P4 eInk transport controls (depends on P1)
-- #8 — P6 Echo Show Tier B
-- #11 — P5 deployment docs
+- **#28 — P11 Media Status (AirPlay + Spotify, one-by-one)** — _validated in-VM, ready to merge._ `npm test` 40/40; `/api/sources` + `/api/status?source=…` correct; `/display` rotation and pill **pinning** verified (pin persists past the 8s rotate window); trial-merges cleanly into `main`. Only unchecked item: "live mode stays AirPlay-only" (needs a live-mode eyeball). Ships **mock** Spotify; real Web API is the P12 follow-on.
+- #10 — P1 DACP remote control — draft; **device-pending** (Mac + Apple Music + AirPlay). Trial-merges clean; CI green.
+- #7 — P3 eInk read-only display — draft; **device-pending** (eInk).
+- #9 — P4 eInk transport controls — draft; **depends on P1**; device-pending (eInk).
+- #8 — P6 Echo Show Tier B — draft; **device-pending** (Echo Show + LAN DNS + LWA token).
+- #11 — P5 deployment docs — draft; ⚠️ **stale (18 behind), conflicts** in `AGENTS.md` + `specs/p0-airplay-status.md` → **needs a rebase** before it can merge.
 
 **Device-test pending (merged code, needs hardware)**
 
 - P7 Android APK · P8 DeskThing on Car Thing · P9 iPad on device · P10 deploy on LAN
 
+**New follow-on spec**
+
+- **P12 — real Spotify Web API + controls** (`specs/p12-spotify-source.md`, arrives with #28) — `DECISION REQUIRED`: Spotify Client ID before it's Cloud-PR ready.
+
 ---
 
-## 2. Immediate merges (no hardware required)
+## 2. Immediate merges / low-risk (no hardware required)
 
-- [ ] Review + merge **#11** (P5 deployment docs) — docs; confirm a trial merge into `main` is clean first
+- [ ] Merge **#28** (P11 Media Status) — validated in-VM, merges cleanly; optionally eyeball live-mode-AirPlay-only first
+- [ ] Rebase **#11** (P5 docs) onto `main` (resolve `AGENTS.md` + `specs/p0-airplay-status.md` conflicts), then merge
 
-_(The other no-device PRs — kiosk, health, gateway, per-client tuning, phase/docs — are already merged.)_
+_(The other no-device PRs — kiosk, health + sidecar, `check-health.sh`, gateway + `/_gateway`, per-client tuning, phase/docs, this plan — are already merged.)_
 
 ---
 
@@ -155,7 +161,7 @@ These are on `main` but were authored without a device build in CI.
 
 ## 8. Suggested execution order
 
-1. Merge remaining no-device PR: **#11**
+1. Merge **#28** (validated); rebase + merge **#11** (P5 docs)
 2. Device-test **P1 (#10)** → merge → then **P4 (#9)**
 3. Device-test **P3 (#7)** and **P6 (#8)** → merge
 4. Verify merged clients on hardware: **P7**, **P8**, **P9**
