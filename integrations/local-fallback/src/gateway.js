@@ -2,6 +2,7 @@ import http from 'node:http';
 import { resolveService } from './config.js';
 import { probeService, shouldProxy } from './probe.js';
 import { renderFallbackPage } from './fallbackPage.js';
+import { renderGatewayPage } from './gatewayPage.js';
 
 /**
  * Create the fallback gateway HTTP server (not yet listening).
@@ -42,6 +43,25 @@ export const createGateway = ({ config, timeoutMs = 2000, cacheMs = 3000, probeI
     const payload = JSON.stringify(body);
     res.writeHead(code, { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) });
     res.end(payload);
+  };
+
+  const sendHtml = (res, code, html) => {
+    res.writeHead(code, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Length': Buffer.byteLength(html) });
+    res.end(html);
+  };
+
+  const snapshotServices = async () => {
+    const services = {};
+    for (const service of Object.values(config.services)) {
+      const health = await evaluate(service);
+      services[service.name] = {
+        status: health.status,
+        proxying: shouldProxy(health.status),
+        primaryHost: service.primaryHost,
+        ports: health.ports,
+      };
+    }
+    return services;
   };
 
   const sendFallback = (res, service, health) => {
@@ -92,17 +112,18 @@ export const createGateway = ({ config, timeoutMs = 2000, cacheMs = 3000, probeI
       }
 
       if (path === '/_gateway/services') {
-        const services = {};
-        for (const service of Object.values(config.services)) {
-          const health = await evaluate(service);
-          services[service.name] = {
-            status: health.status,
-            proxying: shouldProxy(health.status),
-            primaryHost: service.primaryHost,
-            ports: health.ports,
-          };
-        }
+        const services = await snapshotServices();
         sendJson(res, 200, { gateway: { status: 'ok', uptimeSec: Math.floor((Date.now() - startedAt) / 1000) }, services });
+        return;
+      }
+
+      if (path === '/_gateway' || path === '/_gateway/') {
+        const services = await snapshotServices();
+        const html = renderGatewayPage(
+          { uptimeSec: Math.floor((Date.now() - startedAt) / 1000) },
+          services,
+        );
+        sendHtml(res, 200, html);
         return;
       }
 
