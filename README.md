@@ -46,6 +46,9 @@ Phase numbering: [specs/README.md](specs/README.md). Pre-P100: **0.y.z**; **P100
 | **P3** — eInk display | Spec | [p3-eink-display.md](specs/p3-eink-display.md) |
 | **P4** — eInk controls | Spec | [p4-eink-controls.md](specs/p4-eink-controls.md) |
 | **P5** — Deployment | Spec | [p5-deployment.md](specs/p5-deployment.md) |
+| **P10** — Local service fallback | MVP done | [p10-local-service-fallback.md](specs/p10-local-service-fallback.md) |
+| **P11** — Media Status sources | Shell + mock | [p11-media-status-sources.md](specs/p11-media-status-sources.md) — AirPlay + Spotify, one at a time |
+| **P12** — Spotify source | Spec | [p12-spotify-source.md](specs/p12-spotify-source.md) |
 | **P49** — Pre-prod beta | **Next** | [p49-preprod-deployment.md](specs/p49-preprod-deployment.md) — RPi4, AirPlay 2 |
 | **P99** — Prod readiness | Spec | [p99-prod-readiness.md](specs/p99-prod-readiness.md) — logs, Grafana, SOPs, launchd |
 
@@ -55,6 +58,7 @@ See [specs/p0-airplay-status.md](specs/p0-airplay-status.md) for the full P0 tec
 
 - [.github/BRANCH_POLICY.md](.github/BRANCH_POLICY.md) — branch naming, main protection, PR rules
 - [docs/kiosk-display.md](docs/kiosk-display.md) — always-on `/display` kiosk view
+- [docs/media-status.md](docs/media-status.md) — Media Status board (AirPlay + Spotify, one at a time)
 - [docs/ipad-guided-access.md](docs/ipad-guided-access.md) — iPad always-on display (P9 web MVP)
 - [docs/versioning.md](docs/versioning.md) — semver, `/api/version`, deploy env
 - [specs/p0-airplay-status.md](specs/p0-airplay-status.md) — architecture, data model, API, P0 status

@@ -159,6 +159,15 @@
   color: var(--text-muted);
 }
 
+.kiosk-source-pills {
+  margin-top: 1.25rem;
+  margin-bottom: 0;
+}
+
+.kiosk-source-pills .source-pill {
+  background: rgba(20, 20, 20, 0.55);
+}
+
 /* --- Idle --- */
 .kiosk-idle {
   animation: kiosk-fade-in 0.5s ease;

@@ -18,6 +18,8 @@ This project spun off from an earlier Spotify-now-playing experiment. After eval
 
 We evaluated [Nowify](https://github.com/jonashcroft/Nowify) (Vue SPA + Spotify API) — same visual goal, different architecture. We are not forking it.
 
+**Spotify returns as a second adapter, not a rename.** The GitHub repo and AirPlay picker stay `airplay-status` / **AirPlay Status**. The board that can show both is **Media Status** ([docs/media-status.md](docs/media-status.md), [P11](specs/p11-media-status-sources.md)): one card at a time (rotate or pin). Real Spotify Web API + controls are [P12](specs/p12-spotify-source.md).
+
 ## Chosen Architecture: Option B (shairport-sync Sidecar)
 
 | Option | Description | Decision |
@@ -137,6 +139,8 @@ P99 runs **after P50 soak sign-off**, **before P100** release (`1.0.0`). P199 be
 | **P8** — DeskThing / Car Thing | 🚧 Authored (device-test pending) | `specs/p8-deskthing-carthing.md`, `integrations/deskthing/` — same always-on rules on Car Thing. Needs DeskThing host + hardware to run |
 | **P9** — iPad fallback client | ✅ Web MVP | `specs/p9-ipad-always-on.md`, `docs/ipad-guided-access.md` — Guided Access web path (OD1=B) over `/display?client=ipad` |
 | **P10** — Local service fallback | ✅ MVP | `specs/p10-local-service-fallback.md`, `integrations/local-fallback/` — off-Pi gateway; probe ports; proxy-when-healthy / fallback page |
+| **P11** — Media Status sources | 🚧 Shell + mock | `specs/p11-media-status-sources.md`, [docs/media-status.md](docs/media-status.md) — AirPlay + Spotify as separate sources, shown **one by one** |
+| **P12** — Spotify source + controls | 📄 Spec | `specs/p12-spotify-source.md` — Web API currently-playing + player controls (needs Spotify app) |
 | **P49** — Pre-prod beta | ✅ Done | `specs/p49-preprod-deployment.md` — RPi4, AP2, bare metal |
 | **P50** — Beta soak + observability | 📄 Active | `specs/p50-beta-soak-observability.md` — soak Pi; Mac Loki/Grafana |
 | **P99** — Prod readiness | 📄 Spec | `specs/p99-prod-readiness.md` — see permanent definition above |
@@ -149,9 +153,10 @@ Feature work on other branches (e.g. P6 Echo Show on `feat/p6-echo-show`) merges
 
 ## Data Model
 
-See `specs/p0-airplay-status.md`. Key fields: `isPlaying`, `title`, `artist`, `album`, `albumArt`, `progressMs`, `durationMs`, `source`, `updatedAt`.
+See `specs/p0-airplay-status.md`. Key fields: `isPlaying`, `title`, `artist`, `album`, `albumArt`, `progressMs`, `durationMs`, `source`, `sourceId` (P11, adapter: `airplay` \| `spotify`), `updatedAt`.
 
 P1 adds: `controlAvailable`, `controlReason`.
+P11 adds: `GET /api/sources` (all adapters) — focused card is still `GET /api/status`.
 
 ## What NOT To Do
 
@@ -176,7 +181,8 @@ See `docs/debug-capture.md`. Normal mode redirects `/debug` to `/`. For prod iss
 | `src/services/airplayMetadataService.js` | Pipe watcher, session-end logic |
 | `src/lib/metadataParser.js` | Playback state normalization |
 | `src/lib/metadataPipeReader.js` | Binary pipe parser |
-| `src/index.js` | Express app, `/api/status`, `/api/events` |
+| `src/services/sourceDisplayService.js` | P11 focus / rotate / pin |
+| `src/index.js` | Express app, `/api/status`, `/api/sources`, `/api/events` |
 | `bin/run-local.sh` | Start shairport + dashboard |
 | `config/eink-devices.example.json` | P3.1 eInk profile templates |
 
@@ -195,7 +201,7 @@ See `docs/debug-capture.md`. Normal mode redirects `/debug` to `/`. For prod iss
 For a headless Linux cloud VM (no iPhone/Mac sender, no shairport-sync, no mDNS):
 
 - **Run the dashboard in mock mode** — no AirPlay hardware or sidecar needed:
-  `USE_MOCK=true SKIP_SHAIRPORT_CHECK=1 npm start` → http://localhost:3003 (already the `dashboard` terminal in `.cursor/environment.json`). In mock mode `/api/events` (SSE) returns 404 by design; the page shows fixed mock data.
+  `USE_MOCK=true SKIP_SHAIRPORT_CHECK=1 npm start` → http://localhost:3003 (already the `dashboard` terminal in `.cursor/environment.json`). In mock mode `/api/events` (SSE) returns 404 by design. P11 mock enables **AirPlay + Spotify** adapters and rotates them one at a time (`GET /api/sources`). Live default stays AirPlay-only.
 - **Test the real live path without hardware:** run live mode (`SKIP_SHAIRPORT_CHECK=1 npm start`), create the metadata FIFO (`mkfifo /tmp/shairport-sync-metadata`), then write shairport-sync-style XML `<item>` records (type `636f7265`/`73736e63`, base64 `<data>`, each terminated by `</item>\n`) into the pipe. This exercises pipe reader → parser → SSE → UI, which is otherwise only reachable via a real AirPlay sender. `METADATA_PIPE` overrides the pipe path.
 - **No test/lint/build tooling exists** (no `test`/`lint` scripts, no dev deps, no bundler). `npm run demo` runs `src/bin/demo-metadata.js` to exercise the metadata parser end-to-end without hardware.
 - **`.cursor/cloud-bootstrap.sh`** only symlinks Cursor rules from the sibling `engineering-standards` multi-repo checkout; it is not required to run or test the app. It `exit 1`s if that sibling repo is absent, so run `npm ci` on its own if the bootstrap step is unavailable.

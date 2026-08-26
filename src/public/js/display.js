@@ -219,15 +219,30 @@ window.addEventListener('blur', () => {
   if (!screenDimmed) focusBeforeIdle = false;
 });
 
-/* ---- SSE ---- */
-const source = new EventSource('/api/events');
-source.onmessage = (event) => {
-  try {
-    applySnapshot(JSON.parse(event.data));
-  } catch (err) {
-    console.error('bad event payload', err);
-  }
-};
-source.onerror = () => console.warn('SSE disconnected, retrying…');
+/* ---- SSE (live) or poll (mock) ---- */
+const liveMode = document.body.dataset.live === 'true';
+if (liveMode) {
+  const source = new EventSource('/api/events');
+  source.onmessage = (event) => {
+    try {
+      applySnapshot(JSON.parse(event.data));
+    } catch (err) {
+      console.error('bad event payload', err);
+    }
+  };
+  source.onerror = () => console.warn('SSE disconnected, retrying…');
+} else {
+  const pollStatus = async () => {
+    try {
+      const res = await fetch('/api/status');
+      if (!res.ok) return;
+      applySnapshot(await res.json());
+    } catch {
+      /* ignore */
+    }
+  };
+  pollStatus();
+  setInterval(pollStatus, 1000);
+}
 
 setInterval(tickProgress, 1000);

@@ -6,14 +6,14 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#0a0a0a">
-  <title><%= deployStage.dashboardTitle %> — Display</title>
+  <title><%= productTitle %> — Display</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/display.css">
 </head>
-<body class="kiosk<%= client ? ' kiosk--' + client : '' %>" data-live="<%= live %>">
+<body class="kiosk<%= client ? ' kiosk--' + client : '' %>" data-live="<%= live ? 'true' : 'false' %>">
   <div
     id="kiosk-bg"
     class="kiosk-bg"
@@ -24,9 +24,9 @@
     <section id="kiosk-idle" class="kiosk-idle" <%= playback.title ? 'hidden' : '' %>>
       <div class="kiosk-idle__icon">🔇</div>
       <p class="kiosk-idle__text">Nothing playing</p>
-      <p class="kiosk-idle__sub">
-        Select <strong><%= deployStage.airplayReceiverName %></strong> as an output to begin.
-      </p>
+        <p class="kiosk-idle__sub">
+          Select <strong><%= deployStage.airplayReceiverName %></strong> as an output to begin<% if (multiSource) { %>, or play on Spotify<% } %>.
+        </p>
     </section>
 
     <section id="kiosk-now" class="kiosk-now" <%= playback.title ? '' : 'hidden' %>>
@@ -66,6 +66,17 @@
           </span>
           <span id="kiosk-source" class="kiosk-source"><%= playback.source || 'AirPlay' %></span>
         </div>
+        <% if (multiSource) { %>
+        <nav id="source-pills" class="kiosk-source-pills source-pills" aria-label="Playback sources">
+          <% board.sources.forEach((src) => { %>
+            <button
+              type="button"
+              class="source-pill<%= src.id === board.focusedId ? ' source-pill--active' : '' %><%= src.hasTrack ? '' : ' source-pill--idle' %>"
+              data-source-id="<%= src.id %>"
+            ><%= src.label %></button>
+          <% }) %>
+        </nav>
+        <% } %>
       </div>
     </section>
   </main>
@@ -75,6 +86,7 @@
     <span class="kiosk-resume__text">Tap to resume</span>
   </button>
 
-  <% if (live) { %><script type="module" src="/js/display.js"></script><% } %>
+  <script type="module" src="/js/display.js"></script>
+  <% if (multiSource) { %><script type="module" src="/js/sourceBoard.js"></script><% } %>
 </body>
 </html>

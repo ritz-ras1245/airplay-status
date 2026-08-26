@@ -9,7 +9,14 @@ import {
   onPlaybackChange,
   startMetadataWatcher,
 } from './services/airplayMetadataService.js';
-import { getPlaybackState as getMockPlaybackState } from './services/mockPlaybackService.js';
+import { getMockSources } from './services/mockPlaybackService.js';
+import { createSourceDisplayService } from './services/sourceDisplayService.js';
+import {
+  DEFAULT_PIN_MS,
+  DEFAULT_ROTATE_MS,
+  emptyPlayback,
+  withSourceId,
+} from './lib/sourceRotate.js';
 import { formatMs } from './utils/formatTime.js';
 import {
   configureTidbytPush,
@@ -29,6 +36,25 @@ const app = express();
 const PORT = Number(process.env.PORT || deployStage.port);
 const USE_MOCK = process.env.USE_MOCK === 'true';
 const METADATA_DEBUG = process.env.METADATA_DEBUG === '1';
+const ENABLE_SPOTIFY_SOURCE = process.env.ENABLE_SPOTIFY_SOURCE === '1';
+const rotateMs = Number(process.env.SOURCE_ROTATE_MS) || DEFAULT_ROTATE_MS;
+const pinMs = Number(process.env.SOURCE_PIN_MS) || DEFAULT_PIN_MS;
+const enabledSourceIds =
+  USE_MOCK || ENABLE_SPOTIFY_SOURCE ? ['airplay', 'spotify'] : ['airplay'];
+
+const sourceBoard = createSourceDisplayService({
+  listSources: () => {
+    if (USE_MOCK) return getMockSources(false);
+    return {
+      airplay: withSourceId(getLivePlaybackState(), 'airplay'),
+      ...(ENABLE_SPOTIFY_SOURCE ? { spotify: emptyPlayback('spotify') } : {}),
+    };
+  },
+  enabledIds: enabledSourceIds,
+  rotateMs,
+  pinMs,
+});
+sourceBoard.start();
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -52,26 +78,78 @@ if (!USE_MOCK) {
   }
 }
 
+const pickPlayback = (board, sourceQuery) => {
+  const requested = String(sourceQuery || '').toLowerCase();
+  const match = board.sources.find((s) => s.id === requested);
+  return match ? match.playback : board.focused;
+};
+
 const resolvePlayback = async (req) => {
-  if (req.query.mock === 'true' || USE_MOCK) {
-    const forceNothingPlaying = req.query.state === 'nothing';
+  const mock = req.query.mock === 'true' || USE_MOCK;
+  const forceNothingPlaying = mock && req.query.state === 'nothing';
+  const live = !mock;
+
+  if (forceNothingPlaying) {
+    const empty = emptyPlayback('airplay');
     return {
-      playback: await getMockPlaybackState(forceNothingPlaying),
-      forceNothingPlaying,
+      playback: empty,
+      forceNothingPlaying: true,
       live: false,
+      board: sourceBoard.getBoard(),
     };
   }
 
+  if (mock && !USE_MOCK) {
+    const sources = getMockSources(false);
+    const requested = String(req.query.source || '').toLowerCase();
+    return {
+      playback: sources[requested] || sources.airplay,
+      forceNothingPlaying: false,
+      live: false,
+      board: null,
+    };
+  }
+
+  const board = sourceBoard.getBoard();
   return {
-    playback: getLivePlaybackState(),
+    playback: pickPlayback(board, req.query.source),
     forceNothingPlaying: false,
-    live: true,
+    live,
+    board,
   };
 };
 
 app.get('/api/status', async (req, res) => {
   const { playback } = await resolvePlayback(req);
   res.json(playback);
+});
+
+app.get('/api/sources', async (req, res) => {
+  if (req.query.mock === 'true' && !USE_MOCK) {
+    const sources = getMockSources(req.query.state === 'nothing');
+    res.json({
+      productName: 'Media Status',
+      focusedId: 'airplay',
+      rotateMs,
+      rotating: false,
+      pinned: false,
+      sources: [
+        { id: 'airplay', label: 'AirPlay', hasTrack: Boolean(sources.airplay.title), playback: sources.airplay },
+        { id: 'spotify', label: 'Spotify', hasTrack: Boolean(sources.spotify.title), playback: sources.spotify },
+      ],
+    });
+    return;
+  }
+  res.json(sourceBoard.getBoard());
+});
+
+app.post('/api/sources/focus', (req, res) => {
+  const sourceId = String(req.body?.sourceId || '').trim();
+  if (!sourceBoard.pin(sourceId)) {
+    res.status(400).json({ ok: false, error: 'unknown sourceId' });
+    return;
+  }
+  res.json(sourceBoard.getBoard());
 });
 
 app.get('/api/version', (_req, res) => {
@@ -120,13 +198,19 @@ app.get('/api/events', (req, res) => {
   res.setHeader('Connection', 'keep-alive');
   res.flushHeaders?.();
 
-  res.write(`data: ${JSON.stringify(getLivePlaybackState())}\n\n`);
+  res.write(`data: ${JSON.stringify(sourceBoard.getFocused())}\n\n`);
 
-  const unsubscribe = onPlaybackChange((playback) => {
-    res.write(`data: ${JSON.stringify(playback)}\n\n`);
+  const unsubMeta = onPlaybackChange(() => {
+    res.write(`data: ${JSON.stringify(sourceBoard.getFocused())}\n\n`);
+  });
+  const unsubFocus = sourceBoard.onFocusChange(() => {
+    res.write(`data: ${JSON.stringify(sourceBoard.getFocused())}\n\n`);
   });
 
-  req.on('close', () => unsubscribe());
+  req.on('close', () => {
+    unsubMeta();
+    unsubFocus();
+  });
 });
 
 app.post('/api/debug/mark', (req, res) => {
@@ -145,16 +229,23 @@ app.post('/api/debug/mark', (req, res) => {
 
 registerSetupRoutes(app);
 
+const viewLocals = (playback, live, board) => ({
+  playback,
+  live,
+  formatMs,
+  deployStage,
+  board,
+  productTitle: board?.productName || deployStage.dashboardTitle,
+  multiSource: Boolean(board && board.sources.length > 1),
+});
+
 const renderDashboard = async (req, res, { showDebugCapture = false } = {}) => {
-  const { playback, forceNothingPlaying, live } = await resolvePlayback(req);
+  const { playback, forceNothingPlaying, live, board } = await resolvePlayback(req);
 
   res.render('index', {
-    playback,
+    ...viewLocals(playback, live, board),
     forceNothingPlaying,
-    live,
     showDebugCapture,
-    formatMs,
-    deployStage,
   });
 };
 
@@ -170,15 +261,12 @@ const handleDashboard = (req, res) => {
 const KIOSK_CLIENTS = new Set(['android', 'deskthing', 'ipad']);
 
 const renderDisplay = async (req, res) => {
-  const { playback, live } = await resolvePlayback(req);
+  const { playback, live, board } = await resolvePlayback(req);
   const clientRaw = String(req.query.client || '').toLowerCase();
   const client = KIOSK_CLIENTS.has(clientRaw) ? clientRaw : '';
 
   res.render('display', {
-    playback,
-    live,
-    formatMs,
-    deployStage,
+    ...viewLocals(playback, live, board),
     client,
   });
 };
@@ -189,10 +277,15 @@ app.get('/display', renderDisplay);
 
 app.listen(PORT, () => {
   const mode = USE_MOCK ? 'mock' : 'live';
-  const { dashboardTitle, label, deployPhase } = deployStage;
+  const boardSnap = sourceBoard.getBoard();
+  const title = boardSnap.productName || deployStage.dashboardTitle;
+  const { label, deployPhase } = deployStage;
   const phase = deployPhase ? ` phase=${deployPhase}` : '';
-  console.log(`${dashboardTitle} v${APP_VERSION} (${mode}, ${label})${phase} at http://localhost:${PORT}`);
+  console.log(`${title} v${APP_VERSION} (${mode}, ${label})${phase} at http://localhost:${PORT}`);
   console.log(`AirPlay picker name: ${deployStage.airplayReceiverName}`);
+  if (enabledSourceIds.length > 1) {
+    console.log(`Sources: ${enabledSourceIds.join(', ')} (one at a time, ${rotateMs}ms)`);
+  }
   console.log(`Version API: http://localhost:${PORT}/api/version`);
   if (METADATA_DEBUG) {
     console.log(`Debug capture UI at http://localhost:${PORT}/debug`);
@@ -207,10 +300,7 @@ app.listen(PORT, () => {
 
   const tidbyt = configureTidbytPush({
     baseUrl: `http://localhost:${PORT}`,
-    getPlaybackState: async () => {
-      if (USE_MOCK) return getMockPlaybackState();
-      return getLivePlaybackState();
-    },
+    getPlaybackState: async () => sourceBoard.getFocused(),
     onPlaybackChange: USE_MOCK ? null : onPlaybackChange,
   });
 

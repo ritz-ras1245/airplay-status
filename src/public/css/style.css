@@ -235,11 +235,52 @@ body {
   color: var(--text-muted);
 }
 
-.airplay-icon {
-  width: 1rem;
-  height: 1rem;
-  object-fit: contain;
-  opacity: 0.85;
+.airplay-icon--hidden {
+  display: none;
+}
+
+.source-pills {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.source-pill {
+  font-family: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.4rem 0.85rem;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.source-pill:hover {
+  border-color: #3a3a3a;
+  color: var(--text);
+}
+
+.source-pill--active {
+  color: var(--text);
+  border-color: var(--accent);
+  background: rgba(10, 132, 255, 0.16);
+}
+
+.source-pill--active[data-source-id='spotify'] {
+  border-color: #1db954;
+  background: rgba(29, 185, 84, 0.16);
+}
+
+.source-pill--idle {
+  opacity: 0.45;
+}
+
+.source-pills[hidden] {
+  display: none;
 }
 
 .toggle-section {

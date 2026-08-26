@@ -81,6 +81,8 @@ Record `version` + `gitCommit` at P49 / P99 / P100 and every patch deploy.
 | [p8-deskthing-carthing.md](./p8-deskthing-carthing.md) | P8 — DeskThing / Car Thing (authored; device-test pending) |
 | [p9-ipad-always-on.md](./p9-ipad-always-on.md) | P9 — iPad fallback client (web MVP) |
 | [p10-local-service-fallback.md](./p10-local-service-fallback.md) | P10 — local service fallback gateway (MVP) |
+| [p11-media-status-sources.md](./p11-media-status-sources.md) | P11 — Media Status (multi-source, one-by-one) |
+| [p12-spotify-source.md](./p12-spotify-source.md) | P12 — Spotify Web API source + controls |
 | [p49-preprod-deployment.md](./p49-preprod-deployment.md) | P49 — line 1 beta |
 | [p50-beta-soak-observability.md](./p50-beta-soak-observability.md) | P50 — soak + Mac Grafana/Loki |
 | [p99-prod-readiness.md](./p99-prod-readiness.md) | P99 — line 1 prod readiness |
