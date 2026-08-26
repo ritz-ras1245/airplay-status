@@ -6,6 +6,15 @@ const formatMs = (ms) => {
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
 };
 
+const CONTROL_REASONS = {
+  no_session: 'Remote control requires an active AirPlay session with AirPlay Status selected.',
+  dacp_probe_failed: 'Remote control is unavailable for this session.',
+  ios_blocked:
+    'This device may not respond to remote control (known iOS 17.4+ limitation). Use the phone directly.',
+  ap2_unsupported: 'AirPlay 2-only senders do not support remote control.',
+  control_unavailable: 'Remote control is unavailable.',
+};
+
 const els = {
   header: document.getElementById('page-header'),
   empty: document.getElementById('empty-state'),
@@ -20,6 +29,12 @@ const els = {
   timeTotal: document.getElementById('progress-total'),
   badge: document.getElementById('status-badge'),
   source: document.getElementById('track-source'),
+  transport: document.getElementById('transport-controls'),
+  btnPrev: document.getElementById('btn-prev'),
+  btnToggle: document.getElementById('btn-toggle'),
+  btnNext: document.getElementById('btn-next'),
+  controlHint: document.getElementById('control-hint'),
+  controlToast: document.getElementById('control-toast'),
 };
 
 let snapshot = null;
@@ -27,6 +42,8 @@ let lastArtUrl = null;
 let progressAnchor = { ms: 0, at: 0 };
 let frozenProgressMs = 0;
 let emptyTimer = null;
+let controlBusy = false;
+let toastTimer = null;
 
 const setVisible = (hasTrack) => {
   if (els.header) els.header.hidden = hasTrack;
@@ -63,6 +80,83 @@ const setBadge = (playing) => {
   els.badge.classList.toggle('status-badge--paused', !playing);
 };
 
+const showToast = (message) => {
+  if (!els.controlToast) return;
+  els.controlToast.textContent = message;
+  els.controlToast.hidden = false;
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => {
+    els.controlToast.hidden = true;
+    toastTimer = null;
+  }, 4000);
+};
+
+const setTransportState = (playback) => {
+  if (!els.transport) return;
+
+  const hasTrack = !!playback.title;
+  els.transport.hidden = !hasTrack;
+
+  if (!hasTrack) {
+    if (els.controlHint) els.controlHint.hidden = true;
+    return;
+  }
+
+  const available = playback.controlAvailable === true;
+  const reason = playback.controlReason;
+  const disabled = !available || controlBusy;
+
+  for (const btn of [els.btnPrev, els.btnToggle, els.btnNext]) {
+    if (!btn) continue;
+    btn.disabled = disabled;
+  }
+
+  if (els.btnToggle) {
+    els.btnToggle.textContent = playback.isPlaying ? '⏸' : '▶';
+    els.btnToggle.setAttribute(
+      'aria-label',
+      playback.isPlaying ? 'Pause' : 'Play',
+    );
+    els.btnToggle.title = playback.isPlaying ? 'Pause' : 'Play';
+  }
+
+  const hintText = available ? '' : CONTROL_REASONS[reason] ?? CONTROL_REASONS.control_unavailable;
+  if (els.controlHint) {
+    els.controlHint.hidden = available;
+    els.controlHint.textContent = hintText;
+  }
+
+  for (const btn of [els.btnPrev, els.btnToggle, els.btnNext]) {
+    if (!btn) continue;
+    btn.title = available ? btn.getAttribute('aria-label') : hintText;
+  }
+};
+
+const sendControl = async (action) => {
+  if (controlBusy || !snapshot?.controlAvailable) return;
+
+  controlBusy = true;
+  setTransportState(snapshot);
+
+  try {
+    const res = await fetch(`/api/control/${action}`, { method: 'POST' });
+    const body = await res.json();
+
+    if (!body.ok) {
+      const message =
+        CONTROL_REASONS[body.reason] ??
+        'Remote control command failed.';
+      showToast(message);
+    }
+  } catch (err) {
+    console.error('control request failed', err);
+    showToast('Remote control request failed.');
+  } finally {
+    controlBusy = false;
+    if (snapshot) setTransportState(snapshot);
+  }
+};
+
 const applySnapshot = (playback) => {
   const wasPlaying = snapshot?.isPlaying ?? false;
   snapshot = playback;
@@ -80,6 +174,7 @@ const applySnapshot = (playback) => {
     if (els.artist.textContent) els.artist.textContent = '';
     if (els.album.textContent) els.album.textContent = '';
     updateProgress(0, 0);
+    setTransportState(playback);
     return;
   }
 
@@ -124,6 +219,7 @@ const applySnapshot = (playback) => {
   }
 
   setBadge(playback.isPlaying);
+  setTransportState(playback);
 
   const sourceLabel = playback.source || 'AirPlay';
   if (els.source.textContent !== sourceLabel) {
@@ -138,6 +234,16 @@ const tickProgress = () => {
   const progressMs = Math.min(snapshot.durationMs, progressAnchor.ms + elapsed);
   updateProgress(progressMs, snapshot.durationMs);
 };
+
+if (els.btnPrev) {
+  els.btnPrev.addEventListener('click', () => sendControl('prev'));
+}
+if (els.btnToggle) {
+  els.btnToggle.addEventListener('click', () => sendControl('toggle'));
+}
+if (els.btnNext) {
+  els.btnNext.addEventListener('click', () => sendControl('next'));
+}
 
 const source = new EventSource('/api/events');
 source.onmessage = (event) => {

@@ -58,6 +58,32 @@
             </div>
           </div>
 
+          <div id="transport-controls" class="transport-controls" hidden>
+            <button
+              type="button"
+              id="btn-prev"
+              class="transport-btn"
+              aria-label="Previous track"
+              title="Previous track"
+            >⏮</button>
+            <button
+              type="button"
+              id="btn-toggle"
+              class="transport-btn transport-btn--primary"
+              aria-label="Play or pause"
+              title="Play or pause"
+            >▶</button>
+            <button
+              type="button"
+              id="btn-next"
+              class="transport-btn"
+              aria-label="Next track"
+              title="Next track"
+            >⏭</button>
+          </div>
+          <p id="control-hint" class="control-hint" hidden></p>
+          <p id="control-toast" class="control-toast" hidden role="status"></p>
+
           <div class="status-row">
             <span id="status-badge" class="status-badge <%= playback.isPlaying ? '' : 'status-badge--paused' %>">
               <%= playback.isPlaying ? '▶ Playing' : '⏸ Paused' %>

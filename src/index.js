@@ -9,6 +9,7 @@ import {
   startMetadataWatcher,
 } from './services/airplayMetadataService.js';
 import { getPlaybackState as getMockPlaybackState } from './services/mockPlaybackService.js';
+import { sendAction } from './services/playbackControlService.js';
 import { formatMs } from './utils/formatTime.js';
 import {
   configureTidbytPush,
@@ -69,6 +70,24 @@ const resolvePlayback = async (req) => {
 app.get('/api/status', async (req, res) => {
   const { playback } = await resolvePlayback(req);
   res.json(playback);
+});
+
+const CONTROL_ACTIONS = new Set(['play', 'pause', 'toggle', 'next', 'prev']);
+
+app.post('/api/control/:action', async (req, res) => {
+  if (req.query.mock === 'true' || USE_MOCK) {
+    res.status(503).json({ ok: false, reason: 'control_unavailable', action: req.params.action });
+    return;
+  }
+
+  const action = String(req.params.action ?? '').toLowerCase();
+  if (!CONTROL_ACTIONS.has(action)) {
+    res.status(400).json({ ok: false, reason: 'invalid_action', action });
+    return;
+  }
+
+  const result = await sendAction(action);
+  res.status(200).json(result);
 });
 
 app.get('/api/version', (_req, res) => {
