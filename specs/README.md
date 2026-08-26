@@ -77,10 +77,10 @@ Record `version` + `gitCommit` at P49 / P99 / P100 and every patch deploy.
 | [p0-airplay-status.md](./p0-airplay-status.md) | P0 |
 | [p1-remote-control.md](./p1-remote-control.md) – [p5-deployment.md](./p5-deployment.md) | P1–P5 features |
 | [p6-echo-show.md](./p6-echo-show.md) | P6 — Echo Show Tier B |
-| [p7-android-always-on.md](./p7-android-always-on.md) | P7 — Android always-on WebView (idea) |
-| [p8-deskthing-carthing.md](./p8-deskthing-carthing.md) | P8 — DeskThing / Car Thing (idea) |
-| [p9-ipad-always-on.md](./p9-ipad-always-on.md) | P9 — iPad fallback client (idea) |
-| [p10-local-service-fallback.md](./p10-local-service-fallback.md) | P10 — local service fallback gateway (idea) |
+| [p7-android-always-on.md](./p7-android-always-on.md) | P7 — Android always-on WebView (authored; device-test pending) |
+| [p8-deskthing-carthing.md](./p8-deskthing-carthing.md) | P8 — DeskThing / Car Thing (authored; device-test pending) |
+| [p9-ipad-always-on.md](./p9-ipad-always-on.md) | P9 — iPad fallback client (web MVP) |
+| [p10-local-service-fallback.md](./p10-local-service-fallback.md) | P10 — local service fallback gateway (MVP) |
 | [p49-preprod-deployment.md](./p49-preprod-deployment.md) | P49 — line 1 beta |
 | [p50-beta-soak-observability.md](./p50-beta-soak-observability.md) | P50 — soak + Mac Grafana/Loki |
 | [p99-prod-readiness.md](./p99-prod-readiness.md) | P99 — line 1 prod readiness |
