@@ -1,6 +1,8 @@
 # Phase P8 — DeskThing / Car Thing always-on client
 
-**Status:** Spec (idea — not Cloud-PR ready)  
+**Status:** Authored — `integrations/deskthing/` (device-test pending on Car Thing + DeskThing host).  
+
+**Decisions locked:** OD1 = A (DeskThing app polls `/api/status`, renders native UI) · OD2 = map "screen off" to DeskThing sleep/backlight · OD3 = auto-wake + on-screen "tap to resume" splash. OD5 (version pin) recorded at device test. Shared always-on rules in `integrations/deskthing/shared/alwaysOnState.js` (unit-tested).  
 **Depends on:** P0 live metadata (`/api/status`, `/api/events`)  
 **Optional dependency:** [P10 local service fallback](./p10-local-service-fallback.md)  
 **Shared behaviour:** [guidelines/always-on-display-client.md](./guidelines/always-on-display-client.md)  

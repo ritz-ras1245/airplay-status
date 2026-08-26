@@ -1,0 +1,14 @@
+{
+  "id": "airplay-status",
+  "label": "AirPlay Status",
+  "version": "0.1.0",
+  "description": "Always-on now-playing console for airplay-status — screen on while playing, sleep when idle, tap to resume.",
+  "author": "airplay-status",
+  "platforms": ["windows", "mac", "linux"],
+  "homepage": "https://github.com/ritz-ras1245/airplay-status",
+  "repository": "https://github.com/ritz-ras1245/airplay-status",
+  "tags": ["utility", "media"],
+  "requires": [],
+  "version_code": 1,
+  "//": "Field set follows @deskthing/types AppManifest; verify against the SDK version you pin (OD5)."
+}
