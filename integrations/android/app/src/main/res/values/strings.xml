@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AirPlay Status</string>
+    <string name="watching">Watching for now-playing…</string>
+    <string name="resume_title">AirPlay Status</string>
+    <string name="resume_text">Tap here to resume</string>
+</resources>
