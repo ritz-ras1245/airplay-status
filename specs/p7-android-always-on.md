@@ -1,6 +1,8 @@
 # Phase P7 — Android always-on WebView client
 
-**Status:** Spec (idea — not Cloud-PR ready)  
+**Status:** Authored — `integrations/android/` (device-test pending; not built in CI — no Android SDK in cloud).  
+
+**Decisions locked:** OD1 = A (`integrations/android/` monorepo) · OD2 = minSdk 26 / targetSdk 34 · OD3 = A (system timeout screen-off, no Device Owner) · OD4 = A (short foreground service + native `/api/status` poll). Shared always-on rules in `integrations/android/app/src/main/java/app/airplaystatus/alwayson/AlwaysOnState.kt` (JVM unit-tested).  
 **Depends on:** P0 live metadata (`/api/status`, `/api/events`)  
 **Optional dependency:** [P10 local service fallback](./p10-local-service-fallback.md)  
 **Shared behaviour:** [guidelines/always-on-display-client.md](./guidelines/always-on-display-client.md)  
