@@ -48,7 +48,7 @@ Open [airplay-status-p49.code-workspace](airplay-status-p49.code-workspace) in C
 | # | Command | Expected |
 |---|---------|----------|
 | 1 | `npm ci` | exits 0 |
-| 2 | `USE_MOCK=true SKIP_SHAIRPORT_CHECK=1 npm start` | log: `AirPlay Status v0.1.0 (mock)` |
+| 2 | `USE_MOCK=true SKIP_SHAIRPORT_CHECK=1 npm start` | log: `Media Status v0.1.0 (mock)` |
 | 3 | `curl -sf http://localhost:3003/api/version` | JSON `"version":"0.1.0"` |
 | 4 | `curl -sf 'http://localhost:3003/api/status?mock=true'` | JSON playback payload |
 | 5 | `./bin/check-version.sh http://localhost:3003` | pretty-printed version JSON |

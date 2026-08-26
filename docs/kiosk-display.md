@@ -5,8 +5,10 @@ An immersive, full-viewport "now playing" surface for **always-on displays**
 the P7–P9 always-on clients are meant to point at, per
 [specs/guidelines/always-on-display-client.md](../specs/guidelines/always-on-display-client.md).
 
-It consumes the existing P0 metadata pipeline only — `GET /api/status` and the
-`GET /api/events` SSE stream. It does **not** add a second metadata source.
+It consumes the existing P0 metadata pipeline (`GET /api/status` and the
+`GET /api/events` SSE stream). P11 [Media Status](media-status.md) may rotate
+`/api/status` among enabled sources **one at a time**; the kiosk still shows a
+single card. Live default is AirPlay-only.
 
 ## URL
 

@@ -3,18 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= deployStage.dashboardTitle %></title>
+  <title><%= productTitle %></title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/style.css">
 </head>
-<body>
+<body data-live="<%= live ? 'true' : 'false' %>">
   <div class="container">
     <header id="page-header" class="header" <%= live && playback.title ? 'hidden' : '' %>>
-      <h1>📡 <%= deployStage.dashboardTitle %><% if (deployStage.id !== 'prod') { %> <span class="stage-badge stage-badge--<%= deployStage.id %>"><%= deployStage.label %></span><% } %></h1>
-      <p id="subtitle"><%= live ? 'Live from AirPlay' : 'Mock preview' %><% if (deployStage.deployHost) { %> · <%= deployStage.deployHost %><% } %></p>
+      <h1>📡 <%= productTitle %><% if (deployStage.id !== 'prod') { %> <span class="stage-badge stage-badge--<%= deployStage.id %>"><%= deployStage.label %></span><% } %></h1>
+      <p id="subtitle"><%= live ? (multiSource ? 'Live · one source at a time' : 'Live from AirPlay') : (multiSource ? 'Mock preview · AirPlay and Spotify, one at a time' : 'Mock preview') %><% if (board && board.pinned) { %> · pinned<% } %><% if (deployStage.deployHost) { %> · <%= deployStage.deployHost %><% } %></p>
     </header>
+
+    <% if (multiSource) { %>
+    <nav id="source-pills" class="source-pills" aria-label="Playback sources">
+      <% board.sources.forEach((src) => { %>
+        <form class="source-pill-form" method="post" action="/api/sources/focus">
+          <input type="hidden" name="sourceId" value="<%= src.id %>">
+          <button
+            type="submit"
+            class="source-pill<%= src.id === board.focusedId ? ' source-pill--active' : '' %><%= src.hasTrack ? '' : ' source-pill--idle' %><%= board.pinned && src.id === board.focusedId ? ' source-pill--pinned' : '' %>"
+            data-source-id="<%= src.id %>"
+          ><%= src.label %></button>
+        </form>
+      <% }) %>
+    </nav>
+    <% } %>
 
     <% if (live) { %>
       <div id="playback-view">
@@ -22,7 +37,7 @@
           <div class="empty-icon">🔇</div>
           <h2 class="empty-title">Nothing playing</h2>
           <p class="empty-subtitle">
-            Select <strong><%= deployStage.airplayReceiverName %></strong> as an output alongside your speakers to see track info here.
+            Select <strong><%= deployStage.airplayReceiverName %></strong> as an output alongside your speakers to see track info here<% if (multiSource) { %>, or play on Spotify<% } %>.
           </p>
         </div>
 
@@ -63,7 +78,7 @@
               <%= playback.isPlaying ? '▶ Playing' : '⏸ Paused' %>
             </span>
             <span class="source-info">
-              <img src="/images/airplay-icon-white.png" alt="" class="airplay-icon" aria-hidden="true">
+              <img src="/images/airplay-icon-white.png" alt="" class="airplay-icon<%= playback.sourceId === 'spotify' ? ' airplay-icon--hidden' : '' %>" aria-hidden="true">
               <span id="track-source"><%= playback.source || 'AirPlay' %></span>
             </span>
           </div>
@@ -85,44 +100,57 @@
       <script src="/js/debug-markers.js" type="module"></script>
       <% } %>
       <script src="/js/live.js" type="module"></script>
+      <script src="/js/sourceBoard.js" type="module"></script>
     <% } else { %>
       <div id="playback-view">
-        <% if (!playback.isPlaying && !playback.title) { %>
-          <div class="card card--empty">
-            <div class="empty-icon">🔇</div>
-            <h2 class="empty-title">Nothing playing</h2>
-            <p class="empty-subtitle">Mock preview — use live mode for AirPlay.</p>
+        <div id="empty-state" class="card card--empty" <%= playback.title ? 'hidden' : '' %>>
+          <div class="empty-icon">🔇</div>
+          <h2 class="empty-title">Nothing playing</h2>
+          <p class="empty-subtitle">Mock preview — use live mode for AirPlay<% if (multiSource) { %> and Spotify<% } %>.</p>
+        </div>
+
+        <div id="track-card" class="card" <%= playback.title ? '' : 'hidden' %>>
+          <div class="album-art-frame">
+            <img
+              id="album-art"
+              class="album-art"
+              src="<%= playback.albumArt || '' %>"
+              alt="Album art"
+              <%= playback.albumArt ? '' : 'hidden' %>
+            >
+            <div id="album-art-ph" class="album-art album-art--placeholder" <%= playback.albumArt ? 'hidden' : '' %>>🎵</div>
           </div>
-        <% } else { %>
-          <div class="card">
-            <% if (playback.albumArt) { %>
-              <img class="album-art" src="<%= playback.albumArt %>" alt="Album art">
-            <% } else { %>
-              <div class="album-art album-art--placeholder">🎵</div>
-            <% } %>
-            <div class="track-info">
-              <h2 class="track-title"><%= playback.title %></h2>
-              <p class="track-artist"><%= playback.artist %></p>
-              <p class="track-album"><%= playback.album %></p>
+
+          <div class="track-info">
+            <h2 class="track-title" id="track-title"><%= playback.title || '' %></h2>
+            <p class="track-artist" id="track-artist"><%= playback.artist || '' %></p>
+            <p class="track-album" id="track-album"><%= playback.album || '' %></p>
+          </div>
+
+          <div class="progress-section">
+            <div class="progress-bar">
+              <div
+                id="progress-fill"
+                class="progress-fill"
+                style="width: <%= playback.durationMs ? Math.min(100, Math.round((playback.progressMs / playback.durationMs) * 100)) : 0 %>%"
+              ></div>
             </div>
-            <div class="progress-section">
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: <%= playback.durationMs ? Math.round((playback.progressMs / playback.durationMs) * 100) : 0 %>%"></div>
-              </div>
-              <div class="progress-times">
-                <span><%= formatMs(playback.progressMs) %></span>
-                <span><%= formatMs(playback.durationMs) %></span>
-              </div>
-            </div>
-            <div class="status-row">
-              <span class="status-badge">▶ Playing</span>
-              <span class="source-info">
-                <img src="/images/airplay-icon-white.png" alt="" class="airplay-icon" aria-hidden="true">
-                <%= playback.source || 'AirPlay' %>
-              </span>
+            <div class="progress-times">
+              <span id="progress-current"><%= formatMs(playback.progressMs) %></span>
+              <span id="progress-total"><%= formatMs(playback.durationMs) %></span>
             </div>
           </div>
-        <% } %>
+
+          <div class="status-row">
+            <span id="status-badge" class="status-badge <%= playback.isPlaying ? '' : 'status-badge--paused' %>">
+              <%= playback.isPlaying ? '▶ Playing' : '⏸ Paused' %>
+            </span>
+            <span class="source-info">
+              <img src="/images/airplay-icon-white.png" alt="" class="airplay-icon<%= playback.sourceId === 'spotify' ? ' airplay-icon--hidden' : '' %>" aria-hidden="true">
+              <span id="track-source"><%= playback.source || 'AirPlay' %></span>
+            </span>
+          </div>
+        </div>
       </div>
       <div class="toggle-section">
         <% if (forceNothingPlaying) { %>
@@ -131,6 +159,7 @@
           <a href="/?mock=true&state=nothing" class="toggle-btn">🔇 Show Nothing Playing</a>
         <% } %>
       </div>
+      <script src="/js/sourceBoard.js" type="module"></script>
     <% } %>
 
   </div>
