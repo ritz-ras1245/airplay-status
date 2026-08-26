@@ -1,0 +1,11 @@
+{
+  "name": "airplay-status-local-fallback",
+  "version": "0.1.0",
+  "description": "Generic local-service fallback gateway (P10) — probes primary hosts and proxies when healthy or serves a status page when down",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  }
+}
