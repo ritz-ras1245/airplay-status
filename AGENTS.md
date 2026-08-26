@@ -133,15 +133,15 @@ P99 runs **after P50 soak sign-off**, **before P100** release (`1.0.0`). P199 be
 | **P4** — eInk controls | 📄 Spec | `specs/p4-eink-controls.md` |
 | **P5** — Deployment | 📄 Spec | `specs/p5-deployment.md` — Pi, Docker (reference) |
 | **P6** — Echo Show | 📄 Spec | `specs/p6-echo-show.md` — Tier B push → Silk |
-| **P7** — Android always-on | 💡 Idea | `specs/p7-android-always-on.md` — WebView console; idle screen-off; tap-to-resume |
-| **P8** — DeskThing / Car Thing | 💡 Idea | `specs/p8-deskthing-carthing.md` — same always-on rules on Car Thing |
-| **P9** — iPad fallback client | 💡 Idea | `specs/p9-ipad-always-on.md` — iPad shell / Guided Access parity |
-| **P10** — Local service fallback | 💡 Idea | `specs/p10-local-service-fallback.md` — off-Pi gateway; probe ports; generic `.local` front |
+| **P7** — Android always-on | 🚧 Authored (device-test pending) | `specs/p7-android-always-on.md`, `integrations/android/` — WebView console; idle screen-off; tap-to-resume. Not built in CI (no Android SDK) |
+| **P8** — DeskThing / Car Thing | 🚧 Authored (device-test pending) | `specs/p8-deskthing-carthing.md`, `integrations/deskthing/` — same always-on rules on Car Thing. Needs DeskThing host + hardware to run |
+| **P9** — iPad fallback client | ✅ Web MVP | `specs/p9-ipad-always-on.md`, `docs/ipad-guided-access.md` — Guided Access web path (OD1=B) over `/display?client=ipad` |
+| **P10** — Local service fallback | ✅ MVP | `specs/p10-local-service-fallback.md`, `integrations/local-fallback/` — off-Pi gateway; probe ports; proxy-when-healthy / fallback page |
 | **P49** — Pre-prod beta | ✅ Done | `specs/p49-preprod-deployment.md` — RPi4, AP2, bare metal |
 | **P50** — Beta soak + observability | 📄 Active | `specs/p50-beta-soak-observability.md` — soak Pi; Mac Loki/Grafana |
 | **P99** — Prod readiness | 📄 Spec | `specs/p99-prod-readiness.md` — see permanent definition above |
 
-**Shared client rules (P7–P9):** [specs/guidelines/always-on-display-client.md](specs/guidelines/always-on-display-client.md)
+**Shared client rules (P7–P9):** [specs/guidelines/always-on-display-client.md](specs/guidelines/always-on-display-client.md). The shared **web surface** is the kiosk view `GET /display` ([docs/kiosk-display.md](docs/kiosk-display.md)); all three clients point at it (`?client=android|deskthing|ipad`). Pure always-on rules are mirrored across `src/public/js/displayState.js` (web), `integrations/deskthing/shared/alwaysOnState.js`, and `integrations/android/.../AlwaysOnState.kt` — all unit-tested. Health probe for P10/clients: `GET /api/health`.
 
 **Implementation order:** Features on **Mac dev** → **P49** beta → **P50** soak → **P99** → **P100** release `1.0.0` → line 2 on `main` as `2.0.0-dev`.
 
