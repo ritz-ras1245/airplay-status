@@ -60,6 +60,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 if (!USE_MOCK) {
   startMetadataWatcher();
@@ -145,7 +146,15 @@ app.get('/api/sources', async (req, res) => {
 
 app.post('/api/sources/focus', (req, res) => {
   const sourceId = String(req.body?.sourceId || '').trim();
-  if (!sourceBoard.pin(sourceId)) {
+  const formPost = Boolean(
+    req.headers['content-type']?.includes('application/x-www-form-urlencoded'),
+  );
+  const ok = sourceBoard.pin(sourceId);
+  if (formPost) {
+    res.redirect(req.get('Referer') || '/');
+    return;
+  }
+  if (!ok) {
     res.status(400).json({ ok: false, error: 'unknown sourceId' });
     return;
   }

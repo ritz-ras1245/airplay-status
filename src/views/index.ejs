@@ -13,17 +13,20 @@
   <div class="container">
     <header id="page-header" class="header" <%= live && playback.title ? 'hidden' : '' %>>
       <h1>📡 <%= productTitle %><% if (deployStage.id !== 'prod') { %> <span class="stage-badge stage-badge--<%= deployStage.id %>"><%= deployStage.label %></span><% } %></h1>
-      <p id="subtitle"><%= live ? (multiSource ? 'Live · one source at a time' : 'Live from AirPlay') : (multiSource ? 'Mock preview · AirPlay and Spotify, one at a time' : 'Mock preview') %><% if (deployStage.deployHost) { %> · <%= deployStage.deployHost %><% } %></p>
+      <p id="subtitle"><%= live ? (multiSource ? 'Live · one source at a time' : 'Live from AirPlay') : (multiSource ? 'Mock preview · AirPlay and Spotify, one at a time' : 'Mock preview') %><% if (board && board.pinned) { %> · pinned<% } %><% if (deployStage.deployHost) { %> · <%= deployStage.deployHost %><% } %></p>
     </header>
 
     <% if (multiSource) { %>
     <nav id="source-pills" class="source-pills" aria-label="Playback sources">
       <% board.sources.forEach((src) => { %>
-        <button
-          type="button"
-          class="source-pill<%= src.id === board.focusedId ? ' source-pill--active' : '' %><%= src.hasTrack ? '' : ' source-pill--idle' %>"
-          data-source-id="<%= src.id %>"
-        ><%= src.label %></button>
+        <form class="source-pill-form" method="post" action="/api/sources/focus">
+          <input type="hidden" name="sourceId" value="<%= src.id %>">
+          <button
+            type="submit"
+            class="source-pill<%= src.id === board.focusedId ? ' source-pill--active' : '' %><%= src.hasTrack ? '' : ' source-pill--idle' %><%= board.pinned && src.id === board.focusedId ? ' source-pill--pinned' : '' %>"
+            data-source-id="<%= src.id %>"
+          ><%= src.label %></button>
+        </form>
       <% }) %>
     </nav>
     <% } %>

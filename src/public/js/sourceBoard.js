@@ -1,20 +1,11 @@
 /**
  * Media Status source pills + mock polling for the focused card.
  * Live card updates still come from SSE in live.js / display.js.
+ * Pills are HTML forms so pin works even if this module fails to bind.
  */
 const pillsEl = () => document.getElementById('source-pills');
 
 const isLive = () => document.body.dataset.live === 'true';
-
-const bindPills = (nav) => {
-  if (!nav || nav.dataset.bound === '1') return;
-  nav.dataset.bound = '1';
-  nav.addEventListener('click', (event) => {
-    const btn = event.target.closest('.source-pill');
-    if (!btn) return;
-    pinSource(btn.dataset.sourceId);
-  });
-};
 
 const formatMs = (ms) => {
   if (!ms || ms < 0) return '0:00';
@@ -22,6 +13,31 @@ const formatMs = (ms) => {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};
+
+const paintPillButton = (btn, src, board) => {
+  btn.dataset.sourceId = src.id;
+  btn.textContent = src.label;
+  btn.classList.toggle('source-pill--active', src.id === board.focusedId);
+  btn.classList.toggle('source-pill--idle', !src.hasTrack);
+  btn.classList.toggle('source-pill--pinned', board.pinned && src.id === board.focusedId);
+};
+
+const makePillForm = (src, board) => {
+  const form = document.createElement('form');
+  form.className = 'source-pill-form';
+  form.method = 'post';
+  form.action = '/api/sources/focus';
+  const input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'sourceId';
+  input.value = src.id;
+  const btn = document.createElement('button');
+  btn.type = 'submit';
+  btn.className = 'source-pill';
+  paintPillButton(btn, src, board);
+  form.append(input, btn);
+  return form;
 };
 
 const renderPills = (board) => {
@@ -33,32 +49,21 @@ const renderPills = (board) => {
     return;
   }
   nav.hidden = false;
-  bindPills(nav);
+  nav.dataset.pinned = board.pinned ? '1' : '0';
 
-  const existing = [...nav.querySelectorAll('.source-pill')];
+  const existing = [...nav.querySelectorAll('.source-pill-form')];
   if (existing.length === board.sources.length) {
     board.sources.forEach((src, i) => {
-      const btn = existing[i];
-      btn.dataset.sourceId = src.id;
-      btn.textContent = src.label;
-      btn.classList.toggle('source-pill--active', src.id === board.focusedId);
-      btn.classList.toggle('source-pill--idle', !src.hasTrack);
+      const form = existing[i];
+      const input = form.querySelector('[name="sourceId"]');
+      const btn = form.querySelector('.source-pill');
+      if (input) input.value = src.id;
+      if (btn) paintPillButton(btn, src, board);
     });
     return;
   }
 
-  nav.replaceChildren(
-    ...board.sources.map((src) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'source-pill';
-      btn.dataset.sourceId = src.id;
-      btn.textContent = src.label;
-      btn.classList.toggle('source-pill--active', src.id === board.focusedId);
-      btn.classList.toggle('source-pill--idle', !src.hasTrack);
-      return btn;
-    }),
-  );
+  nav.replaceChildren(...board.sources.map((src) => makePillForm(src, board)));
 };
 
 const pinSource = async (sourceId) => {
@@ -149,3 +154,11 @@ const poll = async () => {
 
 poll();
 setInterval(poll, 1000);
+
+document.addEventListener('submit', (event) => {
+  const form = event.target.closest('form.source-pill-form');
+  if (!form) return;
+  event.preventDefault();
+  const sourceId = new FormData(form).get('sourceId');
+  if (sourceId) pinSource(String(sourceId));
+});
