@@ -1,6 +1,8 @@
 # Phase P10 — Local service fallback gateway
 
-**Status:** Spec (idea — not Cloud-PR ready)  
+**Status:** MVP implemented — `integrations/local-fallback/` (probe + reverse-proxy + fallback page).  
+
+**Decisions locked (MVP):** OD1 = A (`integrations/local-fallback/` in-repo) · OD2 = C intent, MVP = reverse-proxy + static fallback (DNS cutover is deploy-time docs) · OD4 = Synology Docker (host only) · OD5 = probe `:3003` canonical, `:80` optional · OD6 = A (static down page + live probe matrix). Config is JSON for a dependency-free MVP; a YAML loader can be layered on later.  
 **Depends on:** Deployed primary services (for airplay-status: P49 RPi beta or Mac host)  
 **Used by:** P7 / P8 / P9 display clients; reusable for other LAN `.local` / `home.arpa` services  
 **Layout:** Prefer standalone Docker project under `integrations/local-fallback/` (or future dedicated repo — see OD1)  

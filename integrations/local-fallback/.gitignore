@@ -1,0 +1,2 @@
+# Local config holds LAN hosts/IPs — keep it out of git (spec D5).
+config/services.json

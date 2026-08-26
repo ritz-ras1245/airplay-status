@@ -1,0 +1,16 @@
+{
+  "gateway_http_port": 80,
+  "services": {
+    "airplay-status": {
+      "hostname": "airplay-status.home.arpa",
+      "primary_host": "192.168.1.50",
+      "ports": [
+        { "port": 3003, "check": "http", "path": "/api/health" },
+        { "port": 80, "check": "tcp" }
+      ],
+      "proxy_to": "http://192.168.1.50:3003",
+      "fallback_title": "AirPlay Status",
+      "recover_after": 2
+    }
+  }
+}
