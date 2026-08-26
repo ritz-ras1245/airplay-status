@@ -1,6 +1,7 @@
 import './env.js';
 import express from 'express';
 import path from 'path';
+import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'url';
 import {
   getPlaybackState as getLivePlaybackState,
@@ -77,6 +78,18 @@ app.get('/api/version', (_req, res) => {
   res.json(getVersionInfo());
 });
 
+const sidecarStatus = () => {
+  if (USE_MOCK) return 'n/a';
+  try {
+    // Match by exact process name; pgrep -f would also match this call's own
+    // invoking shell (its cmdline contains the pattern) and false-positive.
+    execSync('pgrep -x shairport-sync', { stdio: 'ignore' });
+    return 'running';
+  } catch {
+    return 'stopped';
+  }
+};
+
 app.get('/api/health', (_req, res) => {
   const info = getVersionInfo();
   const live = USE_MOCK ? null : getLivePlaybackState();
@@ -91,6 +104,7 @@ app.get('/api/health', (_req, res) => {
       version: info.version,
       node: info.node,
       stageId: deployStage.id,
+      sidecar: sidecarStatus(),
     }),
   );
 });
