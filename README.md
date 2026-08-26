@@ -41,10 +41,10 @@ Phase numbering: [specs/README.md](specs/README.md). Pre-P100: **0.y.z**; **P100
 | Phase | Status | Description |
 |-------|--------|-------------|
 | **P0** — Live dashboard | Done | Sidecar, metadata pipe, SSE dashboard ([p0 spec](specs/p0-airplay-status.md)) |
-| **P1** — Remote control | Spec | [p1-remote-control.md](specs/p1-remote-control.md) |
+| **P1** — Remote control | Branch | DACP play/pause/prev/next — [p1 spec](specs/p1-remote-control.md), [Pi checklist](docs/p1-pi-validation.md) |
 | **P2** — Tidbyt | MVP done | [p2-tidbyt.md](specs/p2-tidbyt.md) — [integrations/tidbyt/](integrations/tidbyt/) |
-| **P3** — eInk display | Spec | [p3-eink-display.md](specs/p3-eink-display.md) |
-| **P4** — eInk controls | Spec | [p4-eink-controls.md](specs/p4-eink-controls.md) |
+| **P3** — eInk display | Browser MVP | `/eink` — [p3-eink-display.md](specs/p3-eink-display.md) (PNG path not in this PR) |
+| **P4** — eInk controls | Branch (with P1) | Same DACP API via HTML forms — [p4-eink-controls.md](specs/p4-eink-controls.md) |
 | **P5** — Deployment | Spec | [p5-deployment.md](specs/p5-deployment.md) |
 | **P49** — Pre-prod beta | **Next** | [p49-preprod-deployment.md](specs/p49-preprod-deployment.md) — RPi4, AirPlay 2 |
 | **P99** — Prod readiness | Spec | [p99-prod-readiness.md](specs/p99-prod-readiness.md) — logs, Grafana, SOPs, launchd |

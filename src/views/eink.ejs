@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="60">
+  <title><%= deployStage.dashboardTitle %> eInk</title>
+  <link rel="stylesheet" href="/css/eink.css">
+</head>
+<body>
+  <main class="eink">
+    <% if (controlFlash === 'failed') { %>
+      <p class="eink-flash"><%= controlReasonMessage(controlFlashReason) %></p>
+    <% } else if (controlFlash === 'ok') { %>
+      <p class="eink-flash eink-flash--ok">Command sent. Wait for Now Playing to update.</p>
+    <% } %>
+
+    <% if (!playback.title) { %>
+      <h1>Nothing playing</h1>
+      <p>Select <strong><%= deployStage.airplayReceiverName %></strong> as an AirPlay output.</p>
+    <% } else { %>
+      <% if (playback.albumArt) { %>
+        <img class="eink-art" src="<%= playback.albumArt %>" alt="">
+      <% } %>
+      <h1><%= playback.title %></h1>
+      <p class="eink-artist"><%= playback.artist || '' %></p>
+      <p class="eink-album"><%= playback.album || '' %></p>
+      <p class="eink-time"><%= formatMs(playback.progressMs) %> / <%= formatMs(playback.durationMs) %> · <%= playback.isPlaying ? 'Playing' : 'Paused' %></p>
+    <% } %>
+
+    <div class="eink-transport">
+      <form method="POST" action="/api/control/prev">
+        <input type="hidden" name="returnTo" value="/eink">
+        <input type="hidden" name="device" value="<%= device %>">
+        <button type="submit" aria-label="Previous track" <%= playback.controlAvailable && playback.title ? '' : 'disabled' %>>Prev</button>
+      </form>
+      <form method="POST" action="/api/control/toggle">
+        <input type="hidden" name="returnTo" value="/eink">
+        <input type="hidden" name="device" value="<%= device %>">
+        <button type="submit" aria-label="Play or pause" <%= playback.controlAvailable && playback.title ? '' : 'disabled' %>><%= playback.isPlaying ? 'Pause' : 'Play' %></button>
+      </form>
+      <form method="POST" action="/api/control/next">
+        <input type="hidden" name="returnTo" value="/eink">
+        <input type="hidden" name="device" value="<%= device %>">
+        <button type="submit" aria-label="Next track" <%= playback.controlAvailable && playback.title ? '' : 'disabled' %>>Next</button>
+      </form>
+    </div>
+    <p class="eink-reason"><%= playback.controlAvailable ? '' : controlReasonMessage(playback.controlReason) %></p>
+    <p class="eink-note">Same DACP control path as the web dashboard. PNG / Tidbyt surfaces stay read-only.</p>
+  </main>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # Phase P3 — Kindle / eInk Read-Only Display
 
-**Status:** Spec (pre-implementation)  
+**Status:** Browser `/eink` MVP + transport forms on P1 branch. Full P3 PNG pipeline still spec.  
 **Depends on:** Phase 4 live metadata (`/api/status`)  
 **Optional dependency:** P1 not required (display-only)
 

@@ -1,6 +1,6 @@
 # Phase P1 — Remote Control (Web Play/Pause/Prev/Next)
 
-**Status:** Spec (pre-implementation)  
+**Status:** Implemented on `feat/cursor/p1-remote-control` — **Pi device sign-off required** ([docs/p1-pi-validation.md](../docs/p1-pi-validation.md))  
 **Depends on:** Phase 4 live metadata (`/api/status`, metadata pipe reader)  
 **Priority source devices:** iPhone, iPod Touch; Mac when available
 

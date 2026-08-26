@@ -8,7 +8,9 @@ import {
   onPlaybackChange,
   startMetadataWatcher,
 } from './services/airplayMetadataService.js';
-import { getPlaybackState as getMockPlaybackState } from './services/mockPlaybackService.js';
+import { getPlaybackState as getMockPlaybackState, applyMockControl } from './services/mockPlaybackService.js';
+import { sendControlAction } from './services/playbackControlService.js';
+import { controlReasonMessage } from './lib/controlReasons.js';
 import { formatMs } from './utils/formatTime.js';
 import {
   configureTidbytPush,
@@ -31,6 +33,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 if (!USE_MOCK) {
   startMetadataWatcher();
@@ -73,6 +76,56 @@ app.get('/api/status', async (req, res) => {
 
 app.get('/api/version', (_req, res) => {
   res.json(getVersionInfo());
+});
+
+const CONTROL_ACTIONS = new Set(['play', 'pause', 'toggle', 'next', 'prev']);
+
+const controlWantsRedirect = (req) => {
+  const type = String(req.headers['content-type'] || '');
+  if (type.includes('application/x-www-form-urlencoded')) return true;
+  if (req.query.redirect === 'eink' || req.query.redirect === 'web') return true;
+  if (!req.headers.accept) return false;
+  return req.accepts(['html', 'json']) === 'html';
+};
+
+const safeReturnPath = (req) => {
+  const raw = String(req.body?.returnTo || req.query.returnTo || '');
+  if (raw === '/') return '/';
+  if (raw.startsWith('/eink')) return '/eink';
+  return '/eink';
+};
+
+app.post('/api/control/:action', async (req, res) => {
+  const action = req.params.action;
+  if (!CONTROL_ACTIONS.has(action)) {
+    const body = { ok: false, action, reason: 'control_unavailable' };
+    if (controlWantsRedirect(req)) {
+      const dest = safeReturnPath(req);
+      const q = new URLSearchParams({ control: 'failed', reason: 'control_unavailable' });
+      if (req.body?.device || req.query.device) q.set('device', String(req.body?.device || req.query.device));
+      return res.redirect(303, `${dest}?${q}`);
+    }
+    return res.status(400).json(body);
+  }
+
+  const result =
+    req.query.mock === 'true' || USE_MOCK
+      ? applyMockControl(action)
+      : await sendControlAction(action);
+
+  if (controlWantsRedirect(req)) {
+    const dest = safeReturnPath(req);
+    const q = new URLSearchParams({
+      control: result.ok ? 'ok' : 'failed',
+    });
+    if (!result.ok && result.reason) q.set('reason', result.reason);
+    const device = req.body?.device || req.query.device;
+    if (device) q.set('device', String(device));
+    if (USE_MOCK || req.query.mock === 'true') q.set('mock', 'true');
+    return res.redirect(303, `${dest}?${q}`);
+  }
+
+  res.json(result);
 });
 
 app.get('/api/events', (req, res) => {
@@ -121,6 +174,9 @@ const renderDashboard = async (req, res, { showDebugCapture = false } = {}) => {
     showDebugCapture,
     formatMs,
     deployStage,
+    controlReasonMessage,
+    controlFlash: req.query.control || null,
+    controlFlashReason: req.query.reason || null,
   });
 };
 
@@ -135,6 +191,25 @@ const handleDashboard = (req, res) => {
 
 app.get('/', handleDashboard);
 app.get('/debug', handleDashboard);
+
+app.get('/kindle', (req, res) => {
+  const q = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+  res.redirect(302, `/eink${q}`);
+});
+
+app.get('/eink', async (req, res) => {
+  const { playback, live } = await resolvePlayback(req);
+  res.render('eink', {
+    playback,
+    live,
+    formatMs,
+    deployStage,
+    controlReasonMessage,
+    device: String(req.query.device || 'default'),
+    controlFlash: req.query.control || null,
+    controlFlashReason: req.query.reason || null,
+  });
+});
 
 app.listen(PORT, () => {
   const mode = USE_MOCK ? 'mock' : 'live';

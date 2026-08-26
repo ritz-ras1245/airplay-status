@@ -1,5 +1,4 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import { decodePort, decodeTextOrHex } from './dacpSessionParse.js';
 
 const TYPE_CORE = 0x636f7265;
 const TYPE_SSNC = 0x73736e63;
@@ -21,6 +20,10 @@ const CODE = {
   DISCONNECT: 0x64697363,
   ACTIVE_BEGIN: 0x61626567,
   ACTIVE_END: 0x61656e64,
+  DAID: 0x64616964,
+  DAPO: 0x6461706f,
+  CLIP: 0x636c6970,
+  ACRE: 0x61637265,
 };
 
 const SAMPLE_RATE = 44100;
@@ -102,6 +105,19 @@ export const itemToUpdate = (item) => {
     if (code === CODE.PLAY_END) return { type: 'event', event: 'stop' };
     if (code === CODE.PAUSE) return { type: 'event', event: 'pause' };
     if (code === CODE.RESUME) return { type: 'event', event: 'resume' };
+    if (code === CODE.DAID && data) {
+      return { type: 'field', field: 'dacpId', value: decodeTextOrHex(data) };
+    }
+    if (code === CODE.DAPO && data) {
+      const port = decodePort(data);
+      return port ? { type: 'field', field: 'dacpPort', value: port } : null;
+    }
+    if (code === CODE.CLIP && data) {
+      return { type: 'field', field: 'clientIp', value: decodeTextOrHex(data) };
+    }
+    if (code === CODE.ACRE && data) {
+      return { type: 'field', field: 'activeRemote', value: decodeTextOrHex(data) };
+    }
   }
 
   return null;

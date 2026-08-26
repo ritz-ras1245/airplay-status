@@ -67,6 +67,22 @@
               <span id="track-source"><%= playback.source || 'AirPlay' %></span>
             </span>
           </div>
+
+          <div id="transport" class="transport" <%= playback.title ? '' : 'hidden' %>>
+            <div class="transport-row">
+              <button type="button" class="transport-btn" data-action="prev" aria-label="Previous track" <%= playback.controlAvailable ? '' : 'disabled' %>>⏮</button>
+              <button type="button" class="transport-btn transport-btn--play" data-action="toggle" aria-label="Play or pause" <%= playback.controlAvailable ? '' : 'disabled' %>>
+                <%= playback.isPlaying ? '⏸' : '▶' %>
+              </button>
+              <button type="button" class="transport-btn" data-action="next" aria-label="Next track" <%= playback.controlAvailable ? '' : 'disabled' %>>⏭</button>
+            </div>
+            <p id="transport-hint" class="transport-hint">
+              <%= playback.controlAvailable ? '' : controlReasonMessage(playback.controlReason) %>
+            </p>
+            <% if (controlFlash === 'failed') { %>
+              <p class="transport-flash"><%= controlReasonMessage(controlFlashReason) %></p>
+            <% } %>
+          </div>
         </div>
       </div>
 
@@ -115,11 +131,28 @@
               </div>
             </div>
             <div class="status-row">
-              <span class="status-badge">▶ Playing</span>
+              <span class="status-badge <%= playback.isPlaying ? '' : 'status-badge--paused' %>"><%= playback.isPlaying ? '▶ Playing' : '⏸ Paused' %></span>
               <span class="source-info">
                 <img src="/images/airplay-icon-white.png" alt="" class="airplay-icon" aria-hidden="true">
                 <%= playback.source || 'AirPlay' %>
               </span>
+            </div>
+            <div class="transport">
+              <div class="transport-row">
+                <form method="POST" action="/api/control/prev">
+                  <input type="hidden" name="returnTo" value="/">
+                  <button type="submit" class="transport-btn" aria-label="Previous track" <%= playback.controlAvailable ? '' : 'disabled' %>>⏮</button>
+                </form>
+                <form method="POST" action="/api/control/toggle">
+                  <input type="hidden" name="returnTo" value="/">
+                  <button type="submit" class="transport-btn transport-btn--play" aria-label="Play or pause" <%= playback.controlAvailable ? '' : 'disabled' %>><%= playback.isPlaying ? '⏸' : '▶' %></button>
+                </form>
+                <form method="POST" action="/api/control/next">
+                  <input type="hidden" name="returnTo" value="/">
+                  <button type="submit" class="transport-btn" aria-label="Next track" <%= playback.controlAvailable ? '' : 'disabled' %>>⏭</button>
+                </form>
+              </div>
+              <p class="transport-hint"><%= playback.controlAvailable ? 'Mock preview — commands stay on this dashboard.' : controlReasonMessage(playback.controlReason) %></p>
             </div>
           </div>
         <% } %>

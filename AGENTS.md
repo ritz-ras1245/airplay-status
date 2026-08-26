@@ -127,10 +127,10 @@ P99 runs **after P50 soak sign-off**, **before P100** release (`1.0.0`). P199 be
 | Phase | Status | Deliverable |
 |-------|--------|-------------|
 | **P0** — Live dashboard | ✅ Done | `specs/p0-airplay-status.md` — SSE, debug capture, sidecar |
-| **P1** — Remote control | 📄 Spec | `specs/p1-remote-control.md` — DACP via Node |
+| **P1** — Remote control | 🔧 Branch | `feat/cursor/p1-remote-control` — DACP; AP2 iPhone groups expected `ap2_unsupported`. Validate: [docs/p1-pi-validation.md](docs/p1-pi-validation.md) |
 | **P2** — Tidbyt | ✅ MVP | `specs/p2-tidbyt.md`, `integrations/tidbyt/` |
-| **P3** — eInk display | 📄 Spec | `specs/p3-eink-display.md` (+ P3.1 profiles, on-demand PNG) |
-| **P4** — eInk controls | 📄 Spec | `specs/p4-eink-controls.md` |
+| **P3** — eInk display | 🔧 Browser MVP | `/eink` on P1 branch; PNG path still spec |
+| **P4** — eInk controls | 🔧 With P1 | `/eink` forms → same `POST /api/control` |
 | **P5** — Deployment | 📄 Spec | `specs/p5-deployment.md` — Pi, Docker (reference) |
 | **P49** — Pre-prod beta | ✅ Done | `specs/p49-preprod-deployment.md` — RPi4, AP2, bare metal |
 | **P50** — Beta soak + observability | 📄 Active | `specs/p50-beta-soak-observability.md` — soak Pi; Mac Loki/Grafana |
@@ -169,7 +169,9 @@ See `docs/debug-capture.md`. Normal mode redirects `/debug` to `/`. For prod iss
 | `src/services/airplayMetadataService.js` | Pipe watcher, session-end logic |
 | `src/lib/metadataParser.js` | Playback state normalization |
 | `src/lib/metadataPipeReader.js` | Binary pipe parser |
-| `src/index.js` | Express app, `/api/status`, `/api/events` |
+| `src/index.js` | Express app, `/api/status`, `/api/events`, `/api/control`, `/eink` |
+| `src/lib/dacpClient.js` | Classic DACP HTTP (not AP2 MRP) |
+| `src/services/playbackControlService.js` | Session probe + sendAction |
 | `bin/run-local.sh` | Start shairport + dashboard |
 | `config/eink-devices.example.json` | P3.1 eInk profile templates |
 
