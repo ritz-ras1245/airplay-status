@@ -101,7 +101,12 @@ ensure_builder() {
     log "Creating buildx builder ${BUILDER_NAME} (docker-container, ${PLATFORM})"
     $docker_cmd buildx create --name "$BUILDER_NAME" --driver docker-container --platform "$PLATFORM" --use
   fi
-  $docker_cmd buildx inspect --bootstrap >/dev/null
+  if ! $docker_cmd buildx inspect --bootstrap >/dev/null; then
+    echo "buildx builder ${BUILDER_NAME} failed to bootstrap (overlay-in-overlay VMs often need vfs or the default driver)." >&2
+    echo "Retry: P49_BUILDX_BUILDER=default $0" >&2
+    echo "Or: docker buildx rm ${BUILDER_NAME} && $0" >&2
+    exit 1
+  fi
 }
 
 sha256_file() {

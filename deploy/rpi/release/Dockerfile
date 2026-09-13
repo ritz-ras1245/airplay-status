@@ -61,19 +61,24 @@ COPY deploy/rpi/release/nqptp-configure-flags.txt /build/nqptp-configure-flags.t
 COPY deploy/rpi/release/generate-runtime-debs.sh /build/generate-runtime-debs.sh
 COPY deploy/rpi/release/RUNTIME_DEBS.txt /build/RUNTIME_DEBS.txt
 
+# Copy binaries — do not `make install`. nqptp's install-exec-hook runs
+# `setcap` against /usr/local/bin (ignores DESTDIR) and is not needed in
+# the tarball (the Pi systemd unit starts /usr/local/bin/nqptp as root).
 RUN git clone --depth 1 --branch "${NQPTP_VERSION}" https://github.com/mikebrady/nqptp.git /build/nqptp \
   && cd /build/nqptp \
   && autoreconf -fi \
   && ./configure $(grep -Ev '^\s*(#|$)' /build/nqptp-configure-flags.txt) \
   && make -j"$(nproc)" \
-  && make install DESTDIR=/out
+  && mkdir -p /out/usr/local/bin \
+  && install -m 755 nqptp /out/usr/local/bin/nqptp
 
 RUN git clone --depth 1 --branch "${SHAIRPORT_VERSION}" https://github.com/mikebrady/shairport-sync.git /build/shairport-sync \
   && cd /build/shairport-sync \
   && autoreconf -fi \
   && ./configure $(grep -Ev '^\s*(#|$)' /build/shairport-configure-flags.txt) \
   && make -j"$(nproc)" \
-  && make install DESTDIR=/out
+  && mkdir -p /out/usr/local/bin \
+  && install -m 755 shairport-sync /out/usr/local/bin/shairport-sync
 
 # Verify AP2 + pipe (same checks as the old on-Pi install.sh skip logic).
 RUN set -e; \
