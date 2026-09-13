@@ -1,0 +1,15 @@
+# shairport-sync ./configure flags — source of truth copied from
+# deploy/rpi/install.sh (P49 bring-up on RPi4 / Raspberry Pi OS Trixie).
+#
+# Verified live: AP2 + pipe backend required. Omitting --with-pipe yields
+# runtime "No audio backend found!" (docs/p49-rpi-bare-metal-lessons.md).
+# Audio is discarded via config (pipe → /dev/null); we still need the backend.
+#
+# Used by: deploy/rpi/release/Dockerfile and
+#          deploy/rpi/break-glass/install-compile-on-pi.sh
+--with-airplay-2
+--with-pipe
+--with-metadata
+--with-avahi
+--with-ssl=mbedtls
+--sysconfdir=/etc

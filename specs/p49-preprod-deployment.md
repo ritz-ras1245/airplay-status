@@ -67,18 +67,23 @@ Mac dev (AP1)  →  P49 pre-prod (RPi4, AP2)  →  P50 soak + observability  →
 
 ---
 
-## Packaging — Docker
+## Packaging — linux/arm64 artifact (default)
+
+**How we update:** Mac Docker **buildx** `linux/arm64` → tarball → SSH push. The Pi is **bare metal only** (no Docker/compose). See [DECISIONS.md](../DECISIONS.md) and [deploy/rpi/README.md](../deploy/rpi/README.md).
+
+Compose under `deploy/docker/` is Mac/smoke only. Synology owns household Docker.
+
+## Packaging — Docker (historical / Mac smoke)
 
 See [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) (includes **limitations**).
 
 | Component | Where |
 |-----------|--------|
-| nqptp | Host (`deploy/rpi/install.sh` before compose) |
-| shairport-sync AP2 | Container, `network_mode: host` |
-| Node app | Container, `network_mode: host` |
+| nqptp + shairport-sync AP2 + Node | **Bare metal** from the linux/arm64 tarball (`/opt/airplay-status`) |
 | Metadata FIFO | `/tmp/shairport-sync-metadata` on host |
+| Docker compose | Mac smoke only — not on the Pi |
 
-Deliverables: `deploy/docker/*`, `bin/p49-up.sh`, `bin/p49-down.sh`, `deploy/rpi/install.sh` (host bootstrap).
+Deliverables: `bin/p49-build-release.sh`, `bin/p49-push-release.sh`, `deploy/rpi/release/`.
 
 ## Fleet / remote management (1–4 instances)
 
@@ -86,7 +91,7 @@ Pick **one** for MVP; document others as alternatives.
 
 | Option | Cost | Fit | Notes |
 |--------|------|-----|-------|
-| **Raspberry Pi OS + systemd + SSH** | Free | **Default MVP** | No vendor lock-in; manual updates |
+| **Raspberry Pi OS + systemd + SSH artifact push** | Free | **Default MVP** | Mac buildx tarball; no git/npm on Pi |
 | **Balena Cloud** | Free tier (limited devices) | Optional | OTA, fleet env vars; good for 1–4 Pis |
 | **Ansible pull / simple cron git pull** | Free | Optional | Lightweight multi-node |
 
@@ -131,22 +136,19 @@ Display URL for Echo/Tidbyt on beta: `http://<pi-lan-ip>:3003/…`
 
 ```
 deploy/
-├── docker/
-│   ├── docker-compose.yml
-│   ├── Dockerfile
-│   └── README.md
+├── docker/                 # Mac/smoke only — not on the Pi
 ├── rpi/
-│   ├── install.sh
-│   ├── systemd/
-│   └── README.md
-└── balena/
-    └── README.md          # optional P49.1
+│   ├── README.md           # artifact SOP
+│   ├── install.sh          # gate → break-glass compile
+│   ├── release/            # buildx Dockerfile + in-tarball installer
+│   ├── break-glass/        # on-Pi compile (gated)
+│   └── systemd/
+└── balena/                 # optional P49.1
 bin/
-├── p49-up.sh
-├── p49-down.sh
-└── p49-install-rpi.sh   # optional
-docs/
-└── (see deploy/docker/README-WARN.md)
+├── p49-build-release.sh
+├── p49-push-release.sh
+├── p49-up.sh               # docker smoke (Mac)
+└── p49-down.sh
 ```
 
 ---

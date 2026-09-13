@@ -1,0 +1,13 @@
+# Thin apt runtime packages for Raspberry Pi OS 64-bit (Trixie).
+# No -dev packages. No compiler toolchain (build-essential, gcc, make, cmake, git).
+#
+# Operational packages (always). Shared-library packages are merged in at
+# build time from `ldd` of the prebuilt nqptp + shairport-sync binaries
+# (see generate-runtime-debs.sh). The tarball's RUNTIME_DEBS.txt is the merge.
+avahi-daemon
+ca-certificates
+curl
+libnss-mdns
+nodejs
+openssl
+rsync

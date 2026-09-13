@@ -9,12 +9,14 @@ Validated stack: nqptp + shairport-sync AP2 + airplay-status systemd → `http:/
 
 | Topic | Decision |
 |-------|----------|
-| **Pi deploy path** | **Bare metal** (`sudo ./deploy/rpi/install.sh`) — not Docker on Pi |
+| **How we update now** | Mac Docker **buildx** `linux/arm64` tarball → `./bin/p49-push-release.sh rasohoni@pi.home.arpa` — [DECISIONS.md](../DECISIONS.md) |
+| **Pi deploy path** | **Bare metal** systemd — **no Docker/compose on the Pi** (Synology owns Docker) |
+| **On-Pi compile** | **Break-glass only** (`sudo ./deploy/rpi/install.sh --break-glass-compile`) |
 | **Mac Docker** | Smoke/API only — no iPhone AirPlay discovery ([README-WARN](../deploy/docker/README-WARN.md)) |
 | **Imager OS** | Trixie uses **cloud-init** on boot partition — not `wpa_supplicant.conf` |
 | **Imager version** | Need **2.0+** for Trixie customisation; 1.7.x is too old |
-| **Install script** | Several build/systemd fixes required (documented below) — now in `deploy/rpi/install.sh` |
-| **Sanity check** | `./bin/check-p49-beta.sh` after install |
+| **Compile flags** | Still the source of truth for nqptp/shairport — now in `deploy/rpi/release/*-configure-flags.txt` |
+| **Sanity check** | `/opt/airplay-status/bin/check-p49-beta.sh` after artifact install |
 
 ---
 
@@ -69,9 +71,22 @@ Our JSON presets are **Imager inputs on the Mac** — they are not copied onto t
 
 ---
 
-## `install.sh` fixes (now in repo)
+## How we update (current)
 
-These were discovered during live bring-up and are fixed in `deploy/rpi/install.sh` + `deploy/rpi/systemd/`.
+Do **not** `git clone` + compile on the Pi for routine updates.
+
+```bash
+# Mac
+./bin/p49-build-release.sh
+./bin/p49-push-release.sh rasohoni@pi.home.arpa
+./bin/check-version.sh http://pi.home.arpa
+```
+
+The flags below still matter: the Docker buildx image compiles nqptp/shairport with the **same** `./configure` lines. Host: `pi` / `pi.home.arpa`. SSH sudo: `rasohoni`. `r-bot` cannot sudo.
+
+## `install.sh` compile fixes (historical — now break-glass + Docker build)
+
+These were discovered during live bring-up. They are preserved in `deploy/rpi/break-glass/install-compile-on-pi.sh` and `deploy/rpi/release/` (buildx).
 
 ### nqptp
 
@@ -100,21 +115,16 @@ These were discovered during live bring-up and are fixed in `deploy/rpi/install.
 
 ---
 
-## Bring-up sequence (correct order)
+## Bring-up sequence (current)
 
 ```bash
-sudo apt update
-sudo apt install -y git
-git clone https://github.com/ritz-ras1245/airplay-status.git
-cd airplay-status
-git checkout feat/cursor/p49-rpi-deployment-0a02
-
-sudo ./deploy/rpi/install.sh          # ~15–25 min
-./bin/check-p49-beta.sh
-./bin/check-version.sh http://localhost:3003
+# Mac — no git/npm/make on the Pi
+./bin/p49-build-release.sh
+./bin/p49-push-release.sh rasohoni@pi.home.arpa
+./bin/check-version.sh http://pi.home.arpa
 ```
 
-From Mac: `./bin/check-version.sh http://airplay-beta.local:3003`
+Break-glass compile (only if artifact push is impossible): `sudo ./deploy/rpi/install.sh --break-glass-compile` (~15–25 min).
 
 ---
 
@@ -141,8 +151,9 @@ Automated checks do not replace iPhone + HomePods multi-room test. See [AGENT_ST
 
 | Doc | Purpose |
 |-----|---------|
-| [deploy/rpi/README.md](../deploy/rpi/README.md) | Bare-metal quick start |
-| [deploy/rpi/install.sh](../deploy/rpi/install.sh) | Idempotent installer |
+| [deploy/rpi/README.md](../deploy/rpi/README.md) | Artifact deploy SOP |
+| [DECISIONS.md](../DECISIONS.md) | How we update |
+| [deploy/rpi/install.sh](../deploy/rpi/install.sh) | Gate → break-glass compile |
 | [bin/check-p49-beta.sh](../bin/check-p49-beta.sh) | Post-install sanity script |
 | [p49-beta-remote-deploy.md](./p49-beta-remote-deploy.md) | SD flash + remote deploy plan |
 | [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) | Docker limitations |

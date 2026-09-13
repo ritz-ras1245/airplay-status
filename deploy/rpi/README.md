@@ -1,71 +1,93 @@
 # P49 — bare-metal deploy (Raspberry Pi)
 
-**Default for Pi beta.** One script installs nqptp, shairport-sync (AP2 + metadata pipe), Node app, and systemd units.
+**Default:** build a `linux/arm64` release on the Mac, push it over SSH, unpack on the Pi. The Pi does **not** compile, run `npm`, or clone git for updates.
 
-Lessons from first real bring-up: [docs/p49-rpi-bare-metal-lessons.md](../../docs/p49-rpi-bare-metal-lessons.md)
+Locked topology: [DECISIONS.md](../../DECISIONS.md) — Synology owns Docker; Pi host is `pi` / `pi.home.arpa`; SSH admin `rasohoni` (sudo); agent `r-bot` (no sudo).
 
-## Fresh install
+Lessons from first compile bring-up (historical): [docs/p49-rpi-bare-metal-lessons.md](../../docs/p49-rpi-bare-metal-lessons.md)
+
+## Fresh install / update (artifact)
+
+On a Mac with Docker Desktop (Apple Silicon preferred — `linux/arm64` is native):
 
 ```bash
-git clone https://github.com/ritz-ras1245/airplay-status.git
-cd airplay-status
-git checkout feat/cursor/p49-rpi-deployment-0a02   # or main after merge
-
-sudo ./deploy/rpi/install.sh
-./bin/check-p49-beta.sh
+./bin/p49-build-release.sh
+./bin/p49-push-release.sh rasohoni@pi.home.arpa
+# or: rasohoni@pi.local
 ```
 
-Install takes **~15–25 minutes** (shairport-sync compile). `.env` is created from `config/deploy/beta.env.example` automatically. **pixlet** is installed for Tidbyt.
+That scp’s `artifacts/releases/airplay-status-<tag>-linux-aarch64.tar.gz` and runs the **in-tarball** `install.sh`, which only:
 
-**Tidbyt credentials:** [docs/p49-tidbyt-credentials.md](../../docs/p49-tidbyt-credentials.md) — one-time web upload or `tidbyt.env` from iCloud.
+1. `apt-get install` thin runtime debs (`RUNTIME_DEBS.txt` — no `-dev`, no toolchain)
+2. Unpacks the app + linux-arm64 `node_modules` to `/opt/airplay-status`
+3. Installs prebuilt `nqptp`, `shairport-sync`, `pixlet` to `/usr/local/bin`
+4. Installs systemd units
+5. Restarts **nqptp → shairport-sync → airplay-status**
 
-## After install
+`r-bot` **cannot** sudo — do not push as `r-bot@pi`.
+
+CI can produce the same tarball: [`.github/workflows/p49-build-release.yml`](../../.github/workflows/p49-build-release.yml) (`workflow_dispatch` or annotated `v*` / `p49-*` tags).
+
+### After install
 
 | Item | Location |
 |------|----------|
 | App | `/opt/airplay-status` |
-| shairport config | `/etc/shairport-sync.conf` |
+| Release identity | `/opt/airplay-status/release.env` (`GIT_COMMIT`, overwritten each push) |
+| Secrets / stage | `/opt/airplay-status/.env` (preserved across pushes) |
+| shairport config | `/etc/shairport-sync.conf` (kept if already present) |
 | Metadata pipe | `/tmp/shairport-sync-metadata` |
-| Dashboard | `http://<pi-ip>/` (port **80**) |
+| Dashboard | `http://pi.home.arpa/` (port **80**) |
 
 ```bash
-sudo systemctl status nqptp shairport-sync airplay-status
-./bin/check-version.sh http://localhost
+ssh rasohoni@pi.home.arpa 'sudo /opt/airplay-status/bin/check-p49-beta.sh'
+./bin/check-version.sh http://pi.home.arpa
 ```
 
-## Docker (optional)
+iPhone on the same LAN: AirPlay picker should show **AirPlay Status (Beta)**. Multi-room = real speakers + AirPlay Status together.
 
-Docker on Pi still requires host nqptp. See [deploy/docker/README-WARN.md](../docker/README-WARN.md). Bare metal is simpler on a dedicated Pi.
+**Tidbyt credentials:** [docs/p49-tidbyt-credentials.md](../../docs/p49-tidbyt-credentials.md)
 
-## Sync from Mac
+## What the tarball contains
+
+- Prebuilt **nqptp** `1.2.4` and **shairport-sync** `4.3.6` (AirPlay 2 + pipe metadata)
+- Node app tree + **linux-arm64** production `node_modules`
+- **pixlet** aarch64 (upstream GitHub release — not compiled)
+- systemd units + config templates
+- `RUNTIME_DEBS.txt`
+- `install.sh` (runtime only — no make/cmake/npm/git)
+
+Build recipe: [release/Dockerfile](./release/Dockerfile). Flags: [release/shairport-configure-flags.txt](./release/shairport-configure-flags.txt) (copied from the original on-Pi `install.sh`).
+
+## Annotated tags
+
+See [docs/releases/README.md](../../docs/releases/README.md#annotated-release-tags-p49-artifacts). Example:
 
 ```bash
-./bin/p49-install-rpi.sh airplay@airplay-beta.local
-ssh airplay@airplay-beta.local 'cd ~/airplay-status && sudo ./deploy/rpi/install.sh'
+git tag -a v0.1.0 -m "airplay-status 0.1.0 — P49 linux/arm64 artifact"
+./bin/p49-build-release.sh --tag v0.1.0
 ```
 
-## Update existing install (git pull on Pi)
+## Break-glass: compile on the Pi
 
-Keep a git clone on the Pi (e.g. `~/airplay-status`). `install.sh` rsyncs that tree into `/opt/airplay-status` and restarts services (skips nqptp/shairport rebuild when already installed).
+Only if you cannot build/push an artifact (no Mac Docker, corrupted binaries, etc.):
 
 ```bash
-cd ~/airplay-status
-git fetch origin
-git checkout feat/cursor/p49-rpi-deployment-0a02   # or main after merge
-git pull
-
-sudo ./deploy/rpi/install.sh
+# On a git checkout on the Pi — 15–25 minutes, installs a compiler toolchain
+sudo ./deploy/rpi/install.sh --break-glass-compile
 ./bin/check-p49-beta.sh
 ```
 
-Preserves `/opt/airplay-status/.env` (rsync excludes it). After update, use the setup URL from install output if Tidbyt creds are not set yet.
+That path is [break-glass/install-compile-on-pi.sh](./break-glass/install-compile-on-pi.sh). Do not use it for routine updates.
 
-**Lightweight app-only restart** (if you already ran `install.sh` and only changed Node code):
+## Docker on the Pi
 
-```bash
-sudo systemctl restart airplay-status
-```
+**Not supported.** Household Docker runs on Synology. Compose files under `deploy/docker/` are Mac/smoke-only — see [deploy/docker/README-WARN.md](../docker/README-WARN.md).
 
 ## Log shipping (optional)
 
-P50 observability — stream Pi journal logs to **Grafana/Loki on Mac**: [docs/p50-observability.md](../../docs/p50-observability.md).
+P50 observability — stream Pi journal logs to Grafana/Loki on Mac: [docs/p50-observability.md](../../docs/p50-observability.md).
+
+## Persist (later)
+
+NAS `persist/pi/airplay-status` is the intended long-term home for release blobs. v1 scripts do not require it — SSH push is enough.

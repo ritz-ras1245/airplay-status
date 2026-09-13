@@ -1,6 +1,10 @@
-# P49 — Docker deploy
+# P49 — Docker deploy (Mac / smoke only)
 
-Host-network compose: **nqptp on the host** + **shairport-sync** + **airplay-status** containers.
+**The Pi does not run Docker.** Household Docker is on **Synology**. Pi updates are a Mac-built tarball — [deploy/rpi/README.md](../rpi/README.md), [DECISIONS.md](../../DECISIONS.md).
+
+The compose stack below is for **Mac smoke / API checks** only.
+
+Host-network compose (if you still experiment): **nqptp on the host** + **shairport-sync** + **airplay-status** containers.
 
 ## Limitations
 
@@ -16,19 +20,13 @@ Host-network compose: **nqptp on the host** + **shairport-sync** + **airplay-sta
 
 ### Raspberry Pi
 
-Requires **nqptp** and **Avahi** on the **host** (not in compose). Same Wi‑Fi/LAN as iPhone. Wired Ethernet preferred.
+**Do not** run this compose on the Pi. Use [deploy/rpi/README.md](../rpi/README.md).
 
 ---
 
-## Host setup (Pi, once)
+## Host setup (retired on Pi)
 
-Before first `./bin/p49-up.sh docker`:
-
-```bash
-sudo ./deploy/rpi/install.sh   # nqptp, Avahi, Node deps on host
-```
-
-Or install nqptp manually — see comments in `deploy/rpi/install.sh`.
+`./bin/p49-up.sh docker` is not the P49 update path. For the Pi, push an artifact. The old on-Pi compile is `sudo ./deploy/rpi/install.sh --break-glass-compile` only.
 
 ---
 

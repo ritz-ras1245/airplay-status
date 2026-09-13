@@ -1,51 +1,27 @@
 #!/usr/bin/env bash
-# Sync airplay-status to a Raspberry Pi over SSH (optional P49 helper from Mac/dev host).
+# Retired rsync-source + on-Pi compile helper. Use the release tarball.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-REMOTE="${1:-}"
-REMOTE_DIR="${2:-~/airplay-status}"
 
 usage() {
   cat <<EOF
-Usage: p49-install-rpi.sh USER@HOST [REMOTE_DIR]
+p49-install-rpi.sh (rsync tree + on-Pi install.sh compile) is retired.
 
-  Rsync repo to the Pi, excluding node_modules and secrets.
+How we update:
+  ./bin/p49-build-release.sh
+  ./bin/p49-push-release.sh rasohoni@pi.home.arpa
 
-Examples:
-  ./bin/p49-install-rpi.sh pi@192.168.1.50
-  ./bin/p49-install-rpi.sh pi@rpi4.local ~/airplay-status
+r-bot cannot sudo. Use rasohoni@pi.home.arpa or rasohoni@pi.local.
 
-After sync, on the Pi:
-  cd ~/airplay-status
-  cp config/deploy/beta.env.example .env   # edit Tidbyt vars if needed
-  sudo ./deploy/rpi/install.sh
+See DECISIONS.md and deploy/rpi/README.md.
 EOF
 }
 
-if [[ -z "$REMOTE" || "$REMOTE" == "-h" || "$REMOTE" == "--help" ]]; then
+if [[ -z "${1:-}" || "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
   usage
-  exit "${1:+0}"
+  exit 0
 fi
 
-if ! command -v rsync >/dev/null; then
-  echo "rsync required" >&2
-  exit 1
-fi
-
-echo "Syncing $ROOT → ${REMOTE}:${REMOTE_DIR}"
-ssh "$REMOTE" "mkdir -p '$REMOTE_DIR'"
-rsync -avz --delete \
-  --exclude node_modules \
-  --exclude .git \
-  --exclude .env \
-  --exclude vendor \
-  --exclude 'src/public/artwork/current.*' \
-  "$ROOT/" "${REMOTE}:${REMOTE_DIR}/"
-
-echo ""
-echo "Synced. On the Pi run:"
-echo "  ssh $REMOTE"
-echo "  cd $REMOTE_DIR"
-echo "  cp config/deploy/beta.env.example .env"
-echo "  sudo ./deploy/rpi/install.sh"
+echo "Forwarding to p49-push-release.sh (artifact path)..." >&2
+exec "$ROOT/bin/p49-push-release.sh" "$@"

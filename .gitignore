@@ -7,3 +7,6 @@ vendor/
 src/public/artwork/current.*
 config/eink-devices.json
 config/observability/observability.env
+artifacts/releases/*.tar.gz
+artifacts/releases/*.sha256
+artifacts/releases/.staging/

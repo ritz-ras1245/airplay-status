@@ -159,6 +159,7 @@ P1 adds: `controlAvailable`, `controlReason`.
 - Do not play audio from the receiver
 - Do not infer pause/disconnect from a single metadata field — use debug capture
 - Do not label launchd/install-only work as “P0 hardening” — that is **P99**
+- Do not update the Pi with `git pull` + `npm ci` + on-Pi compile — Mac buildx tarball only ([DECISIONS.md](DECISIONS.md))
 
 ## Debug Capture
 
@@ -178,6 +179,9 @@ See `docs/debug-capture.md`. Normal mode redirects `/debug` to `/`. For prod iss
 | `src/lib/metadataPipeReader.js` | Binary pipe parser |
 | `src/index.js` | Express app, `/api/status`, `/api/events` |
 | `bin/run-local.sh` | Start shairport + dashboard |
+| `bin/p49-build-release.sh` | Mac/CI `linux/arm64` release tarball (buildx) |
+| `bin/p49-push-release.sh` | scp tarball to Pi; `rasohoni` sudo unpack (not `r-bot`) |
+| `DECISIONS.md` | How we update — artifact path, not on-Pi compile |
 | `config/eink-devices.example.json` | P3.1 eInk profile templates |
 
 ## Platform

@@ -1,0 +1,15 @@
+node_modules
+.git
+.env
+*.log
+vendor
+src/public/artwork/current.*
+artifacts
+integrations/android
+integrations/deskthing
+integrations/local-fallback
+docs
+specs
+test
+*.md
+!package.json

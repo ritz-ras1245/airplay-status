@@ -64,7 +64,7 @@ if command -v shairport-sync >/dev/null; then
   if shairport-sync -V 2>&1 | grep -iq 'pipe'; then
     pass "shairport-sync pipe backend enabled"
   else
-    fail "shairport-sync missing pipe backend (re-run install.sh)"
+    fail "shairport-sync missing pipe backend (re-push the linux/arm64 artifact)"
   fi
 else
   fail "shairport-sync not in PATH"

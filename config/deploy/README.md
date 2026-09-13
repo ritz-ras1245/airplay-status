@@ -11,9 +11,10 @@ Stage presets in [stages.json](./stages.json). Override with `.env` on each host
 ## P49 beta on Raspberry Pi
 
 ```bash
-cp config/deploy/beta.env.example .env
-./bin/render-shairport-config.sh --stage beta
-# restart nqptp + shairport-sync + node with .env loaded
+# First artifact install copies beta.env.example to /opt/airplay-status/.env
+# Re-render only if you change stage/name:
+./bin/render-shairport-config.sh --stage beta --output /etc/shairport-sync.conf
+# Routine updates: ./bin/p49-push-release.sh rasohoni@pi.home.arpa
 ```
 
 ## Env vars

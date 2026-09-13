@@ -1,0 +1,3 @@
+# nqptp ./configure flags — source of truth copied from deploy/rpi/install.sh.
+# Binary installs to /usr/local/bin/nqptp (not sbin).
+--with-systemd-startup

@@ -43,4 +43,6 @@ Full phase index: [specs/README.md](../specs/README.md).
 
 - [specs/p49-preprod-deployment.md](../specs/p49-preprod-deployment.md) — **next: RPi beta**
 - [specs/p99-prod-readiness.md](../specs/p99-prod-readiness.md)
-- [docs/releases/README.md](./releases/README.md) — ship records at P100+
+- [docs/releases/README.md](./releases/README.md) — ship records at P100+; **annotated tags** for P49 linux/arm64 artifacts
+- [DECISIONS.md](../DECISIONS.md) — How we update (Mac buildx tarball, not on-Pi compile)
+- [deploy/rpi/README.md](../deploy/rpi/README.md) — `./bin/p49-build-release.sh` + `./bin/p49-push-release.sh`

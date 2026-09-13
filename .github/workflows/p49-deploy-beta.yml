@@ -40,13 +40,9 @@ jobs:
 
       - name: Scaffold notice
         run: |
-          echo "SCAFFOLD workflow — remote deploy not wired yet."
-          echo "Target ref: ${{ inputs.ref }} stage: ${{ inputs.stage }}"
-          echo "After cloud agent PR: SSH to Pi, git checkout, npm ci, systemd restart."
-          echo "See docs/p49-beta-remote-deploy.md and bin/p49-deploy.sh"
+          echo "SCAFFOLD — git+npm deploy is retired."
+          echo "How we update: ./bin/p49-build-release.sh && ./bin/p49-push-release.sh rasohoni@pi.home.arpa"
+          echo "Optional later: this workflow can scp the tarball as rasohoni (not r-bot; r-bot has no sudo)."
+          echo "Build workflow: .github/workflows/p49-build-release.yml"
+          echo "See DECISIONS.md and docs/p49-beta-remote-deploy.md"
           exit 0
-
-      # Cloud agent PR replaces scaffold with:
-      # - ssh deploy using secrets.P49_SSH_PRIVATE_KEY
-      # - remote: git fetch/checkout, npm ci, render-shairport-config, systemctl restart
-      # - health: curl /api/version on P49_HOST

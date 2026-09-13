@@ -1,101 +1,75 @@
-# P49 beta — remote deploy plan
+# P49 beta — remote deploy
 
-**Branch:** `doc/ritz-ras1245/p49-release` (plan + scaffolds)  
-**Implementation branch:** `feat/ritz-ras1245/p49-rpi-beta` (cloud agent → PR)  
-**Spec:** [specs/p49-preprod-deployment.md](../specs/p49-preprod-deployment.md)
+**Default:** Mac Docker **buildx** `linux/arm64` → tarball → SSH push to a **bare-metal** Pi.  
+**Do not** update with SSH + git + on-Pi `install.sh` compile.
 
-One SD flash on the Pi, then headless remote deploys forever via **SSH + git + systemd**. Balena/fleet deferred to P49.1+.
-
----
-
-## GitHub Free tier — all planned features allowed
-
-`ritz-ras1245/airplay-status` is a **public** repository. Every GitHub feature in this plan is available on the **GitHub Free** personal plan at no extra cost.
-
-| Planned use | Free tier | Notes |
-|-------------|-----------|-------|
-| GitHub Actions (PR CI, deploy workflow) | **Yes — unlimited minutes** on standard `ubuntu-latest` runners for public repos | [Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions) |
-| `workflow_dispatch` (manual deploy) | **Yes** | Manual trigger while learning the Pi |
-| Push / tag triggers (later) | **Yes** | Automate after beta checklist is green |
-| Repository secrets | **Yes** | e.g. `P49_SSH_PRIVATE_KEY`, `P49_HOST` |
-| Environment `beta` + env secrets | **Yes** | [Environments on all plans](https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment); optional approval rules on public repos |
-| SSH deploy from Actions | **Yes** | Standard `ssh` / `appleboy/ssh-action` pattern; no paid add-on |
-| Read-only deploy key on Pi | **Yes** | Clone/fetch from Pi without personal SSH key |
-| Branch policy CI (existing) | **Yes** | `.github/workflows/branch-policy.yml` |
-| Artifact storage (~500 MB shared) | **Yes** | We do not rely on large artifacts for P49 |
-| Protected `main` / rulesets | **Yes** | Basic protection on free personal accounts |
-
-**Not required for P49 (no GitHub tier impact):**
-
-- Self-hosted runner on the Pi — health checks run over SSH from `ubuntu-latest`, not on-device
-- Balena Cloud — separate vendor free tier; deferred
-- GitHub Enterprise deployment features — not in scope
-
-**If the repo were private:** 2,000 Actions minutes/month on Free would still cover occasional manual deploys; public repo avoids that cap entirely.
+Locked decisions: [DECISIONS.md](../DECISIONS.md)  
+Pi SOP: [deploy/rpi/README.md](../deploy/rpi/README.md)  
+Spec: [specs/p49-preprod-deployment.md](../specs/p49-preprod-deployment.md)
 
 ---
 
 ## Target architecture
 
 ```text
-Mac dev (AP1, mock, features)
+Mac (features, AP1 sidecar, Docker buildx)
         │
-        │  merge P49 PR → main
+        │  ./bin/p49-build-release.sh
         ▼
-GitHub Actions ──SSH──► RPi4 (headless, SD stays in)
+artifacts/releases/airplay-status-<tag>-linux-aarch64.tar.gz
         │
-        └── git fetch + checkout SHA
-            render beta .env + shairport config
-            systemd restart (nqptp → shairport-sync → airplay-status)
-            health: GET /api/version + check-sidecar
+        │  ./bin/p49-push-release.sh rasohoni@pi.home.arpa
+        ▼
+RPi4 bare metal (no Docker)
+        nqptp → shairport-sync (AP2 + pipe) → airplay-status
+        health: GET /api/version + ./bin/check-p49-beta.sh
 ```
 
-**On the Pi (real stack):** nqptp, shairport-sync AP2, metadata pipe, mDNS/AirPlay.  
-**On Mac (dev only):** mock dashboard, AP1 sidecar, feature iteration.
+| Role | Host | Notes |
+|------|------|--------|
+| Docker | **Synology** | Not on the Pi |
+| Build | **Mac** (or GitHub Actions buildx) | `linux/arm64`; ships `node_modules` |
+| Runtime | **`pi` / `pi.home.arpa`** | systemd only |
+| SSH sudo | **`rasohoni`** | Required for unpack/install |
+| SSH agent | **`r-bot`** | No sudo — cannot run the installer |
+
+NAS `persist/pi/airplay-status` is the future blob store. **v1 does not wait on it** — scp is enough.
 
 ---
 
 ## Phase 0 — One-time SD flash (~30 min, human)
 
-Do once; do not remove the SD card for routine updates.
+Do once. Do not pull a compiler toolchain onto the card for routine updates.
 
 | Step | Action |
 |------|--------|
 | 1 | Flash **Raspberry Pi OS 64-bit Lite** |
-| 2 | Enable **SSH**; create user; Wi‑Fi or Ethernet (**Ethernet preferred** for mDNS) |
-| 3 | Static IP or reliable hostname (e.g. `airplay-beta.local`) |
-| 4 | Clone repo; checkout PR branch or `main` |
-| 5 | `sudo ./deploy/rpi/install.sh` (bare metal — ~20 min) |
-| 6 | `./bin/check-p49-beta.sh` |
-| 7 | From Mac: `./bin/check-version.sh http://<pi>:3003` |
-| 8 | iPhone beta checklist — HomePods + **AirPlay Status (Beta)** together |
+| 2 | Enable **SSH**; user `rasohoni` with sudo; hostname `pi` |
+| 3 | Ethernet preferred (mDNS). Names: `pi.home.arpa` / `pi.local` |
+| 4 | Thin apt only after first boot (`avahi-daemon` arrives with the tarball install) |
+| 5 | From Mac: `./bin/p49-build-release.sh` then `./bin/p49-push-release.sh rasohoni@pi.home.arpa` |
+| 6 | `ssh rasohoni@pi.home.arpa 'sudo /opt/airplay-status/bin/check-p49-beta.sh'` |
+| 7 | From Mac: `./bin/check-version.sh http://pi.home.arpa` |
+| 8 | iPhone: HomePods + **AirPlay Status (Beta)** together |
 
-Full steps: [docs/p49-rpi-bare-metal-lessons.md](./p49-rpi-bare-metal-lessons.md) · [deploy/rpi/README.md](../deploy/rpi/README.md).
+Flash details: [docs/p49-rpi-bare-metal-lessons.md](./p49-rpi-bare-metal-lessons.md) (Imager/cloud-init). Ignore any “git clone + compile on Pi” steps in older sections — those are historical / break-glass.
 
 ---
 
-## Phase 1 — Every deploy after that (remote, headless)
-
-**Default MVP:** SSH + git + systemd (not Balena).
+## Phase 1 — Every deploy after that
 
 | Step | Action |
 |------|--------|
-| 1 | Trigger [`.github/workflows/p49-deploy-beta.yml`](../.github/workflows/p49-deploy-beta.yml) (`workflow_dispatch`) or run [`bin/p49-deploy.sh`](../bin/p49-deploy.sh) from Mac |
-| 2 | On Pi: `git fetch && git checkout <sha> && npm ci` |
-| 3 | Re-render config if stage/env changed |
-| 4 | `systemctl restart` in order: nqptp → shairport-sync → airplay-status |
-| 5 | Health: `/api/version`, `./bin/check-sidecar.sh` |
-| 6 | On failure: do not update last-good SHA on Pi |
+| 1 | Tag if shipping a named artifact (annotated — [docs/releases/README.md](./releases/README.md#annotated-release-tags-p49-artifacts)) |
+| 2 | `./bin/p49-build-release.sh` on Mac, **or** run **Build P49 linux/arm64 release** workflow |
+| 3 | `./bin/p49-push-release.sh rasohoni@pi.home.arpa` |
+| 4 | Installer: apt runtime debs → unpack `/opt/airplay-status` → restart nqptp → shairport-sync → airplay-status |
+| 5 | Health: `/api/version`, `check-p49-beta.sh` |
+| 6 | `.env` on the Pi is **preserved** (Tidbyt etc.). `release.env` is overwritten with `GIT_COMMIT` |
 
-**Secrets:** SSH deploy key in GitHub Actions secrets; `.env` on Pi only (Tidbyt, Echo, etc.) — never committed.
+**Secrets:** stay in `/opt/airplay-status/.env` on the Pi — never committed.
 
-### Deploy triggers (pick one to start)
-
-| Trigger | When |
-|---------|------|
-| **Manual `workflow_dispatch`** | **Start here** — safest while learning the Pi |
-| Push to `main` after P49 merge | Every merge to beta |
-| Tag `beta-*` | Explicit beta releases |
+Optional later: GitHub Actions can scp using `P49_SSH_PRIVATE_KEY` (must be `rasohoni`, not `r-bot`). The scaffold workflow is [`.github/workflows/p49-deploy-beta.yml`](../.github/workflows/p49-deploy-beta.yml) — artifact push is the supported path; git-checkout deploy is retired.
 
 ---
 
@@ -103,39 +77,28 @@ Full steps: [docs/p49-rpi-bare-metal-lessons.md](./p49-rpi-bare-metal-lessons.md
 
 | Stage | Env file | AirPlay name | When |
 |-------|----------|--------------|------|
-| **beta** | `config/deploy/beta.env.example` | AirPlay Status **(Beta)** | Now — P49 sign-off |
+| **beta** | `config/deploy/beta.env.example` | AirPlay Status **(Beta)** | Now — P49 |
 | **prod** | `config/deploy/prod.env.example` | AirPlay Status | After P99 |
 
-Same deploy script, different `--stage`. Do **not** run beta and prod on one Pi at once — switch stage on redeploy or use a second Pi for prod.
+Same tarball, different `--stage` on first install (`install.sh --stage prod`). Do **not** run beta and prod on one Pi at once.
 
 ---
 
-## Scaffold vs cloud agent deliverables
+## Break-glass (compile on Pi)
 
-This branch **scaffolds** paths the cloud agent is building on `feat/ritz-ras1245/p49-rpi-beta`. Stubs exit with a clear message until the implementation PR merges.
+If Mac/CI cannot produce a tarball:
 
-| Path | Status on this branch | Cloud agent replaces with |
-|------|----------------------|---------------------------|
-| `deploy/rpi/install.sh` | Scaffold | Idempotent apt + nqptp/shairport build |
-| `deploy/rpi/systemd/*.service` | Scaffold | Production units |
-| `deploy/rpi/README.md` | **Phase 0 SOP** (usable now) | Merge cloud agent first-boot details |
-| `deploy/docker/*` | Docker deploy | [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) |
-| `deploy/rpi/install.sh` | Host bootstrap | nqptp before compose |
-| `bin/p49-deploy.sh` | Scaffold | SSH remote deploy + health gate |
-| `bin/p49-install-rpi.sh` | Scaffold | Optional Mac bootstrap helper |
-| `bin/p49-up.sh` / `p49-down.sh` | PR #4 | `./bin/p49-up.sh docker` |
-| `.github/workflows/p49-deploy-beta.yml` | Scaffold workflow | Wire secrets after Pi SSH works |
+```bash
+sudo ./deploy/rpi/install.sh --break-glass-compile
+```
 
-After the cloud agent PR merges to `main`, re-run Phase 0 step 4–7 if `install.sh` was scaffold-only, then use Phase 1 for all updates.
+This is the old git + make + `npm ci` path. It is gated on purpose. See [deploy/rpi/break-glass/install-compile-on-pi.sh](../deploy/rpi/break-glass/install-compile-on-pi.sh).
 
 ---
 
-## GitHub setup (once Pi SSH works)
+## GitHub Free tier
 
-1. Generate deploy key pair; add **public** key to Pi `~/.ssh/authorized_keys`; store **private** key as repo secret `P49_SSH_PRIVATE_KEY`.
-2. Add secrets: `P49_HOST`, `P49_SSH_USER`, optional `P49_DEPLOY_PATH` (default `~/airplay-status`).
-3. Create Actions environment **`beta`**; scope secrets to `beta` if desired.
-4. Run **Deploy P49 beta (scaffold)** workflow manually with a known-good SHA.
+`ritz-ras1245/airplay-status` is public. Actions minutes for `ubuntu-latest` + buildx/QEMU are allowed. Artifact upload is enough for v1; we do not rely on large GitHub Packages storage.
 
 ---
 
@@ -145,9 +108,9 @@ After the cloud agent PR merges to `main`, re-run Phase 0 step 4–7 if `install
 - [ ] Dashboard live metadata within 5s
 - [ ] `GET /api/version` → `deployPhase=p49`, correct semver/commit
 - [ ] 24h soak; reboot → services auto-start
-- [ ] Fresh install follows [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md)
+- [ ] Update path is tarball push (not on-Pi compile)
 
-Then proceed to **P99** prod readiness on the same Pi tier.
+Then **P50** soak / **P99** prod readiness on the same Pi tier.
 
 ---
 
@@ -155,8 +118,9 @@ Then proceed to **P99** prod readiness on the same Pi tier.
 
 | Doc | Path |
 |-----|------|
+| Decisions | [DECISIONS.md](../DECISIONS.md) |
+| Pi SOP | [deploy/rpi/README.md](../deploy/rpi/README.md) |
 | P49 spec | [specs/p49-preprod-deployment.md](../specs/p49-preprod-deployment.md) |
-| Agent handoff | [AGENT_START_HERE.md](../AGENT_START_HERE.md) |
+| Tags | [docs/releases/README.md](./releases/README.md) |
 | Deploy stages | [config/deploy/README.md](../config/deploy/README.md) |
 | Multi-room | [docs/multi-room-airplay.md](./multi-room-airplay.md) |
-| P49 deploy | [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) |

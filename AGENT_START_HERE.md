@@ -1,5 +1,7 @@
 # Agent start here — P49 PR validation & human beta sign-off
 
+**Updates (current):** Mac buildx tarball → `./bin/p49-push-release.sh rasohoni@pi.home.arpa`. See [DECISIONS.md](DECISIONS.md) and [deploy/rpi/README.md](deploy/rpi/README.md). The Phase 2 “Docker on Pi / git clone + install.sh compile” steps below are **historical** (PR #4 handoff).
+
 **PR:** https://github.com/ritz-ras1245/airplay-status/pull/4  
 **Branch:** `feat/cursor/p49-rpi-deployment-0a02`  
 **Goal:** Validate the PR locally, deploy to RPi4, complete **human-only** beta checklist with Cursor assisting step-by-step.  

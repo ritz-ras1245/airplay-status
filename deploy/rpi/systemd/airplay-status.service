@@ -9,6 +9,7 @@ Type=simple
 User=airplay-status
 Group=airplay-status
 WorkingDirectory=/opt/airplay-status
+EnvironmentFile=-/opt/airplay-status/release.env
 EnvironmentFile=-/opt/airplay-status/.env
 Environment=SKIP_SHAIRPORT_CHECK=1
 # Bind PORT=80 without running as root

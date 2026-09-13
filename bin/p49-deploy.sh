@@ -1,40 +1,44 @@
 #!/usr/bin/env bash
-# Remote deploy to P49 beta Pi over SSH (git checkout + systemd restart + health).
-# SCAFFOLD: cloud agent implements on feat/ritz-ras1245/p49-rpi-beta.
+# Retired git+npm remote deploy. Artifact push is the P49 path.
 set -euo pipefail
 
-usage() {
-  cat <<EOF
-Usage: p49-deploy.sh --host HOST [--ref SHA|branch] [--stage beta|prod] [--user USER]
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-  SSH to Pi, fetch/checkout ref, npm ci, render config, restart systemd, health check.
+cat <<EOF >&2
+p49-deploy.sh (git fetch + npm ci on the Pi) is retired.
 
-SCAFFOLD only — see docs/p49-beta-remote-deploy.md
+How we update:
+  ./bin/p49-build-release.sh
+  ./bin/p49-push-release.sh rasohoni@pi.home.arpa
+
+See DECISIONS.md and deploy/rpi/README.md.
 EOF
-}
 
-HOST=""
-REF="HEAD"
-STAGE="beta"
-USER="${P49_SSH_USER:-pi}"
-
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --host) HOST="$2"; shift 2 ;;
-    --ref) REF="$2"; shift 2 ;;
-    --stage) STAGE="$2"; shift 2 ;;
-    --user) USER="$2"; shift 2 ;;
-    -h|--help) usage; exit 0 ;;
-    *) echo "Unknown option: $1" >&2; usage >&2; exit 1 ;;
-  esac
-done
-
-if [[ -z "$HOST" ]]; then
-  usage >&2
-  exit 1
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+  exit 0
 fi
 
-echo "[p49-deploy.sh] SCAFFOLD — would deploy ref=${REF} stage=${STAGE} to ${USER}@${HOST}" >&2
-echo "Plan: docs/p49-beta-remote-deploy.md" >&2
-echo "GitHub workflow: .github/workflows/p49-deploy-beta.yml" >&2
+if [[ "${1:-}" == "--host" || "${1:-}" == rasohoni@* || "${1:-}" == *@* ]]; then
+  echo "" >&2
+  echo "Forwarding to p49-push-release.sh..." >&2
+  host=""
+  user="${P49_SSH_USER:-rasohoni}"
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      --host) host="$2"; shift 2 ;;
+      --user) user="$2"; shift 2 ;;
+      --ref|--stage) shift 2 ;;
+      -h|--help) shift ;;
+      *@*) host="$1"; shift ;;
+      *) shift ;;
+    esac
+  done
+  if [[ -n "$host" && "$host" != *@* ]]; then
+    host="${user}@${host}"
+  fi
+  if [[ -n "$host" ]]; then
+    exec "$ROOT/bin/p49-push-release.sh" "$host"
+  fi
+fi
+
 exit 2

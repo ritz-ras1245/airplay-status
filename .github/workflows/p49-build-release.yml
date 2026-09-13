@@ -1,0 +1,51 @@
+# Build linux/arm64 release tarball (same as ./bin/p49-build-release.sh on Mac).
+# Public repo: ubuntu-latest + QEMU is allowed. Not run on every PR (slow qemu compile).
+
+name: Build P49 linux/arm64 release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag (empty = v<semver>-<sha> or exact annotated tag)
+        required: false
+        default: ""
+  push:
+    tags:
+      - "v*"
+      - "p49-*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Resolve tag
+        run: |
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            echo "RELEASE_TAG=${{ github.event.inputs.tag }}" >> "$GITHUB_ENV"
+          elif [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "RELEASE_TAG=${{ github.ref_name }}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Build tarball
+        run: ./bin/p49-build-release.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: airplay-status-linux-aarch64
+          path: artifacts/releases/airplay-status-*-linux-aarch64.tar.gz*
+          if-no-files-found: error
