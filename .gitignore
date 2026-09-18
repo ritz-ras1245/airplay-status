@@ -7,3 +7,6 @@ vendor/
 src/public/artwork/current.*
 config/eink-devices.json
 config/observability/observability.env
+
+# Local Mac buildx release tarballs (never publish)
+artifacts/

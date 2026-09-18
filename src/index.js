@@ -9,7 +9,11 @@ import {
   onPlaybackChange,
   startMetadataWatcher,
 } from './services/airplayMetadataService.js';
-import { getPlaybackState as getMockPlaybackState } from './services/mockPlaybackService.js';
+import { getPlaybackState as getMockPlaybackState, applyMockControl } from './services/mockPlaybackService.js';
+import { sendControlAction } from './services/playbackControlService.js';
+import { controlReasonMessage } from './lib/controlReasons.js';
+import { getEinkProfile } from './lib/einkDevices.js';
+import { computeEinkProgress } from './lib/einkProgress.js';
 import { formatMs } from './utils/formatTime.js';
 import {
   configureTidbytPush,
@@ -26,6 +30,10 @@ const __dirname = path.dirname(__filename);
 const deployStage = getDeployStage();
 const STARTED_AT_MS = Date.now();
 const app = express();
+// Prefer generic errors over Express default stack pages in beta/prod.
+if (process.env.NODE_ENV !== 'development') {
+  app.set('env', 'production');
+}
 const PORT = Number(process.env.PORT || deployStage.port);
 const USE_MOCK = process.env.USE_MOCK === 'true';
 const METADATA_DEBUG = process.env.METADATA_DEBUG === '1';
@@ -34,6 +42,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 if (!USE_MOCK) {
   startMetadataWatcher();
@@ -109,6 +118,56 @@ app.get('/api/health', (_req, res) => {
   );
 });
 
+const CONTROL_ACTIONS = new Set(['play', 'pause', 'toggle', 'next', 'prev']);
+
+const controlWantsRedirect = (req) => {
+  const type = String(req.headers['content-type'] || '');
+  if (type.includes('application/x-www-form-urlencoded')) return true;
+  if (req.query.redirect === 'eink' || req.query.redirect === 'web') return true;
+  if (!req.headers.accept) return false;
+  return req.accepts(['html', 'json']) === 'html';
+};
+
+const safeReturnPath = (req) => {
+  const raw = String(req.body?.returnTo || req.query.returnTo || '');
+  if (raw === '/') return '/';
+  if (raw.startsWith('/eink')) return '/eink';
+  return '/eink';
+};
+
+app.post('/api/control/:action', async (req, res) => {
+  const action = req.params.action;
+  if (!CONTROL_ACTIONS.has(action)) {
+    const body = { ok: false, action, reason: 'control_unavailable' };
+    if (controlWantsRedirect(req)) {
+      const dest = safeReturnPath(req);
+      const q = new URLSearchParams({ control: 'failed', reason: 'control_unavailable' });
+      if (req.body?.device || req.query.device) q.set('device', String(req.body?.device || req.query.device));
+      return res.redirect(303, `${dest}?${q}`);
+    }
+    return res.status(400).json(body);
+  }
+
+  const result =
+    req.query.mock === 'true' || USE_MOCK
+      ? applyMockControl(action)
+      : await sendControlAction(action);
+
+  if (controlWantsRedirect(req)) {
+    const dest = safeReturnPath(req);
+    const q = new URLSearchParams({
+      control: result.ok ? 'ok' : 'failed',
+    });
+    if (!result.ok && result.reason) q.set('reason', result.reason);
+    const device = req.body?.device || req.query.device;
+    if (device) q.set('device', String(device));
+    if (USE_MOCK || req.query.mock === 'true') q.set('mock', 'true');
+    return res.redirect(303, `${dest}?${q}`);
+  }
+
+  res.json(result);
+});
+
 app.get('/api/events', (req, res) => {
   if (req.query.mock === 'true' || USE_MOCK) {
     res.status(404).end();
@@ -155,6 +214,9 @@ const renderDashboard = async (req, res, { showDebugCapture = false } = {}) => {
     showDebugCapture,
     formatMs,
     deployStage,
+    controlReasonMessage,
+    controlFlash: req.query.control || null,
+    controlFlashReason: req.query.reason || null,
   });
 };
 
@@ -186,6 +248,62 @@ const renderDisplay = async (req, res) => {
 app.get('/', handleDashboard);
 app.get('/debug', handleDashboard);
 app.get('/display', renderDisplay);
+
+app.get('/kindle', (req, res) => {
+  const q = req.url.includes('?') ? req.url.slice(req.url.indexOf('?')) : '';
+  res.redirect(302, `/eink${q}`);
+});
+
+app.get('/eink', async (req, res) => {
+  const { playback, live } = await resolvePlayback(req);
+  const deviceId = String(req.query.device || process.env.EINK_DEVICE_ID || 'default');
+  const profile = getEinkProfile(deviceId);
+  const einkProgress = computeEinkProgress({
+    progressMs: playback.progressMs,
+    durationMs: playback.durationMs,
+    isPlaying: playback.isPlaying,
+    profile,
+  });
+  res.render('eink', {
+    playback,
+    live,
+    formatMs,
+    deployStage,
+    controlReasonMessage,
+    device: profile.id,
+    deviceLabel: profile.label || profile.id,
+    controlFlash: req.query.control || null,
+    controlFlashReason: req.query.reason || null,
+    ...einkProgress,
+  });
+});
+
+
+const safeErrorPage = () => `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Something went wrong</title>
+<style>body{font-family:sans-serif;background:#fff;color:#000;padding:1.5rem;text-align:center}a{color:#000}</style>
+</head><body>
+  <h1>Something went wrong</h1>
+  <p>Try refreshing. If it keeps happening, reopen this page later.</p>
+  <p><a href="/eink">Back to eInk</a> · <a href="/">Dashboard</a></p>
+</body></html>`;
+
+// Never leak stacks / paths / internals to browsers (eInk + web).
+app.use((err, req, res, _next) => {
+  console.error('[http]', err?.stack || err);
+  if (res.headersSent) return;
+  const status = Number(err?.status || err?.statusCode) || 500;
+  const wantsHtml =
+    req.accepts(['html', 'json']) === 'html' ||
+    String(req.path || '').startsWith('/eink') ||
+    req.path === '/kindle';
+  if (wantsHtml) {
+    res.status(status).type('html').send(safeErrorPage());
+    return;
+  }
+  res.status(status).json({ ok: false, error: 'Something went wrong' });
+});
 
 app.listen(PORT, () => {
   const mode = USE_MOCK ? 'mock' : 'live';

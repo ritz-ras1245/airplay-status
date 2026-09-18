@@ -2,6 +2,10 @@
 
 This file captures project intent, decisions, and constraints so any agent can continue work without re-deriving context from chat history.
 
+## Hard constraints
+
+- **No Unicode em dash (U+2014).** Use ASCII hyphen-minus `-` or en dash (U+2013) only. Em dash is banned in copy, docs, commits, and PR text.
+
 ## Project Name
 
 **airplay-status** — a local dashboard showing what is currently playing via AirPlay.
@@ -127,10 +131,10 @@ P99 runs **after P50 soak sign-off**, **before P100** release (`1.0.0`). P199 be
 | Phase | Status | Deliverable |
 |-------|--------|-------------|
 | **P0** — Live dashboard | ✅ Done | `specs/p0-airplay-status.md` — SSE, debug capture, sidecar |
-| **P1** — Remote control | 📄 Spec | `specs/p1-remote-control.md` — DACP via Node |
+| **P1** - Remote control | 🔧 Branch | `feat/ritz-ras1245/eink-enablement` - DACP; AP2 iPhone groups expected `ap2_unsupported`. Validate: [docs/p1-pi-validation.md](docs/p1-pi-validation.md) |
 | **P2** — Tidbyt | ✅ MVP | `specs/p2-tidbyt.md`, `integrations/tidbyt/` |
-| **P3** — eInk display | 📄 Spec | `specs/p3-eink-display.md` (+ P3.1 profiles, on-demand PNG) |
-| **P4** — eInk controls | 📄 Spec | `specs/p4-eink-controls.md` |
+| **P3** - eInk display | 🔧 Browser MVP | `/eink` on P1 branch; PNG path still spec |
+| **P4** - eInk controls | 🔧 With P1 | `/eink` forms → same `POST /api/control` |
 | **P5** — Deployment | 📄 Spec | `specs/p5-deployment.md` — Pi, Docker (reference) |
 | **P6** — Echo Show | 📄 Spec | `specs/p6-echo-show.md` — Tier B push → Silk |
 | **P7** — Android always-on | 🚧 Authored (device-test pending) | `specs/p7-android-always-on.md`, `integrations/android/` — WebView console; idle screen-off; tap-to-resume. Not built in CI (no Android SDK) |
@@ -176,7 +180,9 @@ See `docs/debug-capture.md`. Normal mode redirects `/debug` to `/`. For prod iss
 | `src/services/airplayMetadataService.js` | Pipe watcher, session-end logic |
 | `src/lib/metadataParser.js` | Playback state normalization |
 | `src/lib/metadataPipeReader.js` | Binary pipe parser |
-| `src/index.js` | Express app, `/api/status`, `/api/events` |
+| `src/index.js` | Express app, `/api/status`, `/api/events`, `/api/control`, `/eink` |
+| `src/lib/dacpClient.js` | Classic DACP HTTP (not AP2 MRP) |
+| `src/services/playbackControlService.js` | Session probe + sendAction |
 | `bin/run-local.sh` | Start shairport + dashboard |
 | `config/eink-devices.example.json` | P3.1 eInk profile templates |
 

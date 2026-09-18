@@ -1,6 +1,6 @@
 # Phase P4 — eInk Display with Transport Controls
 
-**Status:** Spec (pre-implementation)  
+**Status:** Browser `/eink` + P1 transport forms shipped with P1 branch. PNG path still not implemented (read-only when it lands).  
 **Depends on:** [P3 eInk display](./p3-eink-display.md), [P1 remote control](./p1-remote-control.md)
 
 ## Goal

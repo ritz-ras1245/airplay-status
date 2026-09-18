@@ -12,11 +12,29 @@ export const createEmptyPlaybackState = () => ({
   albumArt: null,
   progressMs: 0,
   durationMs: 0,
+  /** Wall-clock ms when progressMs was last set from the pipe (for eInk/server extrapolation). */
+  progressAnchorAt: null,
   clientName: null,
   clientModel: null,
   senderApp: null,
+  dacpId: null,
+  dacpPort: null,
+  clientIp: null,
+  activeRemote: null,
   updatedAt: null,
 });
+
+/** Extrapolate progress while playing from last pipe sample. */
+export const effectiveProgressMs = (state, now = Date.now()) => {
+  const base = Math.max(0, Number(state.progressMs) || 0);
+  const duration = Math.max(0, Number(state.durationMs) || 0);
+  if (!state.isPlaying || !state.progressAnchorAt) {
+    return duration > 0 ? Math.min(base, duration) : base;
+  }
+  const elapsed = Math.max(0, now - state.progressAnchorAt);
+  const extrapolated = base + elapsed;
+  return duration > 0 ? Math.min(extrapolated, duration) : extrapolated;
+};
 
 /** @deprecated text-line parser kept for demo script */
 export const parseMetadataLine = (line) => {
@@ -87,33 +105,37 @@ export const formatSource = (state) => {
   return 'AirPlay';
 };
 
-export const toPublicState = (state) => ({
+export const toPublicState = (state, control = {}) => ({
   isPlaying: state.isPlaying,
   connected: state.connected,
   title: state.title,
   artist: state.artist,
   album: state.album,
   albumArt: state.albumArt,
-  progressMs: state.progressMs,
+  progressMs: effectiveProgressMs(state),
   durationMs: state.durationMs,
   source: formatSource(state),
   updatedAt: state.updatedAt,
+  controlAvailable: Boolean(control.controlAvailable),
+  controlReason: control.controlAvailable ? null : (control.controlReason ?? 'no_session'),
 });
 
 export const applyMetadataUpdate = (state, update) => {
   if (!update) return state;
 
   const next = { ...state, updatedAt: new Date().toISOString() };
+  const now = Date.now();
 
   if (update.type === 'field') {
     if (update.field === 'progress') {
       if (!next.isPlaying) return next;
 
       const { progressMs, durationMs } = update.value;
-      if (Number.isFinite(progressMs) && (progressMs > 0 || next.progressMs === 0)) {
+      if (Number.isFinite(progressMs) && progressMs >= 0) {
         next.progressMs = progressMs;
+        next.progressAnchorAt = now;
       }
-      if (durationMs > 0 && next.durationMs === 0) {
+      if (Number.isFinite(durationMs) && durationMs > 0) {
         next.durationMs = durationMs;
       }
       return next;
@@ -127,6 +149,8 @@ export const applyMetadataUpdate = (state, update) => {
       next.title = value;
       next.isPlaying = next.streamOpen;
       next.progressMs = 0;
+      next.durationMs = 0;
+      next.progressAnchorAt = next.isPlaying ? now : null;
       return next;
     }
 
@@ -143,17 +167,23 @@ export const applyMetadataUpdate = (state, update) => {
       next.connected = true;
       next.streamOpen = true;
       next.isPlaying = true;
+      next.progressAnchorAt = now;
       break;
     case 'resume':
       if (next.connected) {
         next.streamOpen = true;
         next.isPlaying = true;
+        next.progressAnchorAt = now;
       }
       break;
     case 'pause':
+      next.progressMs = effectiveProgressMs(next, now);
+      next.progressAnchorAt = null;
       next.isPlaying = false;
       break;
     case 'stop':
+      next.progressMs = effectiveProgressMs(next, now);
+      next.progressAnchorAt = null;
       next.streamOpen = false;
       next.isPlaying = false;
       break;

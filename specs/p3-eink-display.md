@@ -1,6 +1,6 @@
 # Phase P3 — Kindle / eInk Read-Only Display
 
-**Status:** Spec (pre-implementation)  
+**Status:** Browser `/eink` MVP + transport forms; segmented progress bar + adaptive meta-refresh shipping on `/eink`. Full P3 PNG pipeline still spec.  
 **Depends on:** Phase 4 live metadata (`/api/status`)  
 **Optional dependency:** P1 not required (display-only)
 
@@ -152,7 +152,7 @@ Optional: expose the same fields on `/api/status` under an `eink` key when `?ein
 
 Same segment math in `einkDisplayService.js` when that profile is **active** (see [On-demand PNG generation](#on-demand-png-generation-connected-clients--ttl)). kindle-dash cron interval should match `refreshRateSec` when possible.
 
-**Priority:** Optional P3 enhancement — ship text-only progress first; add segmented bar when `/eink` MVP is stable. Per-device tuning: [P3.1 Side-Quest](#p31-side-quest--device-profiles).
+**Priority:** Segmented bar + adaptive refresh now shipping on browser `/eink` (default profile `showProgressBar: true`). Per-device tuning: [P3.1 Side-Quest](#p31-side-quest--device-profiles).
 
 ## P3.1 Side-Quest — Device profiles
 

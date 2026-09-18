@@ -1,7 +1,7 @@
 {
   "default": {
     "label": "Generic / unidentified eInk",
-    "showProgressBar": false,
+    "showProgressBar": true,
     "progressBarPx": 216,
     "segmentMinPx": 24,
     "segmentMax": 20,
@@ -12,7 +12,7 @@
     "pngHeight": 800
   },
   "6inch": {
-    "label": "~6\" eInk class — map your small screen here",
+    "label": "~6\" eInk class \u2014 map your small screen here",
     "showProgressBar": true,
     "progressBarPx": 192,
     "segmentMinPx": 22,
@@ -24,7 +24,7 @@
     "pngHeight": 800
   },
   "7inch": {
-    "label": "~7\" eInk class — common Kindle-sized",
+    "label": "~7\" eInk class \u2014 common Kindle-sized",
     "showProgressBar": true,
     "progressBarPx": 216,
     "segmentMinPx": 24,
@@ -36,7 +36,7 @@
     "pngHeight": 1024
   },
   "10inch": {
-    "label": "~10\" eInk class — large panel / wall display",
+    "label": "~10\" eInk class \u2014 large panel / wall display",
     "showProgressBar": true,
     "progressBarPx": 280,
     "segmentMinPx": 28,
@@ -84,7 +84,7 @@
     "pngHeight": 1024
   },
   "profile1": {
-    "label": "Custom profile 1 — note your hardware in label",
+    "label": "Custom profile 1 \u2014 note your hardware in label",
     "showProgressBar": true,
     "progressBarPx": 216,
     "segmentMinPx": 24,
@@ -96,7 +96,7 @@
     "pngHeight": 800
   },
   "profile2": {
-    "label": "Custom profile 2 — note your hardware in label",
+    "label": "Custom profile 2 \u2014 note your hardware in label",
     "showProgressBar": true,
     "progressBarPx": 216,
     "segmentMinPx": 24,

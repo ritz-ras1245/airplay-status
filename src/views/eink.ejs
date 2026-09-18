@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="refresh" content="<%= refreshRateSec %>">
+  <title><%= deployStage.dashboardTitle %> eInk</title>
+  <link rel="stylesheet" href="/css/eink.css">
+</head>
+<body>
+  <main class="eink">
+    <% if (controlFlash === 'failed') { %>
+      <p class="eink-flash"><%= controlReasonMessage(controlFlashReason) %></p>
+    <% } else if (controlFlash === 'ok') { %>
+      <p class="eink-flash eink-flash--ok">Command sent. Wait for Now Playing to update.</p>
+    <% } %>
+
+    <% if (!playback.title) { %>
+      <h1>Nothing playing</h1>
+      <p>Select <strong><%= deployStage.airplayReceiverName %></strong> as an AirPlay output.</p>
+    <% } else { %>
+      <% if (playback.albumArt) { %>
+        <img class="eink-art" src="<%= playback.albumArt %>" alt="">
+      <% } %>
+      <h1><%= playback.title %></h1>
+      <p class="eink-artist"><%= playback.artist || '' %></p>
+      <p class="eink-album"><%= playback.album || '' %></p>
+      <p class="eink-state"><%= playback.isPlaying ? 'Playing' : 'Paused' %></p>
+      <% if (showProgressBar) { %>
+        <div class="eink-progress" style="width: <%= progressBarPx %>px" role="img" aria-label="Progress <%= fillPercent %>%">
+          <div class="eink-progress-fill" style="width: <%= fillPercent %>%"></div>
+        </div>
+      <% } %>
+    <% } %>
+
+    <div class="eink-transport">
+      <form method="POST" action="/api/control/prev">
+        <input type="hidden" name="returnTo" value="/eink">
+        <input type="hidden" name="device" value="<%= device %>">
+        <button type="submit" class="eink-btn" aria-label="Previous track" <%= playback.controlAvailable && playback.title ? '' : 'disabled' %>>
+          <svg class="eink-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="3" y="5" width="3" height="14"/>
+            <polygon points="20,5 8,12 20,19"/>
+          </svg>
+        </button>
+      </form>
+      <form method="POST" action="/api/control/toggle">
+        <input type="hidden" name="returnTo" value="/eink">
+        <input type="hidden" name="device" value="<%= device %>">
+        <button type="submit" class="eink-btn" aria-label="<%= playback.isPlaying ? 'Pause' : 'Play' %>" <%= playback.controlAvailable && playback.title ? '' : 'disabled' %>>
+          <% if (playback.isPlaying) { %>
+            <svg class="eink-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="5" y="4" width="5" height="16"/>
+              <rect x="14" y="4" width="5" height="16"/>
+            </svg>
+          <% } else { %>
+            <svg class="eink-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <polygon points="6,3 21,12 6,21"/>
+            </svg>
+          <% } %>
+        </button>
+      </form>
+      <form method="POST" action="/api/control/next">
+        <input type="hidden" name="returnTo" value="/eink">
+        <input type="hidden" name="device" value="<%= device %>">
+        <button type="submit" class="eink-btn" aria-label="Next track" <%= playback.controlAvailable && playback.title ? '' : 'disabled' %>>
+          <svg class="eink-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <polygon points="4,5 16,12 4,19"/>
+            <rect x="18" y="5" width="3" height="14"/>
+          </svg>
+        </button>
+      </form>
+    </div>
+    <div class="eink-source">
+      <img src="/images/airplay-icon.png" alt="" class="eink-airplay-icon" aria-hidden="true">
+      <span><%= playback.source || 'AirPlay' %></span>
+    </div>
+  </main>
+</body>
+</html>
