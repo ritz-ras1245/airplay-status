@@ -1,14 +1,14 @@
-# AGENTS.md — Context for AI Assistants
+# AGENTS.md - Context for AI Assistants
 
 This file captures project intent, decisions, and constraints so any agent can continue work without re-deriving context from chat history.
 
 ## Hard constraints
 
-- **No Unicode em dash (U+2014).** Use ASCII hyphen-minus `-` or en dash (U+2013) only. Em dash is banned in copy, docs, commits, and PR text.
+- **No Unicode em dash (U+2014) and no text/JSON unicode escape for U+2014.** Use ASCII hyphen-minus `-` or en dash (U+2013) only. Banned in copy, docs, configs, commits, PR text, and all future commits. Pre-commit enforces this on staged files.
 
 ## Project Name
 
-**airplay-status** — a local dashboard showing what is currently playing via AirPlay.
+**airplay-status** - a local dashboard showing what is currently playing via AirPlay.
 
 - **Repo:** https://github.com/ritz-ras1245/airplay-status
 
@@ -17,17 +17,17 @@ This file captures project intent, decisions, and constraints so any agent can c
 This project spun off from an earlier Spotify-now-playing experiment. After evaluation, we pivoted to AirPlay because:
 
 1. The user wanted status for **whatever is playing to AirPlay speakers**, not just Spotify.
-2. AirPlay speakers have no public metadata API — you cannot passively monitor them.
+2. AirPlay speakers have no public metadata API - you cannot passively monitor them.
 3. The proven pattern is to run a **virtual AirPlay receiver**, add yourself as an additional output, and capture metadata while discarding audio.
 
-We evaluated [Nowify](https://github.com/jonashcroft/Nowify) (Vue SPA + Spotify API) — same visual goal, different architecture. We are not forking it.
+We evaluated [Nowify](https://github.com/jonashcroft/Nowify) (Vue SPA + Spotify API) - same visual goal, different architecture. We are not forking it.
 
 ## Chosen Architecture: Option B (shairport-sync Sidecar)
 
 | Option | Description | Decision |
 |---|---|---|
-| A — Pure Node | `@lox-audioserver/node-libraop` as RAOP receiver in Node | Rejected — AirPlay 1 only, flaky multi-room |
-| **B — Sidecar** | **shairport-sync + metadata pipe + Node reader** | **Selected** — mature AirPlay 2, proven metadata path |
+| A - Pure Node | `@lox-audioserver/node-libraop` as RAOP receiver in Node | Rejected - AirPlay 1 only, flaky multi-room |
+| **B - Sidecar** | **shairport-sync + metadata pipe + Node reader** | **Selected** - mature AirPlay 2, proven metadata path |
 
 Flow:
 
@@ -39,13 +39,13 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 
 ## User Workflow
 
-### Dev (Mac — AirPlay 1)
+### Dev (Mac - AirPlay 1)
 
 1. `./bin/run-local.sh` (or `--debug` for troubleshooting)
 2. On iPhone: play music, select **AirPlay Status only** (audio discarded; no multi-speaker with HomePods on Mac)
 3. Browser: http://localhost:3003 shows live metadata
 
-### Beta (P49 — RPi4, AirPlay 2)
+### Beta (P49 - RPi4, AirPlay 2)
 
 1. Deploy per [specs/p49-preprod-deployment.md](specs/p49-preprod-deployment.md)
 2. On iPhone: select **real speakers + AirPlay Status** together
@@ -55,10 +55,10 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 
 - Node.js v20+, ES Modules, Express + EJS
 - No `.env` for secrets (Keychain later if needed)
-- Spec-driven — phase numbering in [specs/README.md](specs/README.md)
-- **Global RVS** (semver, P100/P200, GitHub/Jira/ClickUp): Cursor rule `~/.cursor/rules/release-and-versioning.mdc` — **not in this repo**
+- Spec-driven - phase numbering in [specs/README.md](specs/README.md)
+- **Global RVS** (semver, P100/P200, GitHub/Jira/ClickUp): Cursor rule `~/.cursor/rules/release-and-versioning.mdc` - **not in this repo**
 - **This repo:** [docs/versioning.md](docs/versioning.md), [docs/releases/](docs/releases/)
-- **Branches:** never commit on `main` — use `{action}/{user}/{description}` ([.github/BRANCH_POLICY.md](.github/BRANCH_POLICY.md)). Owner merges without PR; bots/agents/others **must open a PR**.
+- **Branches:** never commit on `main` - use `{action}/{user}/{description}` ([.github/BRANCH_POLICY.md](.github/BRANCH_POLICY.md)). Owner merges without PR; bots/agents/others **must open a PR**.
 - Minimal scope; match existing code style
 - Do not commit unless user asks
 
@@ -98,27 +98,27 @@ Audio from shairport-sync is **discarded** (dummy/pipe-to-/dev/null output).
 
 | Scope | Location |
 |-------|----------|
-| **Global** — RVS, privacy rules | `~/.cursor/rules/` (local symlinks; not in this repo) |
-| **This repo** — phases, API, ship records | [specs/README.md](specs/README.md), [docs/versioning.md](docs/versioning.md), [docs/releases/](docs/releases/) |
+| **Global** - RVS, privacy rules | `~/.cursor/rules/` (local symlinks; not in this repo) |
+| **This repo** - phases, API, ship records | [specs/README.md](specs/README.md), [docs/versioning.md](docs/versioning.md), [docs/releases/](docs/releases/) |
 
 ## Versioning and deploy identity
 
 - **Source of truth:** `package.json` `version` (semver).
-- **Runtime:** `GET /api/version` — optional `GIT_COMMIT`, `DEPLOY_PHASE`, `DEPLOY_HOST`.
+- **Runtime:** `GET /api/version` - optional `GIT_COMMIT`, `DEPLOY_PHASE`, `DEPLOY_HOST`.
 - **CLI:** `./bin/check-version.sh http://<host>:3003`
 
-## Production readiness (P99) — permanent definition
+## Production readiness (P99) - permanent definition
 
-Do **not** use “P0 hardening” in new docs or specs. The canonical names are **P99 / P199 / P299** — prod readiness before **P100 / P200 / P300** release.
+Do **not** use “P0 hardening” in new docs or specs. The canonical names are **P99 / P199 / P299** - prod readiness before **P100 / P200 / P300** release.
 
-Whenever a spec says **hardening** or **prod readiness**, it means **all** of the following (see [specs/p99-prod-readiness.md](specs/p99-prod-readiness.md) — template for every line):
+Whenever a spec says **hardening** or **prod readiness**, it means **all** of the following (see [specs/p99-prod-readiness.md](specs/p99-prod-readiness.md) - template for every line):
 
 | Area | Includes |
 |------|----------|
 | **Persistence** | `bin/install.sh`, launchd/systemd, start on boot |
 | **Logs** | Structured always-on logging (`[component]` prefixes, ISO timestamps, `LOG_LEVEL`); prod log dir (`~/Library/Logs/airplay-status/` on macOS) |
 | **Observability** | Optional self-hosted **Grafana + Loki** stack (`config/observability/`); not SaaS |
-| **Debugging SOPs** | `docs/sop/debugging-humans.md` + `docs/sop/debugging-agents.md` — same repro flow; agents use test markers + grep, no guessing |
+| **Debugging SOPs** | `docs/sop/debugging-humans.md` + `docs/sop/debugging-agents.md` - same repro flow; agents use test markers + grep, no guessing |
 | **Health** | `GET /api/health`, `GET /api/version`, `bin/check-sidecar.sh`, `bin/check-version.sh` |
 | **Runbooks** | `docs/prod-troubleshooting.md`, `docs/prod-macos.md` |
 
@@ -130,22 +130,22 @@ P99 runs **after P50 soak sign-off**, **before P100** release (`1.0.0`). P199 be
 
 | Phase | Status | Deliverable |
 |-------|--------|-------------|
-| **P0** — Live dashboard | ✅ Done | `specs/p0-airplay-status.md` — SSE, debug capture, sidecar |
+| **P0** - Live dashboard | ✅ Done | `specs/p0-airplay-status.md` - SSE, debug capture, sidecar |
 | **P1** - Remote control | 🔧 Branch | `feat/ritz-ras1245/eink-enablement` - DACP; AP2 iPhone groups expected `ap2_unsupported`. Validate: [docs/p1-pi-validation.md](docs/p1-pi-validation.md) |
-| **P2** — Tidbyt | ✅ MVP | `specs/p2-tidbyt.md`, `integrations/tidbyt/` |
+| **P2** - Tidbyt | ✅ MVP | `specs/p2-tidbyt.md`, `integrations/tidbyt/` |
 | **P3** - eInk display | 🔧 Browser MVP | `/eink` on P1 branch; PNG path still spec |
 | **P4** - eInk controls | 🔧 With P1 | `/eink` forms → same `POST /api/control` |
-| **P5** — Deployment | 📄 Spec | `specs/p5-deployment.md` — Pi, Docker (reference) |
-| **P6** — Echo Show | 📄 Spec | `specs/p6-echo-show.md` — Tier B push → Silk |
-| **P7** — Android always-on | 🚧 Authored (device-test pending) | `specs/p7-android-always-on.md`, `integrations/android/` — WebView console; idle screen-off; tap-to-resume. Not built in CI (no Android SDK) |
-| **P8** — DeskThing / Car Thing | 🚧 Authored (device-test pending) | `specs/p8-deskthing-carthing.md`, `integrations/deskthing/` — same always-on rules on Car Thing. Needs DeskThing host + hardware to run |
-| **P9** — iPad fallback client | ✅ Web MVP | `specs/p9-ipad-always-on.md`, `docs/ipad-guided-access.md` — Guided Access web path (OD1=B) over `/display?client=ipad` |
-| **P10** — Local service fallback | ✅ MVP | `specs/p10-local-service-fallback.md`, `integrations/local-fallback/` — off-Pi gateway; probe ports; proxy-when-healthy / fallback page |
-| **P49** — Pre-prod beta | ✅ Done | `specs/p49-preprod-deployment.md` — RPi4, AP2, bare metal |
-| **P50** — Beta soak + observability | 📄 Active | `specs/p50-beta-soak-observability.md` — soak Pi; Mac Loki/Grafana |
-| **P99** — Prod readiness | 📄 Spec | `specs/p99-prod-readiness.md` — see permanent definition above |
+| **P5** - Deployment | 📄 Spec | `specs/p5-deployment.md` - Pi, Docker (reference) |
+| **P6** - Echo Show | 📄 Spec | `specs/p6-echo-show.md` - Tier B push → Silk |
+| **P7** - Android always-on | 🚧 Authored (device-test pending) | `specs/p7-android-always-on.md`, `integrations/android/` - WebView console; idle screen-off; tap-to-resume. Not built in CI (no Android SDK) |
+| **P8** - DeskThing / Car Thing | 🚧 Authored (device-test pending) | `specs/p8-deskthing-carthing.md`, `integrations/deskthing/` - same always-on rules on Car Thing. Needs DeskThing host + hardware to run |
+| **P9** - iPad fallback client | ✅ Web MVP | `specs/p9-ipad-always-on.md`, `docs/ipad-guided-access.md` - Guided Access web path (OD1=B) over `/display?client=ipad` |
+| **P10** - Local service fallback | ✅ MVP | `specs/p10-local-service-fallback.md`, `integrations/local-fallback/` - off-Pi gateway; probe ports; proxy-when-healthy / fallback page |
+| **P49** - Pre-prod beta | ✅ Done | `specs/p49-preprod-deployment.md` - RPi4, AP2, bare metal |
+| **P50** - Beta soak + observability | 📄 Active | `specs/p50-beta-soak-observability.md` - soak Pi; Mac Loki/Grafana |
+| **P99** - Prod readiness | 📄 Spec | `specs/p99-prod-readiness.md` - see permanent definition above |
 
-**Shared client rules (P7–P9):** [specs/guidelines/always-on-display-client.md](specs/guidelines/always-on-display-client.md). The shared **web surface** is the kiosk view `GET /display` ([docs/kiosk-display.md](docs/kiosk-display.md)); all three clients point at it (`?client=android|deskthing|ipad`). Pure always-on rules are mirrored across `src/public/js/displayState.js` (web), `integrations/deskthing/shared/alwaysOnState.js`, and `integrations/android/.../AlwaysOnState.kt` — all unit-tested. Health probe for P10/clients: `GET /api/health`.
+**Shared client rules (P7–P9):** [specs/guidelines/always-on-display-client.md](specs/guidelines/always-on-display-client.md). The shared **web surface** is the kiosk view `GET /display` ([docs/kiosk-display.md](docs/kiosk-display.md)); all three clients point at it (`?client=android|deskthing|ipad`). Pure always-on rules are mirrored across `src/public/js/displayState.js` (web), `integrations/deskthing/shared/alwaysOnState.js`, and `integrations/android/.../AlwaysOnState.kt` - all unit-tested. Health probe for P10/clients: `GET /api/health`.
 
 **Implementation order:** Features on **Mac dev** → **P49** beta → **P50** soak → **P99** → **P100** release `1.0.0` → line 2 on `main` as `2.0.0-dev`.
 
@@ -161,8 +161,8 @@ P1 adds: `controlAvailable`, `controlReason`.
 
 - Do not store secrets in `.env`
 - Do not play audio from the receiver
-- Do not infer pause/disconnect from a single metadata field — use debug capture
-- Do not label launchd/install-only work as “P0 hardening” — that is **P99**
+- Do not infer pause/disconnect from a single metadata field - use debug capture
+- Do not label launchd/install-only work as “P0 hardening” - that is **P99**
 
 ## Debug Capture
 
@@ -200,7 +200,7 @@ See `docs/debug-capture.md`. Normal mode redirects `/debug` to `/`. For prod iss
 
 For a headless Linux cloud VM (no iPhone/Mac sender, no shairport-sync, no mDNS):
 
-- **Run the dashboard in mock mode** — no AirPlay hardware or sidecar needed:
+- **Run the dashboard in mock mode** - no AirPlay hardware or sidecar needed:
   `USE_MOCK=true SKIP_SHAIRPORT_CHECK=1 npm start` → http://localhost:3003 (already the `dashboard` terminal in `.cursor/environment.json`). In mock mode `/api/events` (SSE) returns 404 by design; the page shows fixed mock data.
 - **Test the real live path without hardware:** run live mode (`SKIP_SHAIRPORT_CHECK=1 npm start`), create the metadata FIFO (`mkfifo /tmp/shairport-sync-metadata`), then write shairport-sync-style XML `<item>` records (type `636f7265`/`73736e63`, base64 `<data>`, each terminated by `</item>\n`) into the pipe. This exercises pipe reader → parser → SSE → UI, which is otherwise only reachable via a real AirPlay sender. `METADATA_PIPE` overrides the pipe path.
 - **No test/lint/build tooling exists** (no `test`/`lint` scripts, no dev deps, no bundler). `npm run demo` runs `src/bin/demo-metadata.js` to exercise the metadata parser end-to-end without hardware.

@@ -1,4 +1,4 @@
-# P0 — AirPlay Status Dashboard
+# P0 - AirPlay Status Dashboard
 
 ## Overview
 
@@ -46,10 +46,10 @@ AirPlay speakers do not expose a public "now playing" API. You cannot passively 
 
 ### Design Decisions
 
-- **Sidecar over pure Node receiver** — `shairport-sync` has mature AirPlay 2 support and metadata handling. A Node-only RAOP receiver (`node-libraop`) is AirPlay 1 only and less reliable in multi-room setups.
-- **Audio discarded** — The receiver must not play PCM output (no echo). Configure `shairport-sync` with a null/dummy output or mute.
-- **No cloud deployment** — This is a local-network, home-use tool. No AWS/Azure secrets path.
-- **No `.env` for credentials** — AirPlay receiver may optionally use a password stored in macOS Keychain if needed later.
+- **Sidecar over pure Node receiver** - `shairport-sync` has mature AirPlay 2 support and metadata handling. A Node-only RAOP receiver (`node-libraop`) is AirPlay 1 only and less reliable in multi-room setups.
+- **Audio discarded** - The receiver must not play PCM output (no echo). Configure `shairport-sync` with a null/dummy output or mute.
+- **No cloud deployment** - This is a local-network, home-use tool. No AWS/Azure secrets path.
+- **No `.env` for credentials** - AirPlay receiver may optionally use a password stored in macOS Keychain if needed later.
 
 ## Tech Stack
 
@@ -131,10 +131,10 @@ Metadata pipe format is binary/XML-style, decoded by `shairport-sync-metadata-re
 
 ## Known Limitations
 
-1. User must **select "AirPlay Status" as an AirPlay output** each session (or save an AirPlay group). **iPhone multi-room** with HomePods/AP2 speakers requires an **AirPlay 2** receiver (Linux/Pi) — not macOS Homebrew; see [docs/multi-room-airplay.md](../docs/multi-room-airplay.md).
-2. Metadata quality depends on the **source app** — Apple Music is rich; some apps send title only or no artwork.
-3. **Not passive** — cannot read status from speakers you do not also stream to.
-4. **Local network only** — sender and receiver must be on the same LAN.
+1. User must **select "AirPlay Status" as an AirPlay output** each session (or save an AirPlay group). **iPhone multi-room** with HomePods/AP2 speakers requires an **AirPlay 2** receiver (Linux/Pi) - not macOS Homebrew; see [docs/multi-room-airplay.md](../docs/multi-room-airplay.md).
+2. Metadata quality depends on the **source app** - Apple Music is rich; some apps send title only or no artwork.
+3. **Not passive** - cannot read status from speakers you do not also stream to.
+4. **Local network only** - sender and receiver must be on the same LAN.
 5. **macOS 15.4+** system Now Playing APIs are restricted; this approach bypasses that by being a receiver.
 
 ## P0 Implementation Status
@@ -146,7 +146,7 @@ Metadata pipe format is binary/XML-style, decoded by `shairport-sync-metadata-re
 | Sidecar | shairport-sync install docs, metadata pipe reader | Done |
 | Live metadata | Pipe reader → dashboard (SSE) | Done |
 
-**P0 is complete.** Production polish (launchd, structured logs, Grafana, agent/human debugging SOPs) lives in **[P99 — prod readiness](./p99-prod-readiness.md)**, implemented last in iteration 1.
+**P0 is complete.** Production polish (launchd, structured logs, Grafana, agent/human debugging SOPs) lives in **[P99 - prod readiness](./p99-prod-readiness.md)**, implemented last in iteration 1.
 
 ## Roadmap (P1–P10, P99)
 
@@ -174,7 +174,7 @@ Always-on client shared rules: [guidelines/always-on-display-client.md](./guidel
 | Phase | Feasible? | Confidence | Main risk |
 |-------|-----------|------------|-----------|
 | **P1** Web controls | **Conditional** | Medium | Apple deprecated DACP on iOS 17.4+; iPhone may ignore play/pause/skip even when commands send |
-| **P2** Tidbyt | **Yes** | High | Custom apps don't auto-refresh — server pushes WebP on a schedule |
+| **P2** Tidbyt | **Yes** | High | Custom apps don't auto-refresh - server pushes WebP on a schedule |
 | **P3** Kindle display | **Yes** | High | Browser path is simplest; jailbreak fetch path for always-on wall display |
 | **P4** Kindle controls | **Conditional** | Medium | Same DACP limits as P1; browser UI can expose buttons but iPhone may not respond |
 | **P5** Non-Mac deploy | **Yes** | High on RPi; Medium on Docker; Low on Synology | mDNS discovery requires host networking / Avahi |
@@ -224,5 +224,5 @@ airplay-status/
 
 - [shairport-sync](https://github.com/mikebrady/shairport-sync)
 - [shairport-sync-metadata-reader](https://github.com/mikebrady/shairport-sync-metadata-reader)
-- [shairport-metadata-display](https://github.com/AlainGourves/shairport-metadata-display) — prior art for metadata → web UI
+- [shairport-metadata-display](https://github.com/AlainGourves/shairport-metadata-display) - prior art for metadata → web UI
 - [App Code Labs: AirPlay metadata on Raspberry Pi](https://appcodelabs.com/show-artist-song-metadata-using-airplay-on-raspberry-pi)

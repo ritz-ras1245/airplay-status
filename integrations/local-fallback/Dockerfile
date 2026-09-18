@@ -2,7 +2,7 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# No runtime dependencies (Node http/net only) — copy source as-is.
+# No runtime dependencies (Node http/net only) - copy source as-is.
 COPY package.json ./
 COPY src ./src
 

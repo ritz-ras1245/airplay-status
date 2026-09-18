@@ -1,4 +1,4 @@
-# Mac observability stack — Loki + Grafana (+ optional Mac Promtail).
+# Mac observability stack - Loki + Grafana (+ optional Mac Promtail).
 # Pi Promtail pushes journal logs to Loki on port LOKI_PORT (LAN).
 #
 # Copy observability.env.example → observability.env and set Grafana password.

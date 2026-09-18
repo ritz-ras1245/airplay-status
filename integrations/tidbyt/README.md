@@ -2,7 +2,7 @@
 
 Push AirPlay now-playing metadata to a [Tidbyt](https://tidbyt.com/) device (64×32 LED matrix).
 
-Custom apps pushed via the Tidbyt API do not auto-refresh on the device — this project renders a WebP on your Mac and pushes it when playback metadata changes.
+Custom apps pushed via the Tidbyt API do not auto-refresh on the device - this project renders a WebP on your Mac and pushes it when playback metadata changes.
 
 Spotify-style layout: **32×32 album art**, marquee title (green) and artist (white), progress bar. No header, no idle screen.
 
@@ -16,18 +16,18 @@ Pushes only when a track has a title or artist. Progress updates re-push in ~5% 
    brew install tidbyt/tidbyt/pixlet
    ```
 
-2. **Tidbyt credentials** — in the Tidbyt mobile app: **Settings → Get API Key**. Note your **Device ID** and **API token**.
+2. **Tidbyt credentials** - in the Tidbyt mobile app: **Settings → Get API Key**. Note your **Device ID** and **API token**.
 
-3. **Tidbyt credentials** (gitignored) — Tidbyt app: **Settings → Get API Key**
+3. **Tidbyt credentials** (gitignored) - Tidbyt app: **Settings → Get API Key**
 
    ```bash
    cp config/deploy/tidbyt.env.example .local/tidbyt.env
-   # Edit .local/tidbyt.env — keeps working if .env is refreshed for P49/beta
+   # Edit .local/tidbyt.env - keeps working if .env is refreshed for P49/beta
    ```
 
    Or put `TIDBYT_*` in repo `.env` (easier to overwrite by mistake).
 
-4. **Dashboard running** — `./bin/run-local.sh` (loads `.env` + `.local/tidbyt.env`).
+4. **Dashboard running** - `./bin/run-local.sh` (loads `.env` + `.local/tidbyt.env`).
 
 ## Manual push (testing)
 
@@ -64,14 +64,14 @@ At startup you'll see either:
 ✓  Tidbyt push enabled (pixlet: /opt/homebrew/bin/pixlet)
 ```
 
-or a warning explaining what's missing (e.g. pixlet not installed) — the dashboard still runs.
+or a warning explaining what's missing (e.g. pixlet not installed) - the dashboard still runs.
 
 Set `DISABLE_TIDBYT=1` in `.env` or the environment to skip Tidbyt entirely.
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `TIDBYT_DEVICE_ID` | — | Required for push |
-| `TIDBYT_API_TOKEN` | — | Required for push |
+| `TIDBYT_DEVICE_ID` | - | Required for push |
+| `TIDBYT_API_TOKEN` | - | Required for push |
 | `TIDBYT_INSTALLATION_ID` | `airplaystatus` | Alphanumeric only; persists in Tidbyt app rotation |
 | `DISABLE_TIDBYT` | off | Set to `1` to force off while creds remain in `.env` |
 
@@ -91,13 +91,13 @@ Pushes while a track is playing; **deletes the installation** when the session e
 └──────────────────────────────────────────────────────────────┘
 ```
 
-On disconnect, calls `DELETE /v0/devices/.../installations/airplaystatus` — the app is removed from rotation until the next track pushes again.
+On disconnect, calls `DELETE /v0/devices/.../installations/airplaystatus` - the app is removed from rotation until the next track pushes again.
 
 ## Files
 
 | File | Purpose |
 |------|---------|
-| `airplay-status.star` | Pixlet renderer — reads JSON `status` config |
+| `airplay-status.star` | Pixlet renderer - reads JSON `status` config |
 | `../../bin/push-tidbyt.sh` | One-shot render + push |
 | `../../src/services/tidbytPushService.js` | Push while playing, delete installation when idle |
 

@@ -35,7 +35,7 @@ const applyEnvFile = (envPath, { overwrite = false } = {}) => {
   }
 };
 
-/** Mac dev: .env (stage) then .local/tidbyt.env (creds — survives beta .env refresh). */
+/** Mac dev: .env (stage) then .local/tidbyt.env (creds - survives beta .env refresh). */
 export const loadMacEnv = () => {
   applyEnvFile(defaultEnvPath);
   applyEnvFile(localTidbytEnvPath, { overwrite: true });

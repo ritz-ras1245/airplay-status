@@ -1,6 +1,6 @@
-# Phase P9 — iPad always-on fallback client
+# Phase P9 - iPad always-on fallback client
 
-**Status:** MVP delivered (web path) — runbook at [../docs/ipad-guided-access.md](../docs/ipad-guided-access.md); reuses the kiosk view `GET /display?client=ipad`.  
+**Status:** MVP delivered (web path) - runbook at [../docs/ipad-guided-access.md](../docs/ipad-guided-access.md); reuses the kiosk view `GET /display?client=ipad`.  
 
 **Decision locked:** OD1 = B (Safari Home-Screen web app + Guided Access) for the MVP. Promote to OD1 = A (native WKWebView) only if a resume notification while the screen is fully off becomes mandatory (see limitations in the runbook).  
 **Depends on:** P0 live metadata (`/api/status`, `/api/events`)  
@@ -24,7 +24,7 @@ Follow specs/cloud-cursor-pr-standard.md.
 
 ## Goal
 
-Provide an **iPad fallback** always-on console for airplay-status: same playing / idle / focus-before-idle resume rules as Android (P7), using the existing webpage as the visual surface. iPad is the spare wall/table display when a dedicated Android tablet or Car Thing is unavailable — not a second product identity.
+Provide an **iPad fallback** always-on console for airplay-status: same playing / idle / focus-before-idle resume rules as Android (P7), using the existing webpage as the visual surface. iPad is the spare wall/table display when a dedicated Android tablet or Car Thing is unavailable - not a second product identity.
 
 ---
 
@@ -69,7 +69,7 @@ Provide an **iPad fallback** always-on console for airplay-status: same playing 
 |----|----------|---------|-------|
 | **OD1** | Delivery vehicle | A) Tiny native Swift WKWebView app (TestFlight / sideload) · B) Safari + Home Screen web app + Guided Access · C) Both: B for MVP, A if notifications need native | B is fastest; A needed for reliable idle notifications while “screen off” |
 | **OD2** | Screen off | Guided Access + Auto-Lock vs native `idleTimer` control | Safari alone cannot force screen off as precisely as a native app |
-| **OD3** | Resume notification | Local notification from native app vs no notification on pure web path | Focus-before-idle nudge likely **requires OD1=A** (or Shortcuts automation — fragile) |
+| **OD3** | Resume notification | Local notification from native app vs no notification on pure web path | Focus-before-idle nudge likely **requires OD1=A** (or Shortcuts automation - fragile) |
 | **OD4** | Repo | `integrations/ipad/` monorepo vs separate Xcode repo | Prefer monorepo if native |
 
 **Recommendation:** MVP path **OD1=B** for display-only; promote to **OD1=A** when resume notifications are mandatory for parity with P7.

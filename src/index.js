@@ -52,7 +52,7 @@ if (!USE_MOCK) {
         execSync('pgrep -f "shairport-sync -c"', { stdio: 'ignore' });
       } catch {
         console.warn('');
-        console.warn(`⚠  shairport-sync is not running — "${deployStage.airplayReceiverName}" will not appear on your iPhone.`);
+        console.warn(`⚠  shairport-sync is not running - "${deployStage.airplayReceiverName}" will not appear on your iPhone.`);
         console.warn('   In another terminal: ./bin/run-shairport.sh');
         console.warn('   Or use: ./bin/run-local.sh (starts both)');
         console.warn('');
@@ -333,6 +333,6 @@ app.listen(PORT, () => {
   });
 
   if (!tidbyt.shouldStart && setupToken) {
-    console.log('Upload Tidbyt creds at /setup?token=… — push starts immediately (no restart).');
+    console.log('Upload Tidbyt creds at /setup?token=… - push starts immediately (no restart).');
   }
 });

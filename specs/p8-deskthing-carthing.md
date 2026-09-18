@@ -1,6 +1,6 @@
-# Phase P8 — DeskThing / Car Thing always-on client
+# Phase P8 - DeskThing / Car Thing always-on client
 
-**Status:** Authored — `integrations/deskthing/` (device-test pending on Car Thing + DeskThing host).  
+**Status:** Authored - `integrations/deskthing/` (device-test pending on Car Thing + DeskThing host).  
 
 **Decisions locked:** OD1 = A (DeskThing app polls `/api/status`, renders native UI) · OD2 = map "screen off" to DeskThing sleep/backlight · OD3 = auto-wake + on-screen "tap to resume" splash. OD5 (version pin) recorded at device test. Shared always-on rules in `integrations/deskthing/shared/alwaysOnState.js` (unit-tested).  
 **Depends on:** P0 live metadata (`/api/status`, `/api/events`)  
@@ -24,7 +24,7 @@ Follow specs/cloud-cursor-pr-standard.md.
 
 ## Goal
 
-Port the same **always-on when playing / screen-off when idle / tap-to-resume when focus-before-idle** behaviour to a **Spotify Car Thing** running **[DeskThing](https://deskthing.app/)** (community desktop companion stack). The Car Thing becomes a small dedicated now-playing console for airplay-status — not a second metadata backend.
+Port the same **always-on when playing / screen-off when idle / tap-to-resume when focus-before-idle** behaviour to a **Spotify Car Thing** running **[DeskThing](https://deskthing.app/)** (community desktop companion stack). The Car Thing becomes a small dedicated now-playing console for airplay-status - not a second metadata backend.
 
 ---
 
@@ -65,7 +65,7 @@ Exact render path depends on OD1 (native DeskThing app vs host-proxied WebView).
 |---|----------|-----------|
 | D1 | **Same product rules as P7/P9** (playing awake, idle dim, focus-before-idle resume nudge) | User: “similar thing” |
 | D2 | **DeskThing port**, not stock Spotify Car Thing OS | Only practical custom-app path |
-| D3 | **Read-only display MVP** — no DACP chrome required | Aligns with P2/P3/P6 display clients |
+| D3 | **Read-only display MVP** - no DACP chrome required | Aligns with P2/P3/P6 display clients |
 | D4 | **airplay-status remains source of truth** | No Car Thing-side AirPlay receiver |
 
 ---

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Query GET /api/health on a running instance (dev Mac, RPi4 beta, prod).
-# Exits non-zero if unreachable or status != "ok" — usable in monitoring/cron.
+# Exits non-zero if unreachable or status != "ok" - usable in monitoring/cron.
 set -euo pipefail
 
 BASE="${1:-http://localhost:3003}"

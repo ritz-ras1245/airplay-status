@@ -1,11 +1,11 @@
-# Phase P10 — Local service fallback gateway
+# Phase P10 - Local service fallback gateway
 
-**Status:** MVP implemented — `integrations/local-fallback/` (probe + reverse-proxy + fallback page).  
+**Status:** MVP implemented - `integrations/local-fallback/` (probe + reverse-proxy + fallback page).  
 
 **Decisions locked (MVP):** OD1 = A (`integrations/local-fallback/` in-repo) · OD2 = C intent, MVP = reverse-proxy + static fallback (DNS cutover is deploy-time docs) · OD4 = Synology Docker (host only) · OD5 = probe `:3003` canonical, `:80` optional · OD6 = A (static down page + live probe matrix). Config is JSON for a dependency-free MVP; a YAML loader can be layered on later.  
 **Depends on:** Deployed primary services (for airplay-status: P49 RPi beta or Mac host)  
 **Used by:** P7 / P8 / P9 display clients; reusable for other LAN `.local` / `home.arpa` services  
-**Layout:** Prefer standalone Docker project under `integrations/local-fallback/` (or future dedicated repo — see OD1)  
+**Layout:** Prefer standalone Docker project under `integrations/local-fallback/` (or future dedicated repo - see OD1)  
 **Standard:** [cloud-cursor-pr-standard.md](./cloud-cursor-pr-standard.md) (apply when promoted to Cloud-PR ready)
 
 ## Agent pickup prompt
@@ -22,11 +22,11 @@ Follow specs/cloud-cursor-pr-standard.md.
 
 ## Goal
 
-When the **primary host** (typically the RPi running airplay-status) is **not reachable** on the ports clients expect (idea callout: **`:80`**, plus whatever else we monitor), browsers and always-on clients must land on a **fallback** hosted somewhere more reliable — **Docker on the eero-adjacent always-on box** and/or **Synology**. That fallback:
+When the **primary host** (typically the RPi running airplay-status) is **not reachable** on the ports clients expect (idea callout: **`:80`**, plus whatever else we monitor), browsers and always-on clients must land on a **fallback** hosted somewhere more reliable - **Docker on the eero-adjacent always-on box** and/or **Synology**. That fallback:
 
 1. Serves a simple “primary unavailable” / status page (and optional reverse-proxy when healthy).
 2. **Probes** the primary over the configured port set.
-3. Is **generic** — same pattern for airplay-status and other local services.
+3. Is **generic** - same pattern for airplay-status and other local services.
 
 One concrete design: a container that **fronts local services** (DNS or reverse-proxy entrypoint) and continuously **pings / health-checks** backends so `.local` (or `home.arpa`) names stay useful even when a single Pi is down.
 
@@ -92,8 +92,8 @@ services:
 
 Gateway keeps last probe results and exposes:
 
-- `GET /_gateway/health` — gateway itself
-- `GET /_gateway/services` — JSON probe matrix
+- `GET /_gateway/health` - gateway itself
+- `GET /_gateway/services` - JSON probe matrix
 - Per-service vhost or path-based routing
 
 ---
@@ -106,7 +106,7 @@ Gateway keeps last probe results and exposes:
 | D2 | **Fallback hosted off-Pi** (Synology Docker and/or always-on LAN box near eero) | Survives Pi death |
 | D3 | **Probe all configured ports** for each service | User: ping RPi over ports we care about |
 | D4 | **Clients use the gateway URL as the stable entrypoint** when P10 is enabled | Always-on shells (P7–P9) point here |
-| D5 | **No secrets in git** — LAN IPs/hostnames in local config / compose override | Project rule |
+| D5 | **No secrets in git** - LAN IPs/hostnames in local config / compose override | Project rule |
 
 ---
 
@@ -133,7 +133,7 @@ Mark **DECISION REQUIRED** on OD1, OD2, OD4, OD5 before Cloud-PR ready.
 | `GATEWAY_HTTP_PORT` | No | Default `80` on the fallback host |
 | Compose `ports` / `network_mode` | Yes | LAN reachability; host networking may be required for some mDNS designs |
 
-Example probe types: `tcp`, `http` (GET path + expect 2xx), optional `icmp` (often blocked in containers — prefer TCP/HTTP).
+Example probe types: `tcp`, `http` (GET path + expect 2xx), optional `icmp` (often blocked in containers - prefer TCP/HTTP).
 
 ---
 
@@ -164,7 +164,7 @@ Example probe types: `tcp`, `http` (GET path + expect 2xx), optional `icmp` (oft
 - Serves fallback page showing:
   - Service name
   - Each port: up/down, last latency, last checked
-  - Hint: “RPi unreachable — check power / Ethernet”
+  - Hint: “RPi unreachable - check power / Ethernet”
 - Always-on clients (P7–P9) remain “alive” (HTTP 200 from gateway) instead of WebView hard-failing.
 
 ### Recovery

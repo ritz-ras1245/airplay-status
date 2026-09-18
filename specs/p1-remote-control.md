@@ -1,4 +1,4 @@
-# Phase P1 — Remote Control (Web Play/Pause/Prev/Next)
+# Phase P1 - Remote Control (Web Play/Pause/Prev/Next)
 
 **Status:** Implemented on `feat/cursor/p1-remote-control` - **Pi device sign-off required** ([docs/p1-pi-validation.md](../docs/p1-pi-validation.md))  
 **Depends on:** Phase 4 live metadata (`/api/status`, metadata pipe reader)  
@@ -14,12 +14,12 @@ The user keeps **AirPlay Status** selected as an output. Buttons on the web UI s
 
 | Aspect | Assessment |
 |--------|------------|
-| **Overall** | **Conditional** — technically possible via DACP; reliability varies by sender OS and AirPlay mode |
+| **Overall** | **Conditional** - technically possible via DACP; reliability varies by sender OS and AirPlay mode |
 | **Classic AirPlay (AP1)** | Required for DACP; matches current dev setup (`Startup in Classic AirPlay mode` in shairport-sync logs) |
-| **iPhone / iPod (iOS 17.4+)** | **High risk** — Apple largely ignores DACP remote commands; commands may send without effect ([shairport-sync #1858](https://github.com/mikebrady/shairport-sync/issues/1858)) |
-| **Mac (Music.app)** | **Medium–high** — same DACP path; often more reliable than iOS |
-| **AirPlay 2-only senders** | **Not feasible** — AP2 remote control not reverse-engineered ([shairport-sync #2186](https://github.com/mikebrady/shairport-sync/issues/2186)) |
-| **shairport-sync D-Bus/MQTT** | **Not recommended** — D-Bus is Linux-only; MQTT remote is unreliable on modern iOS |
+| **iPhone / iPod (iOS 17.4+)** | **High risk** - Apple largely ignores DACP remote commands; commands may send without effect ([shairport-sync #1858](https://github.com/mikebrady/shairport-sync/issues/1858)) |
+| **Mac (Music.app)** | **Medium–high** - same DACP path; often more reliable than iOS |
+| **AirPlay 2-only senders** | **Not feasible** - AP2 remote control not reverse-engineered ([shairport-sync #2186](https://github.com/mikebrady/shairport-sync/issues/2186)) |
+| **shairport-sync D-Bus/MQTT** | **Not recommended** - D-Bus is Linux-only; MQTT remote is unreliable on modern iOS |
 
 **Decision:** Implement a **Node.js DACP HTTP client** using session fields from the existing metadata pipe. Do not depend on shairport-sync D-Bus or MQTT for P1.
 
@@ -219,7 +219,7 @@ Run with `./bin/run-local.sh --debug`. Mark steps via `/debug` UI.
 | 7 | iPhone | AP2 only | Any | Any | `controlAvailable: false`, reason `ap2_unsupported` |
 | 8 | Any | Classic | Any | Control with AirPlay Status deselected | `no_session` |
 
-Record iOS version on each iPhone test. If iOS 17.4+ ignores commands, document as known limitation — UI must show `ios_blocked` after confirmed failure, not pretend success.
+Record iOS version on each iPhone test. If iOS 17.4+ ignores commands, document as known limitation - UI must show `ios_blocked` after confirmed failure, not pretend success.
 
 ## Spike (required before full UI)
 
@@ -255,6 +255,6 @@ Record iOS version on each iPhone test. If iOS 17.4+ ignores commands, document 
 
 ## References
 
-- [shairport-sync metadata reader](https://github.com/mikebrady/shairport-sync-metadata-reader) — ssnc codes including `daid`, `dapo`, `clip`
-- [shairport-sync #223](https://github.com/mikebrady/shairport-sync/issues/223) — D-Bus remote control (Linux; not used here)
-- [shairport-sync #1858](https://github.com/mikebrady/shairport-sync/issues/1858) — MQTT/DACP ignored on iOS 17.4+
+- [shairport-sync metadata reader](https://github.com/mikebrady/shairport-sync-metadata-reader) - ssnc codes including `daid`, `dapo`, `clip`
+- [shairport-sync #223](https://github.com/mikebrady/shairport-sync/issues/223) - D-Bus remote control (Linux; not used here)
+- [shairport-sync #1858](https://github.com/mikebrady/shairport-sync/issues/1858) - MQTT/DACP ignored on iOS 17.4+

@@ -10,7 +10,7 @@ source: airplay-status/docs/p49-rpi-bare-metal-lessons.md
 remarkable: later
 ---
 
-# P49 RPi bare-metal — study notes
+# P49 RPi bare-metal - study notes
 
 > Copy into Obsidian vault. Remarkable export: optional later.
 
@@ -75,7 +75,7 @@ iPhone + HomePods in one AirPlay group with **AirPlay Status (Beta)**.
 ## Tidbyt on Pi
 
 - `install.sh` installs **pixlet**
-- Creds: `docs/p49-tidbyt-credentials.md` — web upload or `tidbyt.env` from iCloud
+- Creds: `docs/p49-tidbyt-credentials.md` - web upload or `tidbyt.env` from iCloud
 - Template: `config/deploy/tidbyt.env.example`
 
 ## Links

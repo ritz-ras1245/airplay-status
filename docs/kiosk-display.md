@@ -5,7 +5,7 @@ An immersive, full-viewport "now playing" surface for **always-on displays**
 the P7–P9 always-on clients are meant to point at, per
 [specs/guidelines/always-on-display-client.md](../specs/guidelines/always-on-display-client.md).
 
-It consumes the existing P0 metadata pipeline only — `GET /api/status` and the
+It consumes the existing P0 metadata pipeline only - `GET /api/status` and the
 `GET /api/events` SSE stream. It does **not** add a second metadata source.
 
 ## URL
@@ -36,7 +36,7 @@ once hardware is in hand):
 |------|------|--------|-------|
 | **Playing / Paused** | `isPlaying` or a track title present | Kept awake via the [Screen Wake Lock API](https://developer.mozilla.org/docs/Web/API/Screen_Wake_Lock_API) | Live metadata + progress |
 | **Idle** | Nothing playing / session cleared | After an ~8s grace the screen is dimmed and the wake lock released | Lightweight; waits for the next track |
-| **Resume nudge** | Playback restarts while dimmed | Shows a full-screen **"Tap to resume"** overlay — but **only** if this client was the focused/foreground session when it dimmed (*focus-before-idle*) | Otherwise it un-dims silently, so idle displays around the house are not spammed |
+| **Resume nudge** | Playback restarts while dimmed | Shows a full-screen **"Tap to resume"** overlay - but **only** if this client was the focused/foreground session when it dimmed (*focus-before-idle*) | Otherwise it un-dims silently, so idle displays around the house are not spammed |
 
 The pure rules (`classifyPlayback`, `shouldHoldWakeLock`, `shouldNudgeResume`)
 live in [`src/public/js/displayState.js`](../src/public/js/displayState.js) and

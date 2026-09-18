@@ -1,5 +1,5 @@
 ---
-description: Branch naming — required format for all git branches and Cloud Agents
+description: Branch naming - required format for all git branches and Cloud Agents
 alwaysApply: true
 ---
 
@@ -16,7 +16,7 @@ alwaysApply: true
 | Segment | Values |
 |---------|--------|
 | **action** | `feat`, `fix`, `doc`, `chore`, `refactor`, `test`, `ci`, `spec`, `hotfix` |
-| **user** | GitHub login or tool name — e.g. `ritz-ras1245`, `cursor`, `dependabot` |
+| **user** | GitHub login or tool name - e.g. `ritz-ras1245`, `cursor`, `dependabot` |
 | **description** | kebab-case slug |
 
 **Examples:** `feat/cursor/p49-docker-spike`, `doc/cursor/cloud-setup`, `fix/cursor/session-end-clear`
@@ -25,11 +25,11 @@ alwaysApply: true
 
 ## Rules
 
-- **Never commit on `main`** — work on a named branch; merge to `main` only
-- **Cloud / bot agents:** open a **PR** — do not merge to `main`
+- **Never commit on `main`** - work on a named branch; merge to `main` only
+- **Cloud / bot agents:** open a **PR** - do not merge to `main`
 - **Local agents:** before `git checkout -b`, use `{action}/cursor/{description}` (or `ritz-ras1245` when acting as owner)
 
-## Cursor Cloud Agents — branch prefix (required)
+## Cursor Cloud Agents - branch prefix (required)
 
 Cloud Agents create the branch **before** this rule runs. Repo rules cannot override the platform prefix.
 

@@ -52,7 +52,7 @@ const printTidbytSetupWarning = (issues) => {
     write(`${boldWhite}  • ${message}${reset}`);
   }
   write('');
-  write(`${dim}  Dashboard is running — only Tidbyt push is skipped.${reset}`);
+  write(`${dim}  Dashboard is running - only Tidbyt push is skipped.${reset}`);
   write(`${cyan}  To disable: set DISABLE_TIDBYT=1 in .env or environment${reset}`);
   write(`${boldYellow}${bar}${reset}`);
   write('');
@@ -105,7 +105,7 @@ export const resolveTidbytStartup = ({
       shouldStart: false,
       reason: 'disabled',
       requested: hasCreds,
-      issues: hasCreds ? ['DISABLE_TIDBYT=1 — Tidbyt push suppressed'] : undefined,
+      issues: hasCreds ? ['DISABLE_TIDBYT=1 - Tidbyt push suppressed'] : undefined,
     };
   }
 
@@ -116,12 +116,12 @@ export const resolveTidbytStartup = ({
   const issues = [];
   if (!pixletPath) {
     issues.push(
-      'pixlet not found — Pi: reinstall deploy/rpi/install.sh; Mac: brew install tidbyt/tidbyt/pixlet',
+      'pixlet not found - Pi: reinstall deploy/rpi/install.sh; Mac: brew install tidbyt/tidbyt/pixlet',
     );
   }
   if (!INSTALLATION_ID_PATTERN.test(installationId)) {
     issues.push(
-      `TIDBYT_INSTALLATION_ID must be alphanumeric (a-z, A-Z, 0-9) — got "${installationId}", try ${DEFAULT_TIDBYT_INSTALLATION_ID}`,
+      `TIDBYT_INSTALLATION_ID must be alphanumeric (a-z, A-Z, 0-9) - got "${installationId}", try ${DEFAULT_TIDBYT_INSTALLATION_ID}`,
     );
   }
 

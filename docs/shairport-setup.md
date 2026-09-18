@@ -30,7 +30,7 @@ shairport-sync -V
 
 ## Running the sidecar
 
-**Terminal 1 — start the AirPlay receiver:**
+**Terminal 1 - start the AirPlay receiver:**
 
 ```bash
 ./bin/run-shairport.sh
@@ -38,7 +38,7 @@ shairport-sync -V
 
 **AirPlay Status** should appear in your device's AirPlay picker.
 
-**Terminal 2 — read human-readable metadata:**
+**Terminal 2 - read human-readable metadata:**
 
 ```bash
 ./bin/read-metadata.sh
@@ -62,7 +62,7 @@ npm run watch:metadata
 2. Open AirPlay and select **AirPlay Status**
 3. Metadata lines (or JSON) should appear in Terminal 2
 
-**Multi-speaker from iPhone:** Homebrew on macOS is **AirPlay 1 only** — you cannot select AirPlay Status together with HomePods or other AirPlay 2 speakers in one group. See **[docs/multi-room-airplay.md](multi-room-airplay.md)**. For multi-room + metadata, run an **AirPlay 2** receiver on Raspberry Pi/Linux (`config/shairport-sync-airplay2.conf.example`).
+**Multi-speaker from iPhone:** Homebrew on macOS is **AirPlay 1 only** - you cannot select AirPlay Status together with HomePods or other AirPlay 2 speakers in one group. See **[docs/multi-room-airplay.md](multi-room-airplay.md)**. For multi-room + metadata, run an **AirPlay 2** receiver on Raspberry Pi/Linux (`config/shairport-sync-airplay2.conf.example`).
 
 When you stop playback or disconnect, the reader emits an empty state.
 
@@ -73,7 +73,7 @@ Edit `~/.config/shairport-sync/shairport-sync.conf`:
 | Setting | Purpose |
 |---|---|
 | `general.name` | Name shown in AirPlay picker (`AirPlay Status`) |
-| `pipe.name = "/dev/null"` | Discards audio — metadata only |
+| `pipe.name = "/dev/null"` | Discards audio - metadata only |
 | `metadata.pipe_name` | FIFO path for metadata (`/tmp/shairport-sync-metadata`) |
 
 ## Troubleshooting
@@ -87,7 +87,7 @@ Edit `~/.config/shairport-sync/shairport-sync.conf`:
 **No metadata in reader**
 
 - Confirm you selected **AirPlay Status** as an output (not just your speakers)
-- On iPhone with HomePods: you may need **only** AirPlay Status, or use a Pi AP2 receiver — [multi-room-airplay.md](multi-room-airplay.md)
+- On iPhone with HomePods: you may need **only** AirPlay Status, or use a Pi AP2 receiver - [multi-room-airplay.md](multi-room-airplay.md)
 - Check pipe exists: `ls -l /tmp/shairport-sync-metadata`
 - Rebuild reader: `make -C vendor/shairport-sync-metadata-reader`
 

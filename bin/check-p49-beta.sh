@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# P49 beta — bare-metal sanity check (run on the Pi after install.sh).
+# P49 beta - bare-metal sanity check (run on the Pi after install.sh).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -73,7 +73,7 @@ fi
 if ss -tlnp 2>/dev/null | grep -qE ':7000'; then
   pass "listening on TCP 7000 (AirPlay 2)"
 elif ss -tlnp 2>/dev/null | grep -qE ':5000'; then
-  warn "listening on TCP 5000 (AirPlay 1 only — AP2 multi-room will fail)"
+  warn "listening on TCP 5000 (AirPlay 1 only - AP2 multi-room will fail)"
   FAIL=1
 else
   fail "nothing listening on TCP 7000 or 5000"
@@ -93,7 +93,7 @@ if command -v avahi-browse >/dev/null; then
   if timeout 4 avahi-browse -t _airplay._tcp 2>/dev/null | grep -qi 'AirPlay Status'; then
     pass "AirPlay Status visible via Avahi"
   else
-    warn "AirPlay Status not seen in avahi-browse (may still work — try iPhone picker)"
+    warn "AirPlay Status not seen in avahi-browse (may still work - try iPhone picker)"
   fi
   echo ""
 fi
@@ -125,9 +125,9 @@ echo "From Mac:  ./bin/check-version.sh http://airplay-beta.local:${PORT}"
 echo ""
 
 if [[ "$FAIL" -eq 0 ]]; then
-  echo "=== PASS — stack looks healthy; test iPhone AirPlay picker next ==="
+  echo "=== PASS - stack looks healthy; test iPhone AirPlay picker next ==="
   exit 0
 fi
 
-echo "=== FAIL — fix items above, then: sudo systemctl restart nqptp shairport-sync airplay-status ==="
+echo "=== FAIL - fix items above, then: sudo systemctl restart nqptp shairport-sync airplay-status ==="
 exit 1

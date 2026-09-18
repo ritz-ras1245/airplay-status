@@ -2,13 +2,13 @@
 
 ## Symptom
 
-On iPhone, you can select **either** your HomePods / AirPlay 2 speakers **or** **AirPlay Status**, but not both in the same multi-room group. Tapping one AP2 speaker shows checkmarks on other AP2 devices only — **AirPlay Status** never joins the group.
+On iPhone, you can select **either** your HomePods / AirPlay 2 speakers **or** **AirPlay Status**, but not both in the same multi-room group. Tapping one AP2 speaker shows checkmarks on other AP2 devices only - **AirPlay Status** never joins the group.
 
 ## Root cause (confirmed)
 
 | Factor | This project today (macOS dev) |
 |--------|------------------------------|
-| **Protocol** | Homebrew `shairport-sync` is **AirPlay 1 (classic)** only — no `--with-airplay-2` in the formula |
+| **Protocol** | Homebrew `shairport-sync` is **AirPlay 1 (classic)** only - no `--with-airplay-2` in the formula |
 | **Advertisement** | `_raop._tcp` on port **5000** (classic RAOP) |
 | **iOS behavior** | Multi-select in the AirPlay menu groups **AirPlay 2 endpoints only** |
 | **Mixed AP1 + AP2** | iOS stops playback or refuses to start when mixing classic and AP2 targets |
@@ -35,7 +35,7 @@ shairport-sync -V
 
 Run **AirPlay Status** on a Raspberry Pi (or Linux host) with AirPlay 2 enabled. Then iPhone can select **speakers + AirPlay Status** in one group.
 
-1. Install **nqptp** and build **shairport-sync** with `--with-airplay-2` — see [shairport-sync BUILD.md](https://github.com/mikebrady/shairport-sync/blob/master/BUILD.md)
+1. Install **nqptp** and build **shairport-sync** with `--with-airplay-2` - see [shairport-sync BUILD.md](https://github.com/mikebrady/shairport-sync/blob/master/BUILD.md)
 2. Copy [config/shairport-sync-airplay2.conf.example](../config/shairport-sync-airplay2.conf.example) to the Pi
 3. Start **nqptp** then **shairport-sync** (port **7000**, `_airplay._tcp`)
 4. Run the Node dashboard on the same Pi (or another LAN host reading the metadata pipe)

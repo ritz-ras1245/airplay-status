@@ -1,6 +1,6 @@
-# Phase P7 — Android always-on WebView client
+# Phase P7 - Android always-on WebView client
 
-**Status:** Authored — `integrations/android/` (device-test pending; not built in CI — no Android SDK in cloud).  
+**Status:** Authored - `integrations/android/` (device-test pending; not built in CI - no Android SDK in cloud).  
 
 **Decisions locked:** OD1 = A (`integrations/android/` monorepo) · OD2 = minSdk 26 / targetSdk 34 · OD3 = A (system timeout screen-off, no Device Owner) · OD4 = A (short foreground service + native `/api/status` poll). Shared always-on rules in `integrations/android/app/src/main/java/app/airplaystatus/alwayson/AlwaysOnState.kt` (JVM unit-tested).  
 **Depends on:** P0 live metadata (`/api/status`, `/api/events`)  
@@ -24,7 +24,7 @@ Follow specs/cloud-cursor-pr-standard.md.
 
 ## Goal
 
-Ship a **tiny standalone Android app** that wraps the airplay-status webpage in a console / kiosk-style WebView. While something is playing, the app keeps the screen on. When nothing is playing, it allows (or forces) screen off. If playback starts again **and** the app was in focus when it went idle, show a **“Tap here to resume”** notification — not a silent background reopen, and not a nudge if the user had already left the app.
+Ship a **tiny standalone Android app** that wraps the airplay-status webpage in a console / kiosk-style WebView. While something is playing, the app keeps the screen on. When nothing is playing, it allows (or forces) screen off. If playback starts again **and** the app was in focus when it went idle, show a **“Tap here to resume”** notification - not a silent background reopen, and not a nudge if the user had already left the app.
 
 ---
 
@@ -91,10 +91,10 @@ Mark **DECISION REQUIRED** on OD1–OD4 before Cloud-PR ready.
 |-----|----------|-------------|
 | `DISPLAY_URL` | Yes | Primary dashboard URL (e.g. `http://airplay-status.home.arpa:3003/`) |
 | `FALLBACK_URL` | No | P10 status URL when primary fails |
-| `IDLE_GRACE_SEC` | No | Default `45` — seconds after idle before allowing screen off |
+| `IDLE_GRACE_SEC` | No | Default `45` - seconds after idle before allowing screen off |
 | `POLL_FALLBACK_SEC` | No | Default `5` if SSE unavailable from native watch |
 
-Store in app SharedPreferences / build config — not in server `.env` secrets.
+Store in app SharedPreferences / build config - not in server `.env` secrets.
 
 ---
 

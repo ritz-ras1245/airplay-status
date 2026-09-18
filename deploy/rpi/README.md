@@ -1,4 +1,4 @@
-# P49 — bare-metal deploy (Raspberry Pi)
+# P49 - bare-metal deploy (Raspberry Pi)
 
 **Default for Pi beta.** One script installs nqptp, shairport-sync (AP2 + metadata pipe), Node app, and systemd units.
 
@@ -17,7 +17,7 @@ sudo ./deploy/rpi/install.sh
 
 Install takes **~15–25 minutes** (shairport-sync compile). `.env` is created from `config/deploy/beta.env.example` automatically. **pixlet** is installed for Tidbyt.
 
-**Tidbyt credentials:** [docs/p49-tidbyt-credentials.md](../../docs/p49-tidbyt-credentials.md) — one-time web upload or `tidbyt.env` from iCloud.
+**Tidbyt credentials:** [docs/p49-tidbyt-credentials.md](../../docs/p49-tidbyt-credentials.md) - one-time web upload or `tidbyt.env` from iCloud.
 
 ## After install
 
@@ -68,4 +68,4 @@ sudo systemctl restart airplay-status
 
 ## Log shipping (optional)
 
-P50 observability — stream Pi journal logs to **Grafana/Loki on Mac**: [docs/p50-observability.md](../../docs/p50-observability.md).
+P50 observability - stream Pi journal logs to **Grafana/Loki on Mac**: [docs/p50-observability.md](../../docs/p50-observability.md).

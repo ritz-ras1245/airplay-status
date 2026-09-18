@@ -7,13 +7,13 @@ OBS="$ROOT/config/observability"
 ENV_FILE="$OBS/observability.env"
 
 if ! command -v docker >/dev/null 2>&1; then
-  echo "observability-up: docker not found — install Docker Desktop or: brew install --cask docker" >&2
+  echo "observability-up: docker not found - install Docker Desktop or: brew install --cask docker" >&2
   exit 1
 fi
 
 if [[ ! -f "$ENV_FILE" ]]; then
   cp "$OBS/observability.env.example" "$ENV_FILE"
-  echo "observability-up: created $ENV_FILE — set GF_SECURITY_ADMIN_PASSWORD before exposing LAN" >&2
+  echo "observability-up: created $ENV_FILE - set GF_SECURITY_ADMIN_PASSWORD before exposing LAN" >&2
 fi
 
 # shellcheck disable=SC1090

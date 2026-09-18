@@ -13,7 +13,7 @@ RUNTIME="$(airplay_runtime_mode)"
 echo "AirPlay build:   $BUILD"
 echo "AirPlay runtime: $RUNTIME"
 if [[ "$BUILD" == "classic" || "$RUNTIME" == "classic" ]]; then
-  echo "⚠  Classic (AP1) — iPhone multi-speaker + AirPlay Status: not supported"
+  echo "⚠  Classic (AP1) - iPhone multi-speaker + AirPlay Status: not supported"
   echo "   See docs/multi-room-airplay.md"
 fi
 echo ""

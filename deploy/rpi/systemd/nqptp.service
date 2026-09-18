@@ -1,5 +1,5 @@
 [Unit]
-Description=nqptp — AirPlay 2 timing daemon
+Description=nqptp - AirPlay 2 timing daemon
 Documentation=https://github.com/mikebrady/nqptp
 After=network-online.target
 Wants=network-online.target

@@ -12,13 +12,13 @@ Only available when started with `./bin/run-local.sh --debug`.
 - Debug UI: http://localhost:3003/debug (or `/?debug=1`)
 - Log file: `/tmp/airplay-status-debug.log`
 
-Normal `./bin/run-local.sh` has no debug UI — `/debug` and `/?debug=1` redirect to `/`.
+Normal `./bin/run-local.sh` has no debug UI - `/debug` and `/?debug=1` redirect to `/`.
 
 ## Test procedure
 
 1. Tap a **UI button** (1–6) at `/debug` before each iPhone action
 2. Wait ~2–3 seconds between steps
-3. Reply **done** — agent reads the log:
+3. Reply **done** - agent reads the log:
 
 ```bash
 grep -a -E "TEST MARK|state title|pend|pbeg|aend" /tmp/airplay-status-debug.log

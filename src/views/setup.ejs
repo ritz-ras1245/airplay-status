@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>AirPlay Status — one-time setup</title>
+  <title>AirPlay Status - one-time setup</title>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 32rem; margin: 2rem auto; padding: 0 1rem; }
     label { display: block; margin: 1rem 0 0.25rem; font-weight: 600; }
@@ -17,7 +17,7 @@
 </head>
 <body>
   <h1>One-time secrets setup</h1>
-  <p class="hint">Upload a <code>tidbyt.env</code> file from iPhone Files or Mac. Keys are merged into <code>.env</code> on the Pi only — never committed to git.</p>
+  <p class="hint">Upload a <code>tidbyt.env</code> file from iPhone Files or Mac. Keys are merged into <code>.env</code> on the Pi only - never committed to git.</p>
   <p class="hint">Allowed keys: <%= allowedKeys.join(', ') %></p>
 
   <pre>TIDBYT_DEVICE_ID=…
@@ -58,7 +58,7 @@ TIDBYT_INSTALLATION_ID=airplaystatus</pre>
           'Applied: ' +
           data.applied.join(', ') +
           '. Tidbyt: ' +
-          (data.tidbyt === 'enabled' ? 'enabled now — play music to push.' : data.tidbyt);
+          (data.tidbyt === 'enabled' ? 'enabled now - play music to push.' : data.tidbyt);
       } catch (e) {
         status.className = 'err';
         status.textContent = e.message;

@@ -32,7 +32,7 @@ git fetch "${REMOTE}" "${BRANCH}" 2>/dev/null || git fetch "${REMOTE}"
 
 LOCAL_DIFF="$(git diff -- deploy/rpi/install.sh deploy/rpi/systemd/nqptp.service deploy/rpi/systemd/shairport-sync.service || true)"
 if [[ -z "$LOCAL_DIFF" ]]; then
-  echo "No local edits under deploy/rpi/ — safe to pull."
+  echo "No local edits under deploy/rpi/ - safe to pull."
 else
   echo "Local deploy/rpi edits:"
   echo "$LOCAL_DIFF" | head -80

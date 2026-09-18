@@ -1,6 +1,6 @@
-# Phase P49 — Pre-Prod / Local Beta (RPi4)
+# Phase P49 - Pre-Prod / Local Beta (RPi4)
 
-**Status:** Implementation on `feat/cursor/p49-rpi-deployment-0a02` — human beta sign-off pending  
+**Status:** Implementation on `feat/cursor/p49-rpi-deployment-0a02` - human beta sign-off pending  
 **Depends on:** P0 live dashboard ✅; benefits from any merged feature phases (P2 Tidbyt, P6 Echo, …)  
 **Precedes:** P50 beta soak + observability → P99 production readiness  
 **Related:** [P5 deployment](./p5-deployment.md) (general platforms), [multi-room-airplay.md](../docs/multi-room-airplay.md) (why Pi is required for iPhone multi-speaker)
@@ -17,7 +17,7 @@ This is the **first real-environment gate** before **P99** prod-readiness and **
 
 | Environment | Role | AirPlay | iPhone multi-speaker + metadata |
 |-------------|------|---------|----------------------------------|
-| **Mac Studio (dev)** | Feature iteration | AirPlay 1 only (Homebrew) | **No** — select AirPlay Status alone |
+| **Mac Studio (dev)** | Feature iteration | AirPlay 1 only (Homebrew) | **No** - select AirPlay Status alone |
 | **RPi4 (P49 beta)** | Pre-prod / local beta | AirPlay 2 + nqptp | **Yes** |
 | **Prod (P99)** | Always-on home | Same as beta host | Yes |
 
@@ -25,14 +25,14 @@ Mac dev remains valid for **all software features** except concurrent multi-room
 
 ---
 
-## Dev iteration rules (Mac — permanent for this project)
+## Dev iteration rules (Mac - permanent for this project)
 
 While building P1–P48 features on macOS:
 
 1. Run `./bin/run-local.sh` with classic config (`config/shairport-sync.conf.example`).
-2. On iPhone: select **only AirPlay Status** (audio discarded to `/dev/null` — no speaker output from Mac receiver).
-3. Test dashboard, Tidbyt, Echo push, SSE, debug capture, etc. — **everything except** “CC audio to HomePods + metadata simultaneously.”
-4. Do **not** block feature merges on iPhone multi-room — defer to P49 beta checklist.
+2. On iPhone: select **only AirPlay Status** (audio discarded to `/dev/null` - no speaker output from Mac receiver).
+3. Test dashboard, Tidbyt, Echo push, SSE, debug capture, etc. - **everything except** “CC audio to HomePods + metadata simultaneously.”
+4. Do **not** block feature merges on iPhone multi-room - defer to P49 beta checklist.
 5. `./bin/check-sidecar.sh` and `docs/multi-room-airplay.md` document the caveat.
 
 When a feature set matches **P0-complete or milestone** (e.g. P2 + P6 merged), promote to **P49 beta** on RPi4 before calling it “home ready.”
@@ -67,7 +67,7 @@ Mac dev (AP1)  →  P49 pre-prod (RPi4, AP2)  →  P50 soak + observability  →
 
 ---
 
-## Packaging — Docker
+## Packaging - Docker
 
 See [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) (includes **limitations**).
 
@@ -123,7 +123,7 @@ Display URL for Echo/Tidbyt on beta: `http://<pi-lan-ip>:3003/…`
 - [ ] `(ops)` **`GET /api/version`** returns expected `version`, `gitCommit`, `deployPhase=p49`
 - [ ] `(soak)` 24h uptime without manual restart
 - [ ] `(ops)` Reboot Pi → all services auto-start
-- [ ] `(doc)` [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) — fresh Pi install
+- [ ] `(doc)` [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md) - fresh Pi install
 
 ---
 
@@ -155,7 +155,7 @@ docs/
 
 - P99 logs/Grafana/SOPs (defer to P99)
 - Public internet exposure / TLS reverse proxy
-- Synology as beta host (P5 — low confidence)
+- Synology as beta host (P5 - low confidence)
 - Docker Desktop on Mac as beta target
 - More than 4 fleet nodes
 
@@ -163,7 +163,7 @@ docs/
 
 ## Implementation order (suggested)
 
-1. Pi: host bootstrap + `./bin/p49-up.sh docker` — [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md)
+1. Pi: host bootstrap + `./bin/p49-up.sh docker` - [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md)
 2. Soak + beta sign-off on LAN
 3. P99
 

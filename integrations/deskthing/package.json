@@ -22,5 +22,5 @@
     "typescript": "^5.5.3",
     "vite": "^5.3.3"
   },
-  "//": "Versions are indicative — verify against the DeskThing SDK release you target (OD5 version pin) at build time with `npm create deskthing@latest`."
+  "//": "Versions are indicative - verify against the DeskThing SDK release you target (OD5 version pin) at build time with `npm create deskthing@latest`."
 }

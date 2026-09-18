@@ -1,4 +1,4 @@
-# airplay-status — Next Steps Plan
+# airplay-status - Next Steps Plan
 
 _Last updated 2026-08-26. A followable checklist to take the current work from "authored / in-review" to a shipped 1.0.0._
 
@@ -16,16 +16,16 @@ Repo: https://github.com/ritz-ras1245/airplay-status · Base branch: `main`
 - `GET /api/health` (status, mode, uptime, watcher, **sidecar**, nowPlaying) + `bin/check-health.sh`
 - P10 local-service fallback gateway (`integrations/local-fallback/`) + human `/_gateway` status page
 - P9 iPad always-on **web MVP** (`docs/ipad-guided-access.md`)
-- P8 DeskThing/Car Thing app (`integrations/deskthing/`) — authored
-- P7 Android always-on app (`integrations/android/`) — authored
+- P8 DeskThing/Car Thing app (`integrations/deskthing/`) - authored
+- P7 Android always-on app (`integrations/android/`) - authored
 
-**Open PRs — drafts from other agent runs (device/owner-pending)**
+**Open PRs - drafts from other agent runs (device/owner-pending)**
 
-- #10 — P1 DACP remote control
-- #7 — P3 eInk read-only display
-- #9 — P4 eInk transport controls (depends on P1)
-- #8 — P6 Echo Show Tier B
-- #11 — P5 deployment docs
+- #10 - P1 DACP remote control
+- #7 - P3 eInk read-only display
+- #9 - P4 eInk transport controls (depends on P1)
+- #8 - P6 Echo Show Tier B
+- #11 - P5 deployment docs
 
 **Device-test pending (merged code, needs hardware)**
 
@@ -35,9 +35,9 @@ Repo: https://github.com/ritz-ras1245/airplay-status · Base branch: `main`
 
 ## 2. Immediate merges (no hardware required)
 
-- [ ] Review + merge **#11** (P5 deployment docs) — docs; confirm a trial merge into `main` is clean first
+- [ ] Review + merge **#11** (P5 deployment docs) - docs; confirm a trial merge into `main` is clean first
 
-_(The other no-device PRs — kiosk, health, gateway, per-client tuning, phase/docs — are already merged.)_
+_(The other no-device PRs - kiosk, health, gateway, per-client tuning, phase/docs - are already merged.)_
 
 ---
 
@@ -45,7 +45,7 @@ _(The other no-device PRs — kiosk, health, gateway, per-client tuning, phase/d
 
 Each item: **prerequisites → steps → acceptance → mark ready → merge**. All require hardware not available to a cloud agent.
 
-### 3.1 P1 — DACP remote control (#10)
+### 3.1 P1 - DACP remote control (#10)
 
 - Prerequisites: Mac dev host; Apple Music; the "AirPlay Status" receiver running (`./bin/run-local.sh --debug`).
 - Steps:
@@ -53,10 +53,10 @@ Each item: **prerequisites → steps → acceptance → mark ready → merge**. 
   - [ ] iPhone/Mac → Apple Music → select **AirPlay Status only** (not multi-room on Mac)
   - [ ] `curl http://localhost:3003/api/status` → `controlAvailable: true` after connect
   - [ ] Exercise dashboard transport buttons (play/pause/next/prev); confirm the sender responds
-- Acceptance: transport works, or the UX correctly shows `ios_blocked` / `ap2_unsupported` (iOS 17.4+ may ignore DACP — shairport-sync #1858).
+- Acceptance: transport works, or the UX correctly shows `ios_blocked` / `ap2_unsupported` (iOS 17.4+ may ignore DACP - shairport-sync #1858).
 - Then: mark #10 **Ready for review** → merge. (Trial merge into current `main` is clean; CI green.)
 
-### 3.2 P3 — eInk read-only display (#7)
+### 3.2 P3 - eInk read-only display (#7)
 
 - Prerequisites: target eInk device/driver (per the PR/spec).
 - Steps:
@@ -65,7 +65,7 @@ Each item: **prerequisites → steps → acceptance → mark ready → merge**. 
 - Acceptance: eInk shows current now-playing; on-demand PNG matches.
 - Then: mark ready → merge.
 
-### 3.3 P4 — eInk transport controls (#9)  _(depends on P1)_
+### 3.3 P4 - eInk transport controls (#9)  _(depends on P1)_
 
 - Prerequisites: **P1 (#10) merged**; eInk device.
 - Steps:
@@ -74,7 +74,7 @@ Each item: **prerequisites → steps → acceptance → mark ready → merge**. 
 - Acceptance: controls actuate playback via the P1 path.
 - Then: mark ready → merge **after** #10.
 
-### 3.4 P6 — Echo Show Tier B (#8)
+### 3.4 P6 - Echo Show Tier B (#8)
 
 - Prerequisites: Echo Show / Fire device; LAN DNS (`home.arpa`) per the PR docs; LWA dev token.
 - Steps:
@@ -89,7 +89,7 @@ Each item: **prerequisites → steps → acceptance → mark ready → merge**. 
 
 These are on `main` but were authored without a device build in CI.
 
-### 4.1 P7 — Android (`integrations/android/`)
+### 4.1 P7 - Android (`integrations/android/`)
 
 - Prerequisites: Android Studio / SDK; an Android tablet; same LAN as airplay-status.
 - Steps:
@@ -99,7 +99,7 @@ These are on `main` but were authored without a device build in CI.
   - [ ] Play → screen stays on; idle → screen off; focused-idle → play → "Tap here to resume" notification; left-before-idle → play → no notification
 - Acceptance: matches the P7 spec acceptance list.
 
-### 4.2 P8 — DeskThing / Car Thing (`integrations/deskthing/`)
+### 4.2 P8 - DeskThing / Car Thing (`integrations/deskthing/`)
 
 - Prerequisites: DeskThing server host on LAN; a flashed Car Thing (Thing Labs superbird-tool); pinned DeskThing SDK/version (OD5).
 - Steps:
@@ -109,7 +109,7 @@ These are on `main` but were authored without a device build in CI.
   - [ ] Play → display awake; idle → sleep; focused-idle → play → resume splash; unfocused → silent
 - Acceptance: matches the P8 spec acceptance list; record tested DeskThing + firmware versions.
 
-### 4.3 P9 — iPad (web / Guided Access)
+### 4.3 P9 - iPad (web / Guided Access)
 
 - Prerequisites: an iPad on constant power, same LAN.
 - Steps (per `docs/ipad-guided-access.md`):
@@ -120,7 +120,7 @@ These are on `main` but were authored without a device build in CI.
 
 ---
 
-## 5. P10 gateway — deployment (LAN)
+## 5. P10 gateway - deployment (LAN)
 
 - Prerequisites: Docker on Synology or an always-on box near the eero; DNS control (AdGuard/Pi-hole/router).
 - Steps:
@@ -146,10 +146,10 @@ These are on `main` but were authored without a device build in CI.
 
 ## 7. Road to release (P49 → P50 → P99 → P100)
 
-- **P49** — RPi4 pre-prod beta: done
-- **P50** — beta soak + observability (Pi logs → Mac Loki/Grafana): active — complete soak sign-off
-- **P99** — prod readiness (permanent definition): persistence (`bin/install.sh`, launchd/systemd, start-on-boot); always-on structured logs + prod log dir; optional self-hosted Grafana+Loki; debugging SOPs; health (`/api/health`, `/api/version`, `bin/check-sidecar.sh`, `bin/check-health.sh`, `bin/check-version.sh`); runbooks
-- **P100** — tag **v1.0.0**; open `release/1.x` for `1.0.x` patches while `main` moves to `2.0.0-dev`
+- **P49** - RPi4 pre-prod beta: done
+- **P50** - beta soak + observability (Pi logs → Mac Loki/Grafana): active - complete soak sign-off
+- **P99** - prod readiness (permanent definition): persistence (`bin/install.sh`, launchd/systemd, start-on-boot); always-on structured logs + prod log dir; optional self-hosted Grafana+Loki; debugging SOPs; health (`/api/health`, `/api/version`, `bin/check-sidecar.sh`, `bin/check-health.sh`, `bin/check-version.sh`); runbooks
+- **P100** - tag **v1.0.0**; open `release/1.x` for `1.0.x` patches while `main` moves to `2.0.0-dev`
 
 ---
 
@@ -165,7 +165,7 @@ These are on `main` but were authored without a device build in CI.
 
 ---
 
-## Appendix A — quick commands
+## Appendix A - quick commands
 
 - Dashboard (mock, headless): `USE_MOCK=true SKIP_SHAIRPORT_CHECK=1 npm start` → http://localhost:3003
 - Dashboard (live): `SKIP_SHAIRPORT_CHECK=1 npm start`
@@ -176,12 +176,12 @@ These are on `main` but were authored without a device build in CI.
 - Gateway: `cd integrations/local-fallback && cp config/services.example.json config/services.json && npm start` (or `docker compose up -d --build`); tests: `npm test`
 - Headless live-path test (no AirPlay hardware): create FIFO `mkfifo /tmp/shairport-sync-metadata`, run live mode, write shairport-style `<item>` XML records into the pipe (see AGENTS.md "Cursor Cloud specific instructions")
 
-## Appendix B — branch / PR policy
+## Appendix B - branch / PR policy
 
 - Branches: `{action}/{user}/{description}` (e.g. `feat/cursor/<name>`); never commit on `main`.
 - Bots/agents open PRs; the owner may merge without a PR. CI enforces branch name + privacy.
 
-## Appendix C — usage / model note
+## Appendix C - usage / model note
 
 - Prefer **Cursor Grok / Composer** (included) for further work; **do not** draw down the credit balance.
-- "Other Models" quota is exhausted and on-demand spending is disabled — non-Cursor models would fail or consume credits, so keep automation on Cursor models and avoid heavy subagents.
+- "Other Models" quota is exhausted and on-demand spending is disabled - non-Cursor models would fail or consume credits, so keep automation on Cursor models and avoid heavy subagents.

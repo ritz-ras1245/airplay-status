@@ -1,6 +1,6 @@
-# airplay-status — semver & API reference
+# airplay-status - semver & API reference
 
-**Global RVS** (phases, GitHub/Jira/ClickUp, patches): Cursor rule `~/.cursor/rules/release-and-versioning.mdc` — not in this repo.  
+**Global RVS** (phases, GitHub/Jira/ClickUp, patches): Cursor rule `~/.cursor/rules/release-and-versioning.mdc` - not in this repo.  
 **This file:** project-specific semver, deploy env, and `/api/version`.
 
 ---
@@ -11,7 +11,7 @@
 |------|-------|
 | Semver | **`0.1.0`** (pre-**P100**) |
 | Next prod gate | **P100** → **`1.0.0`** |
-| Current milestone | **P49** — RPi4 beta (AirPlay 2) |
+| Current milestone | **P49** - RPi4 beta (AirPlay 2) |
 | API | **`GET /api/version`** · **`GET /api/health`** (status, mode, uptime, watcher, sidecar, nowPlaying) |
 | CLI | **`./bin/check-version.sh http://<host>:3003`** · **`./bin/check-health.sh http://<host>:3003`** (exit≠0 if unhealthy) |
 
@@ -23,7 +23,7 @@
 |------|-----------|------|
 | **P100** | **P99** | **1.0.0** |
 | **P200** | **P199** | **2.0.0** |
-| Patches | — | **1.0.x** on **`release/1.x`** |
+| Patches | - | **1.0.x** on **`release/1.x`** |
 
 Full phase index: [specs/README.md](../specs/README.md).
 
@@ -41,6 +41,6 @@ Full phase index: [specs/README.md](../specs/README.md).
 
 ## Related
 
-- [specs/p49-preprod-deployment.md](../specs/p49-preprod-deployment.md) — **next: RPi beta**
+- [specs/p49-preprod-deployment.md](../specs/p49-preprod-deployment.md) - **next: RPi beta**
 - [specs/p99-prod-readiness.md](../specs/p99-prod-readiness.md)
-- [docs/releases/README.md](./releases/README.md) — ship records at P100+
+- [docs/releases/README.md](./releases/README.md) - ship records at P100+

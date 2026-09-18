@@ -1,10 +1,10 @@
-# Guideline — Always-on display clients
+# Guideline - Always-on display clients
 
 Shared behaviour for **P7 Android**, **P8 DeskThing / Car Thing**, and **P9 iPad**. Platform specs own packaging and OS APIs; this doc owns the product rules so the three clients stay consistent.
 
 ## Product goal
 
-A thin shell around the airplay-status **webpage** (not a native UI rewrite). While something is playing, the shell keeps the screen awake and shows live now-playing. When idle, the shell releases the display. When playback resumes, it may nudge the user back — but only if they were actively using this client when the screen went dark.
+A thin shell around the airplay-status **webpage** (not a native UI rewrite). While something is playing, the shell keeps the screen awake and shows live now-playing. When idle, the shell releases the display. When playback resumes, it may nudge the user back - but only if they were actively using this client when the screen went dark.
 
 ## Modes
 
@@ -34,7 +34,7 @@ Default primary URL (LAN):
 http://airplay-status.home.arpa/
 ```
 
-or host:port from config. Prefer the main dashboard (or a dedicated `?client=android|deskthing|ipad` query if a client-tuned layout is added later). Do **not** fork a second metadata pipeline — consume P0 `/api/status` + `/api/events`.
+or host:port from config. Prefer the main dashboard (or a dedicated `?client=android|deskthing|ipad` query if a client-tuned layout is added later). Do **not** fork a second metadata pipeline - consume P0 `/api/status` + `/api/events`.
 
 When primary host is unreachable, follow **[P10 local service fallback](../p10-local-service-fallback.md)** if configured.
 

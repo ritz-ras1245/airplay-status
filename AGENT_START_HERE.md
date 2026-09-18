@@ -1,11 +1,11 @@
-# Agent start here — P49 PR validation & human beta sign-off
+# Agent start here - P49 PR validation & human beta sign-off
 
 **PR:** https://github.com/ritz-ras1245/airplay-status/pull/4  
 **Branch:** `feat/cursor/p49-rpi-deployment-0a02`  
 **Goal:** Validate the PR locally, deploy to RPi4, complete **human-only** beta checklist with Cursor assisting step-by-step.  
 **Do not touch:** `feat/p6-echo-show`
 
-Cloud agents implemented deploy artifacts and mock-dashboard smoke tests. **iPhone / HomePods / AirPlay 2 cannot be validated in cloud CI** — that is this handoff.
+Cloud agents implemented deploy artifacts and mock-dashboard smoke tests. **iPhone / HomePods / AirPlay 2 cannot be validated in cloud CI** - that is this handoff.
 
 ---
 
@@ -17,15 +17,15 @@ You are helping validate PR #4 (P49 RPi4 pre-prod deployment) for airplay-status
 Read AGENT_START_HERE.md end to end, then assist me through each phase in order.
 Do not skip steps. Stop and diagnose if any command fails.
 
-Phase 1 — Local smoke (Mac): npm ci, mock dashboard curls.
-Phase 2 — Pi deploy: Docker (README-WARN) with host nqptp; bare-metal install.sh if Docker AP2 fails.
-Phase 3 — Human beta checklist: iPhone multi-room, metadata, ops, soak, reboot.
-Phase 4 — Record results in PR #4 comment and say whether to merge.
+Phase 1 - Local smoke (Mac): npm ci, mock dashboard curls.
+Phase 2 - Pi deploy: Docker (README-WARN) with host nqptp; bare-metal install.sh if Docker AP2 fails.
+Phase 3 - Human beta checklist: iPhone multi-room, metadata, ops, soak, reboot.
+Phase 4 - Record results in PR #4 comment and say whether to merge.
 
 Constraints:
 - Branch: feat/cursor/p49-rpi-deployment-0a02
 - No secrets in git; use .env on Pi only (from config/deploy/beta.env.example)
-- Mac dev is AirPlay 1 only — multi-room tests MUST run on Pi
+- Mac dev is AirPlay 1 only - multi-room tests MUST run on Pi
 - Use docs/p49-docker-spike.md for spike pass/fail
 ```
 
@@ -43,7 +43,7 @@ npm ci
 
 Open [airplay-status-p49.code-workspace](airplay-status-p49.code-workspace) in Cursor and paste the **pickup prompt** above.
 
-### 2. Local smoke tests (Mac — no Pi required)
+### 2. Local smoke tests (Mac - no Pi required)
 
 | # | Command | Expected |
 |---|---------|----------|
@@ -53,7 +53,7 @@ Open [airplay-status-p49.code-workspace](airplay-status-p49.code-workspace) in C
 | 4 | `curl -sf 'http://localhost:3003/api/status?mock=true'` | JSON playback payload |
 | 5 | `./bin/check-version.sh http://localhost:3003` | pretty-printed version JSON |
 
-**Mac AirPlay note:** `./bin/run-local.sh` is AP1 only. Multi-room with HomePods requires the Pi — [docs/multi-room-airplay.md](docs/multi-room-airplay.md).
+**Mac AirPlay note:** `./bin/run-local.sh` is AP1 only. Multi-room with HomePods requires the Pi - [docs/multi-room-airplay.md](docs/multi-room-airplay.md).
 
 ---
 
@@ -129,7 +129,7 @@ Check off in a PR comment when done.
 
 ### Soak and reboot
 
-- [ ] 24-hour soak — metadata still updates
+- [ ] 24-hour soak - metadata still updates
 - [ ] Reboot Pi → nqptp + stack auto-start (Docker `restart: unless-stopped` or systemd)
 
 ### Clean install

@@ -1,5 +1,5 @@
 /**
- * Mock playback service — dummy data matching specs/p0-airplay-status.md
+ * Mock playback service - dummy data matching specs/p0-airplay-status.md
  */
 
 let mockPlaying = true;

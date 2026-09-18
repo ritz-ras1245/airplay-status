@@ -1,4 +1,4 @@
-# Guideline — Mac dev, Linux/Pi beta (optional)
+# Guideline - Mac dev, Linux/Pi beta (optional)
 
 When **Mac dev cannot reproduce beta/prod behavior**, use this pipeline. Global RVS: `~/.cursor/rules/release-and-versioning.mdc`.
 

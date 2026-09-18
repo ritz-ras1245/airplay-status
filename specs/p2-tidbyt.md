@@ -1,6 +1,6 @@
-# Phase P2 — Tidbyt Integration
+# Phase P2 - Tidbyt Integration
 
-**Status:** Implemented (MVP — needs device testing)  
+**Status:** Implemented (MVP - needs device testing)  
 **Depends on:** Phase 4 live metadata (`/api/status`)  
 **Optional dependency:** P1 not required (display-only)
 
@@ -12,11 +12,11 @@ Show AirPlay now-playing on a [Tidbyt](https://tidbyt.com/) device (64×32 LED m
 
 | Aspect | Assessment |
 |--------|------------|
-| **Overall** | **Yes** — well-documented push API and Pixlet toolchain |
+| **Overall** | **Yes** - well-documented push API and Pixlet toolchain |
 | **Live updates** | Requires **server-side push loop** for private/custom apps |
 | **Auto-refresh on device** | Only via [Tidbyt community app](https://github.com/tidbyt/community) or Tidbyt Plus; not assumed for P2 MVP |
 
-Custom Pixlet apps pushed via `pixlet push` **do not run on the Tidbyt** — the device displays a WebP image until the server pushes again ([Tidbyt docs](https://tidbyt.dev/docs/integrate/pushing-apps)).
+Custom Pixlet apps pushed via `pixlet push` **do not run on the Tidbyt** - the device displays a WebP image until the server pushes again ([Tidbyt docs](https://tidbyt.dev/docs/integrate/pushing-apps)).
 
 ## Architecture
 
@@ -37,7 +37,7 @@ Custom Pixlet apps pushed via `pixlet push` **do not run on the Tidbyt** — the
 └──────────────────┘                 └─────────────┘
 ```
 
-Alternative: Pixlet `.star` fetches `http://<host>:3003/api/status` directly during `pixlet render` (requires Tidbyt servers to reach LAN — **not viable** for home LAN). **Decision:** render on the airplay-status host, push WebP.
+Alternative: Pixlet `.star` fetches `http://<host>:3003/api/status` directly during `pixlet render` (requires Tidbyt servers to reach LAN - **not viable** for home LAN). **Decision:** render on the airplay-status host, push WebP.
 
 ## Renderer choice
 
@@ -46,7 +46,7 @@ Alternative: Pixlet `.star` fetches `http://<host>:3003/api/status` directly dur
 | **Pixlet `.star` in repo** (default) | Native Tidbyt ecosystem, good fonts/animations | Requires `pixlet` CLI on host |
 | Node `canvas` / `@resvg/resvg-js` | Pure Node, no Pixlet install | More custom layout code |
 
-**Decision:** `integrations/tidbyt/airplay-status.star` — Pixlet reads JSON from stdin or env during render; shell wrapper passes `/api/status` snapshot.
+**Decision:** `integrations/tidbyt/airplay-status.star` - Pixlet reads JSON from stdin or env during render; shell wrapper passes `/api/status` snapshot.
 
 ## Display layout (64×32)
 
@@ -84,8 +84,8 @@ Future: macOS Keychain storage for token (same pattern as planned Spotify pivot)
 
 **Triggers:**
 
-1. **On change** — subscribe to `onPlaybackChange()` when title/artist/art/play state changes (ignores progress-only updates)
-2. **No heartbeat** — only push while something is playing; idle/stopped sessions do not push
+1. **On change** - subscribe to `onPlaybackChange()` when title/artist/art/play state changes (ignores progress-only updates)
+2. **No heartbeat** - only push while something is playing; idle/stopped sessions do not push
 
 **Push flow:**
 
@@ -113,7 +113,7 @@ Future: macOS Keychain storage for token (same pattern as planned Spotify pivot)
 
 ## CLI helper
 
-`bin/push-tidbyt.sh` — one-shot render + push for testing without enabling loop:
+`bin/push-tidbyt.sh` - one-shot render + push for testing without enabling loop:
 
 ```bash
 #!/usr/bin/env bash
@@ -151,7 +151,7 @@ src/services/
 - [x] Installation persists in Tidbyt app rotation (`--installation-id`)
 - [x] Manual `bin/push-tidbyt.sh` works for debugging *(requires pixlet + credentials)*
 
-## Future: P2b — Community app
+## Future: P2b - Community app
 
 Publishing to [tidbyt/community](https://github.com/tidbyt/community) enables Tidbyt-hosted refresh without home server push loop. Requires:
 
@@ -170,4 +170,4 @@ Publishing to [tidbyt/community](https://github.com/tidbyt/community) enables Ti
 
 - [Tidbyt: Pushing apps](https://tidbyt.dev/docs/integrate/pushing-apps)
 - [Pixlet GitHub](https://github.com/tidbyt/pixlet)
-- [Custom Tidbyt via cron](https://everythingisgray.com/2023/05/24/custom-tidbyt-apps/) — push loop pattern
+- [Custom Tidbyt via cron](https://everythingisgray.com/2023/05/24/custom-tidbyt-apps/) - push loop pattern

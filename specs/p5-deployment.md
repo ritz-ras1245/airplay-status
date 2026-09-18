@@ -1,4 +1,4 @@
-# Phase P5 — Cross-Platform Deployment
+# Phase P5 - Cross-Platform Deployment
 
 **Status:** Spec (pre-implementation)  
 **Depends on:** Phase 4 (live metadata); benefits all phases P1–P4
@@ -50,7 +50,7 @@ Single metadata pipe feeds one Node process; all UIs and integrations consume `/
 
 ## macOS (current dev target)
 
-**Status:** Supported — default `./bin/run-local.sh` flow.
+**Status:** Supported - default `./bin/run-local.sh` flow.
 
 | Component | Setup |
 |-----------|-------|
@@ -63,11 +63,11 @@ Single metadata pipe feeds one Node process; all UIs and integrations consume `/
 
 | Spec | Role |
 |------|------|
-| **P5** (this doc) | Platform reference — macOS, Pi, Docker, Synology tradeoffs |
-| **P49** | Opinionated **pre-prod beta** path — package RPi4, AP2, fleet optional → [p49-preprod-deployment.md](./p49-preprod-deployment.md) |
+| **P5** (this doc) | Platform reference - macOS, Pi, Docker, Synology tradeoffs |
+| **P49** | Opinionated **pre-prod beta** path - package RPi4, AP2, fleet optional → [p49-preprod-deployment.md](./p49-preprod-deployment.md) |
 | **P99** | Prod readiness after beta sign-off → [p99-prod-readiness.md](./p99-prod-readiness.md) |
 
-**iPhone multi-room:** macOS = AirPlay 1 only; full multi-speaker beta is **P49** on RPi4 — [multi-room-airplay.md](../docs/multi-room-airplay.md), [p49-preprod-deployment.md](./p49-preprod-deployment.md).
+**iPhone multi-room:** macOS = AirPlay 1 only; full multi-speaker beta is **P49** on RPi4 - [multi-room-airplay.md](../docs/multi-room-airplay.md), [p49-preprod-deployment.md](./p49-preprod-deployment.md).
 
 ## Raspberry Pi (recommended production)
 
@@ -143,7 +143,7 @@ Use systemd unit (future P99 / P5 addendum) or `pm2` for persistence.
 2. Select as output; dashboard shows metadata
 3. `./bin/check-sidecar.sh` passes
 
-Reference: [App Code Labs — AirPlay metadata on Raspberry Pi](https://appcodelabs.com/show-artist-song-metadata-using-airplay-on-raspberry-pi)
+Reference: [App Code Labs - AirPlay metadata on Raspberry Pi](https://appcodelabs.com/show-artist-song-metadata-using-airplay-on-raspberry-pi)
 
 ## Docker (Linux host)
 
@@ -200,7 +200,7 @@ EXPOSE 3003
 CMD ["node", "src/index.js"]
 ```
 
-Metadata pipe path via env var — extend `airplayMetadataService` to read `METADATA_PIPE` (implementation task, not blocking spec).
+Metadata pipe path via env var - extend `airplayMetadataService` to read `METADATA_PIPE` (implementation task, not blocking spec).
 
 ## Docker on macOS
 
@@ -208,11 +208,11 @@ Metadata pipe path via env var — extend `airplayMetadataService` to read `META
 
 Docker Desktop runs containers in a Linux VM. mDNS packets for `_raop._tcp` often do not reach the LAN correctly. Use **native Homebrew shairport-sync on Mac** for development and testing.
 
-Running **only the Node dashboard** in Docker on Mac while shairport-sync runs natively is possible (mount pipe from host) — document as advanced split setup if needed.
+Running **only the Node dashboard** in Docker on Mac while shairport-sync runs natively is possible (mount pipe from host) - document as advanced split setup if needed.
 
 ## Synology NAS (DSM Docker)
 
-**Status:** Advanced / experimental — expect friction.
+**Status:** Advanced / experimental - expect friction.
 
 ### Common failures
 
@@ -227,7 +227,7 @@ Running **only the Node dashboard** in Docker on Mac while shairport-sync runs n
 3. Open firewall: UDP 5353, TCP 5000–7000 range (RAOP)
 4. Prefer **native Linux package on Pi** instead of Synology for reliability
 
-Document troubleshooting section in README — do not promise easy Synology setup.
+Document troubleshooting section in README - do not promise easy Synology setup.
 
 ### Synology troubleshooting checklist
 
@@ -247,8 +247,8 @@ Document troubleshooting section in README — do not promise easy Synology setu
 | `METADATA_PIPE` | `/tmp/shairport-sync-metadata` | FIFO path (override for Docker volume) |
 | `SKIP_SHAIRPORT_CHECK` | unset | Set `1` in Docker if check fails falsely |
 | `METADATA_DEBUG` | unset | `1` enables debug UI |
-| `TIDBYT_*` | — | See [p2-tidbyt.md](./p2-tidbyt.md) |
-| `EINK_*` | — | See [p3-eink-display.md](./p3-eink-display.md) |
+| `TIDBYT_*` | - | See [p2-tidbyt.md](./p2-tidbyt.md) |
+| `EINK_*` | - | See [p3-eink-display.md](./p3-eink-display.md) |
 
 ## File structure (planned additions)
 
@@ -272,7 +272,7 @@ docs/
 | Always-on home display | **Raspberry Pi 4/5**, native install |
 | Already run Docker on Linux server | Compose stack with host network |
 | Synology only | Try host network; fallback to Pi |
-| Need receiver on Mac only | Homebrew shairport-sync — no Docker |
+| Need receiver on Mac only | Homebrew shairport-sync - no Docker |
 
 ## Acceptance criteria
 
@@ -308,5 +308,5 @@ docs/
 
 - [shairport-sync](https://github.com/mikebrady/shairport-sync)
 - [shairport-sync Docker Hub](https://hub.docker.com/r/mikebrady/shairport-sync)
-- [App Code Labs — Raspberry Pi metadata display](https://appcodelabs.com/show-artist-song-metadata-using-airplay-on-raspberry-pi)
-- [p2-tidbyt.md](./p2-tidbyt.md), [p3-eink-display.md](./p3-eink-display.md) — integrations on deployed host
+- [App Code Labs - Raspberry Pi metadata display](https://appcodelabs.com/show-artist-song-metadata-using-airplay-on-raspberry-pi)
+- [p2-tidbyt.md](./p2-tidbyt.md), [p3-eink-display.md](./p3-eink-display.md) - integrations on deployed host

@@ -45,7 +45,7 @@ airplay_print_multiroom_notice() {
   echo "──────────────────────────────────────────────────────────────"
   echo "  ℹ  Multi-speaker AirPlay (iPhone)"
   echo "──────────────────────────────────────────────────────────────"
-  echo "  This receiver is AirPlay 1 (classic) — build: ${build}, running: ${runtime}."
+  echo "  This receiver is AirPlay 1 (classic) - build: ${build}, running: ${runtime}."
   echo "  iOS will NOT let you select AirPlay Status together with HomePods /"
   echo "  other AirPlay 2 speakers in one multi-room group."
   echo ""

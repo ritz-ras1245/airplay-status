@@ -1,4 +1,4 @@
-# Phase P50 — Beta soak + observability
+# Phase P50 - Beta soak + observability
 
 **Status:** In progress (P49 beta live; observability stack on branch)  
 **Depends on:** P49 beta deployed and validated ✅  
@@ -22,7 +22,7 @@ P49 deploy + sign-off  →  P50 soak + observability  →  P99 prod readiness  �
 | Phase | Pi | Mac |
 |-------|-----|-----|
 | **P49** | Bare-metal AP2 beta live | Dev + optional Docker smoke |
-| **P50** | **Leave running** — no deploy churn unless blocker | Loki + Grafana Docker; Pi Promtail → Mac |
+| **P50** | **Leave running** - no deploy churn unless blocker | Loki + Grafana Docker; Pi Promtail → Mac |
 | **P99** | Structured logs, SOPs, health, persistence polish | Same stack hardened |
 
 ---
@@ -56,8 +56,8 @@ Optional: set `DEPLOY_PHASE=p50` in Pi `.env` during soak (`GET /api/version`).
 
 ## Sign-off checklist
 
-- [ ] Mac `./bin/observability-up.sh` — Grafana http://localhost:3030 shows **AirPlay Status Logs**
-- [ ] Pi Promtail installed — `systemctl status promtail` active
+- [ ] Mac `./bin/observability-up.sh` - Grafana http://localhost:3030 shows **AirPlay Status Logs**
+- [ ] Pi Promtail installed - `systemctl status promtail` active
 - [ ] Grafana shows `{host="airplay-beta"}` lines from all three units within 15m
 - [ ] `./bin/query-loki.sh --around '<recent-iso>' --window 5m` returns lines on Mac
 - [ ] 24h+ soak with no beta blockers (human)

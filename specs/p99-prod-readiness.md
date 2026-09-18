@@ -1,22 +1,22 @@
-# Phase P99 — Production Readiness
+# Phase P99 - Production Readiness
 
 **Status:** Spec (pre-implementation)  
 **Depends on:** Feature phases you intend to ship (minimum: P0 live dashboard ✅)  
-**Iteration:** 1 — run **after P49 beta sign-off**, **before P100** release (`1.0.0`)
+**Iteration:** 1 - run **after P49 beta sign-off**, **before P100** release (`1.0.0`)
 
 ## Goal
 
 Make airplay-status **reliable for daily home use** without manual terminal sessions: install once, start on boot/login, recover from crashes, **centralize logs**, optional **Grafana** visibility, and **SOPs** so humans and AI agents debug the same way every time.
 
-This is **not** new product functionality — it is ops polish for whatever features exist at ship time.
+This is **not** new product functionality - it is ops polish for whatever features exist at ship time.
 
 ## Relationship to other phases
 
 | Phase | Scope |
 |-------|--------|
 | **P0–P98** | Iteration 1 features (dashboard, Tidbyt, Echo, eInk, …) |
-| **P99** (this) | Iteration 1 **prod readiness** — persistence, logs, Grafana, SOPs |
-| **P5** | Cross-platform **deployment guide** (Pi, Docker, Synology) — platform how-to |
+| **P99** (this) | Iteration 1 **prod readiness** - persistence, logs, Grafana, SOPs |
+| **P5** | Cross-platform **deployment guide** (Pi, Docker, Synology) - platform how-to |
 
 P5 answers *“how do I run this on a Pi?”* P99 answers *“how do I operate and debug it in production?”*
 
@@ -36,7 +36,7 @@ One-shot setup beyond `setup-sidecar.sh`:
 - `npm install`
 - Print next steps (enable launchd, log dir, optional Grafana, open dashboard URL)
 
-Idempotent — safe to re-run.
+Idempotent - safe to re-run.
 
 ### 2. macOS launchd (`config/launchd/`)
 
@@ -57,7 +57,7 @@ Document load/unload commands in `docs/prod-macos.md`.
 
 | Requirement | Detail |
 |-------------|--------|
-| Format | Single-line; prefix `[component]` — e.g. `[meta]`, `[tidbyt]`, `[echo]`, `[http]` |
+| Format | Single-line; prefix `[component]` - e.g. `[meta]`, `[tidbyt]`, `[echo]`, `[http]` |
 | Timestamps | ISO-8601 on every line |
 | Levels | `info`, `warn`, `error` (env `LOG_LEVEL`, default `info`) |
 | Secrets | Never log tokens, webhook secrets, or full `.env` |
@@ -73,13 +73,13 @@ Document load/unload commands in `docs/prod-macos.md`.
 | `~/Library/Logs/airplay-status/shairport.log` | shairport-sync stderr |
 | `/tmp/airplay-status-debug.log` | Debug runs only (`--debug`) |
 
-Implement `src/lib/logger.js` — thin wrapper used by services; no heavy deps required for MVP.
+Implement `src/lib/logger.js` - thin wrapper used by services; no heavy deps required for MVP.
 
 ### 4. Grafana + Loki (optional stack, spec’d for home lab)
 
-**P50** delivers the MVP stack (Pi Promtail → Mac Loki/Grafana) — see [p50-beta-soak-observability.md](./p50-beta-soak-observability.md). **P99** completes structured logging, SOPs, and dashboard polish.
+**P50** delivers the MVP stack (Pi Promtail → Mac Loki/Grafana) - see [p50-beta-soak-observability.md](./p50-beta-soak-observability.md). **P99** completes structured logging, SOPs, and dashboard polish.
 
-Self-hosted observability — **not** Grafana Cloud / SaaS.
+Self-hosted observability - **not** Grafana Cloud / SaaS.
 
 ```
 ┌─────────────┐     tail      ┌──────────┐     ┌──────────┐
@@ -109,7 +109,7 @@ Self-hosted observability — **not** Grafana Cloud / SaaS.
 - Error rate (`level=error` or grep `error`)
 - Tidbyt push success/fail (from log lines)
 - Echo webhook success/fail (P6+)
-- Optional: scrape `GET /api/health` via Prometheus if added later — defer Prometheus to P99 stretch
+- Optional: scrape `GET /api/health` via Prometheus if added later - defer Prometheus to P99 stretch
 
 **Default ports:** Grafana `3000` (document conflict with other apps). Loki internal only.
 
@@ -117,14 +117,14 @@ Self-hosted observability — **not** Grafana Cloud / SaaS.
 
 ### 5. Health check
 
-- `GET /api/version` → `{ name, version, gitCommit, deployPhase, deployHost, node }` — **implemented**; see [versioning.md](../docs/versioning.md)
+- `GET /api/version` → `{ name, version, gitCommit, deployPhase, deployHost, node }` - **implemented**; see [versioning.md](../docs/versioning.md)
 - `GET /api/health` → `{ ok, shairport, uptimeSec, version, … }` (P99)
 - `bin/check-version.sh http://<host>:3003` for deploy verification
 - `bin/check-sidecar.sh` remains quick CLI probe; SOP references both
 
-### 5b. Pi secrets UX (Tidbyt — deferred from P49)
+### 5b. Pi secrets UX (Tidbyt - deferred from P49)
 
-P49 ships one-time `/setup?token=…` upload but the token is only visible via install output or SSH ([docs/p49-tidbyt-credentials.md](../docs/p49-tidbyt-credentials.md) — **Known limitation**).
+P49 ships one-time `/setup?token=…` upload but the token is only visible via install output or SSH ([docs/p49-tidbyt-credentials.md](../docs/p49-tidbyt-credentials.md) - **Known limitation**).
 
 **P99 deliverable:** When `.setup-token` exists, dashboard shows LAN-only setup URL (e.g. banner + QR on `/` or `/setup`) so iPhone file upload needs no Mac/SSH. Power-loss already OK (token persists on disk until upload).
 
@@ -139,7 +139,7 @@ Symptom → cause → fix (link to SOPs):
 - Tidbyt / Echo push silent → check logs + integration env
 - After macOS update / sleep
 
-### 7. SOPs — humans and agents
+### 7. SOPs - humans and agents
 
 Two documents + index. Agents and humans follow the **same sequence**; agents automate log reads.
 
@@ -151,17 +151,17 @@ Two documents + index. Agents and humans follow the **same sequence**; agents au
 
 **`docs/sop/debugging-humans.md` must include:**
 
-1. **Quick triage** — `./bin/check-sidecar.sh`, `/api/health`, is music playing to **AirPlay Status**?
-2. **Standard repro** — numbered steps; use `/debug` test markers when metadata/state is wrong
-3. **Prod log collection** — where files live; `tail -f ~/Library/Logs/airplay-status/node.log`
-4. **Grafana** — open dashboard, filter `[meta]`, time range last 15m
-5. **Escalation** — when to restart launchd vs full `./bin/run-local.sh --debug` session
-6. **Integration-specific** — Tidbyt pixlet/creds; Echo webhook/Lambda (link P6 docs)
+1. **Quick triage** - `./bin/check-sidecar.sh`, `/api/health`, is music playing to **AirPlay Status**?
+2. **Standard repro** - numbered steps; use `/debug` test markers when metadata/state is wrong
+3. **Prod log collection** - where files live; `tail -f ~/Library/Logs/airplay-status/node.log`
+4. **Grafana** - open dashboard, filter `[meta]`, time range last 15m
+5. **Escalation** - when to restart launchd vs full `./bin/run-local.sh --debug` session
+6. **Integration-specific** - Tidbyt pixlet/creds; Echo webhook/Lambda (link P6 docs)
 
 **`docs/sop/debugging-agents.md` must include:**
 
-1. **Before asking user to reproduce** — enable logging path; confirm `--debug` if metadata FSM
-2. **Test markers** — `POST /api/debug/mark` or UI buttons; user says **done** → read log
+1. **Before asking user to reproduce** - enable logging path; confirm `--debug` if metadata FSM
+2. **Test markers** - `POST /api/debug/mark` or UI buttons; user says **done** → read log
 3. **Grep recipes** (copy-paste):
 
 ```bash
@@ -169,9 +169,9 @@ grep -a -E "TEST MARK|state |error|pend|aend|\[tidbyt\]|\[echo\]" /tmp/airplay-s
 tail -100 ~/Library/Logs/airplay-status/node.log
 ```
 
-4. **Rules** — do not infer pause/disconnect from one field; align marks with events (see event-log-capture skill)
-5. **Grafana** — if user has stack up, note time range + panel; otherwise use file logs
-6. **Output format** — timeline table: time | mark/action | log evidence | conclusion
+4. **Rules** - do not infer pause/disconnect from one field; align marks with events (see event-log-capture skill)
+5. **Grafana** - if user has stack up, note time range + panel; otherwise use file logs
+6. **Output format** - timeline table: time | mark/action | log evidence | conclusion
 
 Link SOPs from `AGENTS.md`, `README.md`, and `docs/debug-capture.md`.
 
@@ -231,14 +231,14 @@ src/lib/
 
 ## When to implement
 
-**Last** in iteration 1 — after the feature set you care about is merged (e.g. P2 Tidbyt + P6 Echo tested). Re-run P99 checklist when adding major integrations (new sidecars, webhooks).
+**Last** in iteration 1 - after the feature set you care about is merged (e.g. P2 Tidbyt + P6 Echo tested). Re-run P99 checklist when adding major integrations (new sidecars, webhooks).
 
 ---
 
 ## References
 
-- [p0-airplay-status.md](./p0-airplay-status.md) — core dashboard (done)
-- [p5-deployment.md](./p5-deployment.md) — Pi/Docker deployment
-- [debug-capture.md](../docs/debug-capture.md) — deep metadata debug
+- [p0-airplay-status.md](./p0-airplay-status.md) - core dashboard (done)
+- [p5-deployment.md](./p5-deployment.md) - Pi/Docker deployment
+- [debug-capture.md](../docs/debug-capture.md) - deep metadata debug
 - `bin/check-sidecar.sh`, `bin/run-local.sh`
-- Event-log-capture skill — test marker workflow for agents
+- Event-log-capture skill - test marker workflow for agents

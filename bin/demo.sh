@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Quick demo without AirPlay — runs parser simulation + opens wireframe UI
+# Quick demo without AirPlay - runs parser simulation + opens wireframe UI
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 

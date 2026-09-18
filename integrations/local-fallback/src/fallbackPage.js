@@ -15,7 +15,7 @@ export const renderFallbackPage = (service, health) => {
   const rows = health.ports
     .map((p) => {
       const state = p.up ? 'up' : 'down';
-      const latency = p.up && p.latencyMs != null ? `${p.latencyMs} ms` : '—';
+      const latency = p.up && p.latencyMs != null ? `${p.latencyMs} ms` : '-';
       return `<tr class="p p--${state}">
         <td>${escapeHtml(p.port)}/${escapeHtml(p.check)}</td>
         <td class="state">${p.up ? '● up' : '○ down'}</td>
@@ -30,7 +30,7 @@ export const renderFallbackPage = (service, health) => {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeHtml(service.fallbackTitle)} — unavailable</title>
+<title>${escapeHtml(service.fallbackTitle)} - unavailable</title>
 <style>
   :root { color-scheme: dark; }
   body { font-family: system-ui, -apple-system, sans-serif; background:#0a0a0a; color:#f5f5f5;
@@ -50,7 +50,7 @@ export const renderFallbackPage = (service, health) => {
 <body>
   <div class="card">
     <h1>${escapeHtml(service.fallbackTitle)} is unavailable</h1>
-    <p class="sub">Primary host <code>${escapeHtml(service.primaryHost)}</code> is not responding — status <strong>${escapeHtml(health.status)}</strong>.</p>
+    <p class="sub">Primary host <code>${escapeHtml(service.primaryHost)}</code> is not responding - status <strong>${escapeHtml(health.status)}</strong>.</p>
     <table>
       <thead><tr><th>Port</th><th>State</th><th>Latency</th><th>Detail</th></tr></thead>
       <tbody>
