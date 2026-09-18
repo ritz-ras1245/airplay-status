@@ -53,7 +53,7 @@ export function getEinkProfile(deviceId) {
   return { id: 'default', ...EMBEDDED_DEFAULTS.default };
 }
 
-/** Test helper — clear cache between tests if needed. */
+/** Test helper - clear cache between tests if needed. */
 export function clearEinkDevicesCache() {
   cached = null;
 }
