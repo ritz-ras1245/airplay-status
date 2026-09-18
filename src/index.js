@@ -12,6 +12,8 @@ import {
 import { getPlaybackState as getMockPlaybackState, applyMockControl } from './services/mockPlaybackService.js';
 import { sendControlAction } from './services/playbackControlService.js';
 import { controlReasonMessage } from './lib/controlReasons.js';
+import { getEinkProfile } from './lib/einkDevices.js';
+import { computeEinkProgress } from './lib/einkProgress.js';
 import { formatMs } from './utils/formatTime.js';
 import {
   configureTidbytPush,
@@ -28,6 +30,10 @@ const __dirname = path.dirname(__filename);
 const deployStage = getDeployStage();
 const STARTED_AT_MS = Date.now();
 const app = express();
+// Prefer generic errors over Express default stack pages in beta/prod.
+if (process.env.NODE_ENV !== 'development') {
+  app.set('env', 'production');
+}
 const PORT = Number(process.env.PORT || deployStage.port);
 const USE_MOCK = process.env.USE_MOCK === 'true';
 const METADATA_DEBUG = process.env.METADATA_DEBUG === '1';
@@ -250,16 +256,53 @@ app.get('/kindle', (req, res) => {
 
 app.get('/eink', async (req, res) => {
   const { playback, live } = await resolvePlayback(req);
+  const deviceId = String(req.query.device || process.env.EINK_DEVICE_ID || 'default');
+  const profile = getEinkProfile(deviceId);
+  const einkProgress = computeEinkProgress({
+    progressMs: playback.progressMs,
+    durationMs: playback.durationMs,
+    isPlaying: playback.isPlaying,
+    profile,
+  });
   res.render('eink', {
     playback,
     live,
     formatMs,
     deployStage,
     controlReasonMessage,
-    device: String(req.query.device || 'default'),
+    device: profile.id,
+    deviceLabel: profile.label || profile.id,
     controlFlash: req.query.control || null,
     controlFlashReason: req.query.reason || null,
+    ...einkProgress,
   });
+});
+
+
+const safeErrorPage = () => `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Something went wrong</title>
+<style>body{font-family:sans-serif;background:#fff;color:#000;padding:1.5rem;text-align:center}a{color:#000}</style>
+</head><body>
+  <h1>Something went wrong</h1>
+  <p>Try refreshing. If it keeps happening, reopen this page later.</p>
+  <p><a href="/eink">Back to eInk</a> · <a href="/">Dashboard</a></p>
+</body></html>`;
+
+// Never leak stacks / paths / internals to browsers (eInk + web).
+app.use((err, req, res, _next) => {
+  console.error('[http]', err?.stack || err);
+  if (res.headersSent) return;
+  const status = Number(err?.status || err?.statusCode) || 500;
+  const wantsHtml =
+    req.accepts(['html', 'json']) === 'html' ||
+    String(req.path || '').startsWith('/eink') ||
+    req.path === '/kindle';
+  if (wantsHtml) {
+    res.status(status).type('html').send(safeErrorPage());
+    return;
+  }
+  res.status(status).json({ ok: false, error: 'Something went wrong' });
 });
 
 app.listen(PORT, () => {

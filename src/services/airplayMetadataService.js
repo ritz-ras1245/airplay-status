@@ -7,6 +7,11 @@ import {
   toPublicState,
 } from '../lib/metadataParser.js';
 import {
+  createPipeReader,
+  itemToUpdate,
+  saveArtwork,
+} from '../lib/metadataPipeReader.js';
+import {
   getControlPublic,
   noteInternalPlayback,
   setControlChangeListener,

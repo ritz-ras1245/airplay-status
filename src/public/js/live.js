@@ -80,7 +80,9 @@ const setTransport = (playback) => {
   els.transportBtns.forEach((btn) => {
     btn.disabled = !enabled;
     if (btn.dataset.action === 'toggle') {
-      btn.textContent = playback.isPlaying ? '⏸' : '▶';
+      btn.innerHTML = playback.isPlaying
+        ? '<svg class="transport-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="4" width="5" height="16"/><rect x="14" y="4" width="5" height="16"/></svg>'
+        : '<svg class="transport-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="6,3 21,12 6,21"/></svg>';
     }
   });
   if (els.transportHint) {

@@ -70,11 +70,15 @@
 
           <div id="transport" class="transport" <%= playback.title ? '' : 'hidden' %>>
             <div class="transport-row">
-              <button type="button" class="transport-btn" data-action="prev" aria-label="Previous track" <%= playback.controlAvailable ? '' : 'disabled' %>>⏮</button>
+              <button type="button" class="transport-btn" data-action="prev" aria-label="Previous track" <%= playback.controlAvailable ? '' : 'disabled' %>><svg class="transport-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="3" height="14"/><polygon points="20,5 8,12 20,19"/></svg></button>
               <button type="button" class="transport-btn transport-btn--play" data-action="toggle" aria-label="Play or pause" <%= playback.controlAvailable ? '' : 'disabled' %>>
-                <%= playback.isPlaying ? '⏸' : '▶' %>
+                <% if (playback.isPlaying) { %>
+                  <svg class="transport-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="4" width="5" height="16"/><rect x="14" y="4" width="5" height="16"/></svg>
+                <% } else { %>
+                  <svg class="transport-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="6,3 21,12 6,21"/></svg>
+                <% } %>
               </button>
-              <button type="button" class="transport-btn" data-action="next" aria-label="Next track" <%= playback.controlAvailable ? '' : 'disabled' %>>⏭</button>
+              <button type="button" class="transport-btn" data-action="next" aria-label="Next track" <%= playback.controlAvailable ? '' : 'disabled' %>><svg class="transport-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="4,5 16,12 4,19"/><rect x="18" y="5" width="3" height="14"/></svg></button>
             </div>
             <p id="transport-hint" class="transport-hint">
               <%= playback.controlAvailable ? '' : controlReasonMessage(playback.controlReason) %>
@@ -138,18 +142,24 @@
               </span>
             </div>
             <div class="transport">
-              <div class="transport-row">
+                            <div class="transport-row">
                 <form method="POST" action="/api/control/prev">
                   <input type="hidden" name="returnTo" value="/">
-                  <button type="submit" class="transport-btn" aria-label="Previous track" <%= playback.controlAvailable ? '' : 'disabled' %>>⏮</button>
+                  <button type="submit" class="transport-btn" aria-label="Previous track" <%= playback.controlAvailable ? '' : 'disabled' %>><svg class="transport-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="3" height="14"/><polygon points="20,5 8,12 20,19"/></svg></button>
                 </form>
                 <form method="POST" action="/api/control/toggle">
                   <input type="hidden" name="returnTo" value="/">
-                  <button type="submit" class="transport-btn transport-btn--play" aria-label="Play or pause" <%= playback.controlAvailable ? '' : 'disabled' %>><%= playback.isPlaying ? '⏸' : '▶' %></button>
+                  <button type="submit" class="transport-btn transport-btn--play" aria-label="Play or pause" <%= playback.controlAvailable ? '' : 'disabled' %>>
+                    <% if (playback.isPlaying) { %>
+                      <svg class="transport-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="5" y="4" width="5" height="16"/><rect x="14" y="4" width="5" height="16"/></svg>
+                    <% } else { %>
+                      <svg class="transport-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="6,3 21,12 6,21"/></svg>
+                    <% } %>
+                  </button>
                 </form>
                 <form method="POST" action="/api/control/next">
                   <input type="hidden" name="returnTo" value="/">
-                  <button type="submit" class="transport-btn" aria-label="Next track" <%= playback.controlAvailable ? '' : 'disabled' %>>⏭</button>
+                  <button type="submit" class="transport-btn" aria-label="Next track" <%= playback.controlAvailable ? '' : 'disabled' %>><svg class="transport-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><polygon points="4,5 16,12 4,19"/><rect x="18" y="5" width="3" height="14"/></svg></button>
                 </form>
               </div>
               <p class="transport-hint"><%= playback.controlAvailable ? 'Mock preview — commands stay on this dashboard.' : controlReasonMessage(playback.controlReason) %></p>
