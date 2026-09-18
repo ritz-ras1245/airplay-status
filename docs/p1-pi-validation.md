@@ -1,6 +1,6 @@
 # P1 transport controls - Pi / device validation
 
-**Branch:** `release/eink-minimal`  
+**Branch:** `feat/ritz-ras1245/eink-enablement`  
 **Do not merge until this checklist is filled from a real Pi + phone session.**
 
 The Pi stays **AirPlay 2**. This PR does **not** switch the receiver to Classic/AP1.
