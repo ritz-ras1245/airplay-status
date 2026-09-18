@@ -1,4 +1,4 @@
-# AirPlay Status — Android always-on client (P7)
+# AirPlay Status - Android always-on client (P7)
 
 A tiny Kotlin app that wraps the airplay-status dashboard in a kiosk **WebView**
 console. It keeps the screen on while playing, lets it turn off when idle, and
@@ -8,7 +8,7 @@ console that was focused when it went dark. See the spec:
 
 > **Status: authored, device-test pending.** No Android SDK/Gradle runs in the
 > cloud VM, so this app is **not compiled/run in CI**. The pure state machine has
-> JVM unit tests. Plugin/dependency versions are indicative — align them with
+> JVM unit tests. Plugin/dependency versions are indicative - align them with
 > your Android Studio / AGP version before building.
 
 ## Design (decisions)
@@ -50,7 +50,7 @@ adb install -r app/build/outputs/apk/debug/app-debug.apk   # sideload
 
 Grant the **notifications** permission on first launch, and exempt the app from
 battery optimization for reliable always-on behaviour. A Gradle wrapper is not
-committed — run `gradle wrapper` once (or open in Android Studio) to generate it.
+committed - run `gradle wrapper` once (or open in Android Studio) to generate it.
 
 ## Out of scope (MVP)
 

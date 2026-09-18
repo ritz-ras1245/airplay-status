@@ -2,7 +2,7 @@
 
 Before every `git push`, `.githooks/pre-push` runs `./bin/check-tracked-privacy.sh`.
 
-## Blocks (strict mode — default)
+## Blocks (strict mode - default)
 
 - Secrets and API tokens
 - Absolute paths (`/Users/...`, `/home/...`)

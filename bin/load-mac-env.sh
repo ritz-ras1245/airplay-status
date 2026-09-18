@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Source repo .env then .local/tidbyt.env (Mac dev — Tidbyt creds survive beta .env refresh).
+# Source repo .env then .local/tidbyt.env (Mac dev - Tidbyt creds survive beta .env refresh).
 # Usage: ROOT=...; # shellcheck source=bin/load-mac-env.sh
 #        source "$ROOT/bin/load-mac-env.sh"
 

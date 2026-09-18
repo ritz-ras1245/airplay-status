@@ -1,4 +1,4 @@
-# Phase P4 — eInk Display with Transport Controls
+# Phase P4 - eInk Display with Transport Controls
 
 **Status:** Browser `/eink` + P1 transport forms shipped with P1 branch. PNG path still not implemented (read-only when it lands).  
 **Depends on:** [P3 eInk display](./p3-eink-display.md), [P1 remote control](./p1-remote-control.md)
@@ -11,11 +11,11 @@ Extend the P3 eInk display with **play, pause, previous, and next** controls opt
 
 | Aspect | Assessment |
 |--------|------------|
-| **Overall** | **Conditional** — UI is straightforward; control reliability matches P1 DACP limits |
-| **Kindle browser + forms** | **Yes** — plain HTML POST works without JavaScript |
-| **Kindle browser + fetch** | **Maybe** — test on device; forms are fallback |
-| **PNG-only (kindle-dash)** | **No controls** — static image cannot accept input; remain P3 read-only |
-| **iOS 17.4+ DACP** | **High risk** — same `ios_blocked` behavior as P1 |
+| **Overall** | **Conditional** - UI is straightforward; control reliability matches P1 DACP limits |
+| **Kindle browser + forms** | **Yes** - plain HTML POST works without JavaScript |
+| **Kindle browser + fetch** | **Maybe** - test on device; forms are fallback |
+| **PNG-only (kindle-dash)** | **No controls** - static image cannot accept input; remain P3 read-only |
+| **iOS 17.4+ DACP** | **High risk** - same `ios_blocked` behavior as P1 |
 
 **Decision:** Implement controls on **`/eink` browser path only**. PNG fetch path stays read-only per P3.
 
@@ -32,7 +32,7 @@ Kindle browser (/eink)
                                          dacpClient ──► iPhone / Mac sender
 ```
 
-No new control protocol — P4 is a **second UI** over P1's `POST /api/control/:action`.
+No new control protocol - P4 is a **second UI** over P1's `POST /api/control/:action`.
 
 ## Display
 
@@ -105,7 +105,7 @@ Mirror P1 `controlAvailable` and `controlReason` from playback state (or server-
 | No active track | Hide control row or show disabled with "Nothing playing" |
 | `controlReason === "ios_blocked"` | Explain that iPhone may not respond on this iOS version |
 
-**Do not hide buttons** when unavailable — show them disabled with explanation (same honesty as main dashboard).
+**Do not hide buttons** when unavailable - show them disabled with explanation (same honesty as main dashboard).
 
 ### Reason display (user-facing)
 
@@ -132,7 +132,7 @@ POST /api/control/prev
 
 - Success: redirect to `/eink` (303)
 - Failure: redirect to `/eink?control=failed&reason=<reason>` and show non-blocking message
-- Do not use `alert()` — unreliable on Kindle browser
+- Do not use `alert()` - unreliable on Kindle browser
 
 ## Route changes (planned)
 
@@ -160,7 +160,7 @@ Static PNG cannot receive touch input. Options for users who want controls on a 
 1. Open Kindle browser to `/eink` instead of PNG cron
 2. Keep kindle-dash on PNG for read-only; use phone for control
 
-Document this split in README — do not attempt touch overlays on PNG.
+Document this split in README - do not attempt touch overlays on PNG.
 
 ## Configuration
 
@@ -228,11 +228,11 @@ Run P1 debug flow (`./bin/run-local.sh --debug`) for sender-side verification; e
 
 - [ ] Touch-friendly control row on `/eink`
 - [ ] Works without JavaScript via HTML forms
-- [ ] Reuses P1 API and DACP session — no duplicate control logic
+- [ ] Reuses P1 API and DACP session - no duplicate control logic
 - [ ] Honest failure UX when sender ignores commands
 
 ## References
 
-- [p1-remote-control.md](./p1-remote-control.md) — DACP client, API, iOS caveats
-- [p3-eink-display.md](./p3-eink-display.md) — browser and PNG display paths
-- [shairport-sync #1858](https://github.com/mikebrady/shairport-sync/issues/1858) — iOS DACP limitations
+- [p1-remote-control.md](./p1-remote-control.md) - DACP client, API, iOS caveats
+- [p3-eink-display.md](./p3-eink-display.md) - browser and PNG display paths
+- [shairport-sync #1858](https://github.com/mikebrady/shairport-sync/issues/1858) - iOS DACP limitations

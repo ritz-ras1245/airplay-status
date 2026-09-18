@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Reject commits on main — all work must use a named branch.
+# Reject commits on main - all work must use a named branch.
+# Ban Unicode em dash (U+2014) and its JSON/text escape form in staged files.
 set -euo pipefail
 
 branch="$(git symbolic-ref --quiet HEAD 2>/dev/null || true)"
@@ -10,6 +11,36 @@ if [[ "${branch}" == "main" ]]; then
   echo "Create a branch: git checkout -b feat/YOUR_USER/short-description" >&2
   echo "Policy: .github/BRANCH_POLICY.md" >&2
   exit 1
+fi
+
+mapfile -t staged < <(git diff --cached --name-only --diff-filter=ACM || true)
+if ((${#staged[@]} > 0)); then
+  python3 - "${staged[@]}" <<'PY'
+import sys
+from pathlib import Path
+lit = chr(92) + "u2014"
+em = chr(0x2014)
+skip = {".png",".jpg",".jpeg",".gif",".webp",".ico",".woff",".woff2",".ttf",".gz",".tar",".zip",".bin",".pdf"}
+bad = []
+for f in sys.argv[1:]:
+    p = Path(f)
+    if not p.is_file():
+        continue
+    if p.suffix.lower() in skip:
+        continue
+    try:
+        t = p.read_text(encoding="utf-8")
+    except Exception:
+        continue
+    if em in t or lit in t:
+        bad.append(f)
+if bad:
+    print("pre-commit: em dash (U+2014) or banned unicode escape found in:", file=sys.stderr)
+    for f in bad:
+        print("  " + f, file=sys.stderr)
+    print("Use ASCII hyphen - or en dash (U+2013) only.", file=sys.stderr)
+    raise SystemExit(1)
+PY
 fi
 
 exit 0

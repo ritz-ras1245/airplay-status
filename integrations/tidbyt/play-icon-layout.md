@@ -1,4 +1,4 @@
-# Tidbyt layout — locked (device-tuned)
+# Tidbyt layout - locked (device-tuned)
 
 Do not change casually; re-verify on a physical Tidbyt after edits.
 
@@ -26,7 +26,7 @@ Do not change casually; re-verify on a physical Tidbyt after edits.
 #
 ```
 
-Rows: `PLAY_ROWS = [1, 2, 3, 2, 1]` — no trailing padding on each row.
+Rows: `PLAY_ROWS = [1, 2, 3, 2, 1]` - no trailing padding on each row.
 
 ### Pause icon (grey `#888888`, 6px wide)
 

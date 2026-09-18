@@ -1,9 +1,9 @@
-# P50 — Beta soak observability (Pi → Mac Grafana/Loki)
+# P50 - Beta soak observability (Pi → Mac Grafana/Loki)
 
 **Phase:** [specs/p50-beta-soak-observability.md](../specs/p50-beta-soak-observability.md)  
 **Context:** P49 beta is live on RPi4. P50 = **soak the working beta** + **centralize logs on Mac** for timestamp debugging.
 
-Ship **RPi journal logs** to **Loki + Grafana** on Mac (Docker). Logs retain **45 days** on Mac — nothing lost while you are offline.
+Ship **RPi journal logs** to **Loki + Grafana** on Mac (Docker). Logs retain **45 days** on Mac - nothing lost while you are offline.
 
 **Not Grafana Cloud.** Home LAN only.
 
@@ -25,7 +25,7 @@ Promtail on Pi **tails journald continuously** (batched push ~1s). Retries if Ma
 
 ---
 
-## 1. Mac — start stack (one time)
+## 1. Mac - start stack (one time)
 
 Requires [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or `brew install --cask docker`).
 
@@ -62,9 +62,9 @@ Find Mac hostname: `scutil --get LocalHostName` → `MacStudio.local` style mDNS
 
 ---
 
-## 2. Pi — install Promtail (one SSH session)
+## 2. Pi - install Promtail (one SSH session)
 
-Additive — does **not** restart airplay services. OK during P50 soak.
+Additive - does **not** restart airplay services. OK during P50 soak.
 
 ```bash
 cd /opt/airplay-status   # or ~/airplay-status clone
@@ -116,7 +116,7 @@ curl -s http://airplay-beta.local/api/version | jq .deployPhase
 2. Parse user timestamp → ISO-8601 UTC
 3. `./bin/query-loki.sh --around '<ts>' --window 10m`
 4. Units: `airplay-status.service`, `shairport-sync.service`, `nqptp.service`
-5. Root-cause from log evidence — no guessing
+5. Root-cause from log evidence - no guessing
 
 ---
 

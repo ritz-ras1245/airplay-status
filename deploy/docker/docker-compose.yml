@@ -1,5 +1,5 @@
-# P49 beta — Docker host-network stack
-# Prerequisite on Pi host: nqptp running (UDP 319/320) — see deploy/docker/README-WARN.md
+# P49 beta - Docker host-network stack
+# Prerequisite on Pi host: nqptp running (UDP 319/320) - see deploy/docker/README-WARN.md
 
 services:
   shairport-sync:

@@ -1,4 +1,4 @@
-# P49 Path A — Docker on Raspberry Pi (host network)
+# P49 Path A - Docker on Raspberry Pi (host network)
 
 Try this path first. If iPhone discovery or AirPlay 2 multi-room fails after the spike, use [Path B (bare metal)](../rpi/README.md).
 
@@ -6,7 +6,7 @@ Try this path first. If iPhone discovery or AirPlay 2 multi-room fails after the
 
 ```
 Host (RPi4)
-├── nqptp (systemd on host — UDP 319/320)
+├── nqptp (systemd on host - UDP 319/320)
 ├── shairport-sync container (network_mode: host)
 └── airplay-status container (network_mode: host)
          └── metadata FIFO: /tmp/shairport-sync-metadata (host path)
@@ -87,5 +87,5 @@ Complete the device checklist in [docs/p49-docker-spike.md](../../docs/p49-docke
 ## References
 
 - [p49-docker-spike.md](../../docs/p49-docker-spike.md)
-- [deploy/rpi/README.md](../rpi/README.md) — bare-metal fallback
+- [deploy/rpi/README.md](../rpi/README.md) - bare-metal fallback
 - [specs/p49-preprod-deployment.md](../../specs/p49-preprod-deployment.md)

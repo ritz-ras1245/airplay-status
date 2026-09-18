@@ -1,4 +1,4 @@
-# P49 — Tidbyt credentials on the Pi
+# P49 - Tidbyt credentials on the Pi
 
 Tidbyt push needs **credentials** + **pixlet** on the host running `airplay-status` (your Pi). Secrets never go in git.
 
@@ -22,7 +22,7 @@ Tidbyt push needs **credentials** + **pixlet** on the host running `airplay-stat
 | **A2. Mac direct upload** | Skip iPhone | `./bin/tidbyt-creds-mac.sh --upload 'http://…/setup?token=…'` |
 | **B. SCP + apply script** | File in iCloud / Files app | Copy `config/deploy/tidbyt.env.example` → fill on phone → `scp` → `apply-secrets-file.sh` |
 | **C. SSH + nano** | Comfortable on terminal | Edit `/opt/airplay-status/.env` directly |
-| **D. Mac push only** | Pi has no pixlet (not our Pi path) | Run `./bin/push-tidbyt.sh` on Mac against Pi API — manual, no auto loop |
+| **D. Mac push only** | Pi has no pixlet (not our Pi path) | Run `./bin/push-tidbyt.sh` on Mac against Pi API - manual, no auto loop |
 
 ### A. One-time web upload
 
@@ -120,7 +120,7 @@ Use `DISABLE_TIDBYT=1` separately in `.env` or systemd if you need to suppress p
 ## Security notes
 
 - Setup URL is **LAN-only** in practice; token is random 32-char hex, **single use**.
-- No HTTPS on `:3003` — acceptable for home LAN one-time provisioning.
+- No HTTPS on `:3003` - acceptable for home LAN one-time provisioning.
 - Do **not** commit filled `tidbyt.env` or `.env`.
 - iCloud copy is fine if your threat model accepts it (same as password manager export).
 
@@ -136,7 +136,7 @@ Use `DISABLE_TIDBYT=1` separately in `.env` or systemd if you need to suppress p
 
 There is **no** QR code or phone-discoverable setup link yet. Save the URL at install time (Notes, AirDrop) if you want iPhone upload; otherwise use Mac `--upload`.
 
-**Power loss:** not an issue — systemd restarts the stack on boot; `.env` and an unused `.setup-token` persist on disk.
+**Power loss:** not an issue - systemd restarts the stack on boot; `.env` and an unused `.setup-token` persist on disk.
 
 **Deferred to P99:** LAN setup URL on the dashboard (e.g. QR when setup is pending) so iPhone provisioning needs no SSH. See [specs/p99-prod-readiness.md](../specs/p99-prod-readiness.md).
 
@@ -145,7 +145,7 @@ There is **no** QR code or phone-discoverable setup link yet. Save the URL at in
 ## Future (not implemented)
 
 - Interactive SSH wizard (`bin/setup-tidbyt-creds.sh` prompts)
-- **`bin/pi-setup-url.sh`** — Mac helper to print full setup URL over SSH
+- **`bin/pi-setup-url.sh`** - Mac helper to print full setup URL over SSH
 - Keychain / 1Password CLI pull on Mac during `p49-install-rpi.sh`
 - CI/CD deploy so Pi picks up code without manual patching
 

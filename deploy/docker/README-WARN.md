@@ -1,4 +1,4 @@
-# P49 — Docker deploy
+# P49 - Docker deploy
 
 Host-network compose: **nqptp on the host** + **shairport-sync** + **airplay-status** containers.
 
@@ -10,7 +10,7 @@ Host-network compose: **nqptp on the host** + **shairport-sync** + **airplay-sta
 |-------|---------|
 | **`network_mode: host`** | Containers run in a Linux VM, not on your LAN. mDNS/AirPlay does not reach iPhone on Wi‑Fi. |
 | **Firewall / open ports** | Does not fix discovery. |
-| **nqptp (UDP 319/320)** | Required for AirPlay 2. macOS reserves these ports — nqptp cannot run on the Mac host. |
+| **nqptp (UDP 319/320)** | Required for AirPlay 2. macOS reserves these ports - nqptp cannot run on the Mac host. |
 | **iPhone sees speaker** | **Will not work** on Mac Docker. Use a Pi on your LAN, or `./bin/run-local.sh --debug` on Mac (AP1 only). |
 | **What Mac Docker is good for** | Compose build, container logs, `docker exec` API checks |
 
@@ -28,7 +28,7 @@ Before first `./bin/p49-up.sh docker`:
 sudo ./deploy/rpi/install.sh   # nqptp, Avahi, Node deps on host
 ```
 
-Or install nqptp manually — see comments in `deploy/rpi/install.sh`.
+Or install nqptp manually - see comments in `deploy/rpi/install.sh`.
 
 ---
 
@@ -74,6 +74,6 @@ docker exec airplay-status-app curl -sf http://127.0.0.1:3003/api/version | pyth
 |------|---------|
 | `docker-compose.yml` | shairport-sync + Node |
 | `Dockerfile` | Node app image |
-| `shairport/shairport-sync.conf` | AP2 config — render before up |
+| `shairport/shairport-sync.conf` | AP2 config - render before up |
 
 Spike log: [docs/p49-docker-spike.md](../../docs/p49-docker-spike.md)

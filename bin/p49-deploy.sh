@@ -9,7 +9,7 @@ Usage: p49-deploy.sh --host HOST [--ref SHA|branch] [--stage beta|prod] [--user 
 
   SSH to Pi, fetch/checkout ref, npm ci, render config, restart systemd, health check.
 
-SCAFFOLD only — see docs/p49-beta-remote-deploy.md
+SCAFFOLD only - see docs/p49-beta-remote-deploy.md
 EOF
 }
 
@@ -34,7 +34,7 @@ if [[ -z "$HOST" ]]; then
   exit 1
 fi
 
-echo "[p49-deploy.sh] SCAFFOLD — would deploy ref=${REF} stage=${STAGE} to ${USER}@${HOST}" >&2
+echo "[p49-deploy.sh] SCAFFOLD - would deploy ref=${REF} stage=${STAGE} to ${USER}@${HOST}" >&2
 echo "Plan: docs/p49-beta-remote-deploy.md" >&2
 echo "GitHub workflow: .github/workflows/p49-deploy-beta.yml" >&2
 exit 2

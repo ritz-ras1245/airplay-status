@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install Promtail on Pi — streams systemd journal (airplay stack) to Mac Loki.
+# Install Promtail on Pi - streams systemd journal (airplay stack) to Mac Loki.
 # Run on Pi after Mac observability stack is up: ./bin/observability-up.sh
 #
 #   LOKI_PUSH_URL=http://<mac-hostname>.local:3100/loki/api/v1/push sudo ./deploy/rpi/promtail/install-promtail.sh
@@ -68,5 +68,5 @@ UNIT
 systemctl daemon-reload
 systemctl enable --now promtail
 
-log "Promtail running — pushing to ${LOKI_PUSH_URL}"
+log "Promtail running - pushing to ${LOKI_PUSH_URL}"
 log "Check: systemctl status promtail && journalctl -u promtail -n 20"

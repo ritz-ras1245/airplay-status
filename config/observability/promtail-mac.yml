@@ -1,4 +1,4 @@
-# Promtail on Mac — tails local dev/prod log files into Loki (optional).
+# Promtail on Mac - tails local dev/prod log files into Loki (optional).
 # Pi logs arrive via deploy/rpi/promtail (journal → Mac Loki).
 
 server:

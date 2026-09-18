@@ -32,10 +32,10 @@ Enforced on GitHub (ruleset) and locally (`.githooks/pre-commit` blocks commits 
 
 | Actor | Work on | Merge to `main` |
 |-------|---------|-----------------|
-| **`ritz-ras1245`** (owner) | Named branch only | **No PR** — local merge + push (GitHub bypass) |
+| **`ritz-ras1245`** (owner) | Named branch only | **No PR** - local merge + push (GitHub bypass) |
 | **Bots, agents, other humans** | Named branch only | **Pull request required** |
 
-Nobody commits directly on `main` locally — the pre-commit hook rejects it.
+Nobody commits directly on `main` locally - the pre-commit hook rejects it.
 
 ---
 
@@ -72,11 +72,11 @@ gh pr create --base main
 
 ---
 
-Enforced locally (`.githooks/`) and in CI (`.github/workflows/branch-policy.yml`). GitHub ruleset API for branch names is not available on this plan — naming is validated on push/PR instead.
+Enforced locally (`.githooks/`) and in CI (`.github/workflows/branch-policy.yml`). GitHub ruleset API for branch names is not available on this plan - naming is validated on push/PR instead.
 
 ---
 
-## Cursor Cloud Agents — branch prefix
+## Cursor Cloud Agents - branch prefix
 
 Cloud Agents auto-create a branch **before** the agent reads repo rules. The default `cursor/<slug>` **fails** CI (missing `{action}/` segment).
 
@@ -95,13 +95,13 @@ Configure **Branch prefix** once (account-level, not in this repo):
 | Documentation | `doc/cursor` |
 | Bug fixes | `fix/cursor` |
 
-The prefix is **static** — it cannot switch between `feat/` and `fix/` per task automatically ([Cursor forum](https://forum.cursor.com/t/cloud-agent-custom-branch-prefix-feat-fix-instead-of-cursor-and-commit-author-attribution/163698)). Change it in settings before launching a doc/fix agent, or start the agent on an existing compliant branch instead.
+The prefix is **static** - it cannot switch between `feat/` and `fix/` per task automatically ([Cursor forum](https://forum.cursor.com/t/cloud-agent-custom-branch-prefix-feat-fix-instead-of-cursor-and-commit-author-attribution/163698)). Change it in settings before launching a doc/fix agent, or start the agent on an existing compliant branch instead.
 
 Repo rule: [`.cursor/rules/branch-policy.mdc`](../.cursor/rules/branch-policy.mdc)
 
 | Ruleset | Target | Rules |
 |---------|--------|-------|
 | **Protect main** | `main` | Require PR; block force-push & deletion; **`ritz-ras1245` bypass** (merge without PR) |
-| **Branch naming** | non-`main` | CI + local hooks — `{action}/{user}/{description}` or `release/N.x` |
+| **Branch naming** | non-`main` | CI + local hooks - `{action}/{user}/{description}` or `release/N.x` |
 
 Global release semver rules: `~/.cursor/rules/release-and-versioning.mdc`.

@@ -1,14 +1,14 @@
-# iPad always-on display (web + Guided Access) — P9 MVP
+# iPad always-on display (web + Guided Access) - P9 MVP
 
 This is the **P9 MVP** path (Open Decision **OD1 = B**): use an iPad as a spare
-always-on now-playing console with **no native app** — just Safari, a Home Screen
+always-on now-playing console with **no native app** - just Safari, a Home Screen
 web app, and Guided Access. It reuses the kiosk display view shipped in P0/P3
 work: [`docs/kiosk-display.md`](kiosk-display.md).
 
 > Native Swift/WKWebView (OD1 = A) is only needed if you require a reliable
 > "tap to resume" **notification while the screen is fully off**. The web path
 > below covers live display, screen-on-while-playing, and the on-screen
-> resume overlay — see limitations at the end.
+> resume overlay - see limitations at the end.
 
 ## Display URL
 
@@ -45,7 +45,7 @@ so the iPad still lands on a status page when the primary host is down.
 
 ## Behaviour (shared always-on contract)
 
-Provided by the kiosk view — see [`docs/kiosk-display.md`](kiosk-display.md):
+Provided by the kiosk view - see [`docs/kiosk-display.md`](kiosk-display.md):
 
 - **Playing:** immersive now-playing, screen kept awake (Wake Lock), live via SSE.
 - **Idle:** after an ~8s grace the page dims itself (screen-off intent).
@@ -57,7 +57,7 @@ Provided by the kiosk view — see [`docs/kiosk-display.md`](kiosk-display.md):
 
 - iPadOS Safari **cannot force the backlight fully off** as precisely as a native
   app; rely on Auto-Lock for true screen-off.
-- **No background/system notification** while the screen is off — the resume nudge
+- **No background/system notification** while the screen is off - the resume nudge
   is the on-screen overlay, shown when the app is foregrounded. If you need a
   push-style "tap to resume" while the display is asleep, promote to **OD1 = A**
   (native WKWebView shell) per [`specs/p9-ipad-always-on.md`](../specs/p9-ipad-always-on.md).

@@ -28,7 +28,7 @@ export const renderGatewayPage = (gateway, services, refreshSec = 5) => {
           (p) => `<tr class="p p--${p.up ? 'up' : 'down'}">
             <td>${escapeHtml(p.port)}/${escapeHtml(p.check)}</td>
             <td class="state">${p.up ? '● up' : '○ down'}</td>
-            <td>${escapeHtml(p.up && p.latencyMs != null ? `${p.latencyMs} ms` : '—')}</td>
+            <td>${escapeHtml(p.up && p.latencyMs != null ? `${p.latencyMs} ms` : '-')}</td>
             <td>${escapeHtml(p.error || '')}</td>
           </tr>`,
         )

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# P49 — stop pre-prod stack (Docker or systemd).
+# P49 - stop pre-prod stack (Docker or systemd).
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

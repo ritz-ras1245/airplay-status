@@ -94,6 +94,6 @@ if [[ "${FAIL}" -eq 0 ]]; then
   exit 0
 fi
 
-echo "check-tracked-privacy: failed — remove secrets/paths or allow via .privacy-check-allow" >&2
+echo "check-tracked-privacy: failed - remove secrets/paths or allow via .privacy-check-allow" >&2
 echo "See engineering-standards/docs/privacy-check.md" >&2
 exit 1

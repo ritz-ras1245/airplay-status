@@ -9,7 +9,7 @@ const pkg = JSON.parse(readFileSync(path.join(projectRoot, 'package.json'), 'utf
 export const APP_NAME = pkg.name;
 export const APP_VERSION = pkg.version;
 
-/** Deploy metadata — set on RPi/Docker via env at install time. */
+/** Deploy metadata - set on RPi/Docker via env at install time. */
 export function getVersionInfo() {
   const stage = getDeployStage();
   const major = parseInt(APP_VERSION.split('.')[0], 10) || 0;

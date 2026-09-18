@@ -3,7 +3,7 @@ import http from 'node:http';
 
 /**
  * Normalize a raw probe outcome into a stable result record.
- * Pure — unit-testable without sockets.
+ * Pure - unit-testable without sockets.
  * @param {{ok: boolean, latencyMs?: number, error?: string|null}} raw
  */
 export const classifyProbe = ({ ok, latencyMs = null, error = null }) => ({
@@ -15,7 +15,7 @@ export const classifyProbe = ({ ok, latencyMs = null, error = null }) => ({
 
 /**
  * Roll up per-port results into an overall service status.
- * Pure — unit-testable.
+ * Pure - unit-testable.
  * @param {Array<{up: boolean}>} portResults
  * @returns {'up'|'degraded'|'down'}
  */

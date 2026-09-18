@@ -1,6 +1,6 @@
-# Cloud Agent handoff — P1–P6 (while P49 beta soaks)
+# Cloud Agent handoff - P1–P6 (while P49 beta soaks)
 
-**Context:** P49 beta is **live on RPi4**. **P50** = soak + observability — **do not modify the Pi** or P49 deploy paths unless fixing a beta blocker.
+**Context:** P49 beta is **live on RPi4**. **P50** = soak + observability - **do not modify the Pi** or P49 deploy paths unless fixing a beta blocker.
 
 **Repo:** https://github.com/ritz-ras1245/airplay-status  
 **Base branch:** `main`  
@@ -17,7 +17,7 @@
 | **Environment** | **`airplay-status + standards`** |
 | **Starting ref** | `main` |
 | **Branch prefix** | `feat/cursor` → e.g. `feat/cursor/p1-remote-control` |
-| **Merge** | Open PR only — **do not merge to `main`** |
+| **Merge** | Open PR only - **do not merge to `main`** |
 
 **Standards:** No secrets in repo. No personal paths. Privacy pre-push check must pass. Branch name `{action}/cursor/{slug}`.
 
@@ -25,13 +25,13 @@
 
 ## Do not touch (P50 soak)
 
-- Live Pi (`airplay-beta.local`) — no SSH deploys, no cred resets
+- Live Pi (`airplay-beta.local`) - no SSH deploys, no cred resets
 - `deploy/rpi/install.sh` unless beta blocker
 - Observability: [docs/p50-observability.md](./p50-observability.md) (Promtail install is additive OK)
 
 ---
 
-## Phase queue — launch all in parallel
+## Phase queue - launch all in parallel
 
 | Phase | Spec | Branch slug | Depends on |
 |-------|------|-------------|------------|
@@ -40,9 +40,9 @@
 | **P4** | [p4-eink-controls.md](../specs/p4-eink-controls.md) | `p4-eink-controls` | P1 API (implement per spec; stub if P1 not merged) |
 | **P5** | [p5-deployment.md](../specs/p5-deployment.md) | `p5-deployment-docs` | P49 ✅ docs only |
 | **P6** | [p6-echo-show.md](../specs/p6-echo-show.md) | `p6-echo-show` | P0 ✅ |
-| ~~P2~~ | Tidbyt | — | Done |
-| ~~P49~~ | Beta deploy | — | Done ✅ |
-| **P50** | Soak + observability | — | **Active** |
+| ~~P2~~ | Tidbyt | - | Done |
+| ~~P49~~ | Beta deploy | - | Done ✅ |
+| **P50** | Soak + observability | - | **Active** |
 
 ---
 
@@ -51,14 +51,14 @@
 ```
 Environment: airplay-status + standards.
 Follow AGENTS.md, .github/BRANCH_POLICY.md, and specs/cloud-cursor-pr-standard.md strictly.
-P49 beta Pi is SOAKING — do NOT change deploy/rpi/, do NOT SSH to airplay-beta.local.
+P49 beta Pi is SOAKING - do NOT change deploy/rpi/, do NOT SSH to airplay-beta.local.
 Branch feat/cursor/<slug> from main. Open PR when done; do NOT merge to main.
-Mac dev only for runtime testing (./bin/run-local.sh). Minimal scope — match spec exactly.
+Mac dev only for runtime testing (./bin/run-local.sh). Minimal scope - match spec exactly.
 ```
 
 ---
 
-## P1 — Remote control
+## P1 - Remote control
 
 ```
 [Paste shared prefix above]
@@ -75,7 +75,7 @@ PR test plan: Mac Music → AirPlay Status only → controls + /api/status
 
 ---
 
-## P3 — eInk read-only
+## P3 - eInk read-only
 
 ```
 [Paste shared prefix above]
@@ -84,7 +84,7 @@ Implement Phase P3 per specs/p3-eink-display.md end-to-end.
 
 Read: config/eink-devices.example.json
 
-Deliver: /eink browser page, on-demand PNG endpoint, profiles, refresh interval. Read-only — no transport controls.
+Deliver: /eink browser page, on-demand PNG endpoint, profiles, refresh interval. Read-only - no transport controls.
 
 Branch: feat/cursor/p3-eink-display
 PR test plan: curl PNG; /eink in browser
@@ -92,14 +92,14 @@ PR test plan: curl PNG; /eink in browser
 
 ---
 
-## P4 — eInk controls
+## P4 - eInk controls
 
 ```
 [Paste shared prefix above]
 
 Implement Phase P4 per specs/p4-eink-controls.md end-to-end.
 
-Depends on P1 POST /api/control/:action — if not on main, implement minimal playbackControlService per P1 spec in this branch (document in PR).
+Depends on P1 POST /api/control/:action - if not on main, implement minimal playbackControlService per P1 spec in this branch (document in PR).
 
 Deliver: /eink controls via HTML forms; PNG path stays read-only.
 
@@ -108,28 +108,28 @@ Branch: feat/cursor/p4-eink-controls
 
 ---
 
-## P5 — Deployment docs
+## P5 - Deployment docs
 
 ```
 [Paste shared prefix above]
 
-Update specs/p5-deployment.md and cross-links per specs/p5-deployment.md — align with P49 bare metal (deploy/rpi/), port 80, docs/p49-rpi-bare-metal-lessons.md, deploy/docker/README-WARN.md.
+Update specs/p5-deployment.md and cross-links per specs/p5-deployment.md - align with P49 bare metal (deploy/rpi/), port 80, docs/p49-rpi-bare-metal-lessons.md, deploy/docker/README-WARN.md.
 
-Docs/spec only — no unrelated code.
+Docs/spec only - no unrelated code.
 
 Branch: feat/cursor/p5-deployment-docs
 ```
 
 ---
 
-## P6 — Echo Show (Tier B)
+## P6 - Echo Show (Tier B)
 
 ```
 [Paste shared prefix above]
 
 Pickup and analyse specs/p6-echo-show.md. Take it end-to-end to a PR per specs/cloud-cursor-pr-standard.md.
 
-Deliver: integrations/echo/, echoPushService, /echo SSE UI, Lambda/API Gateway scaffold as spec defines. Tier B only — not Tier A kiosk.
+Deliver: integrations/echo/, echoPushService, /echo SSE UI, Lambda/API Gateway scaffold as spec defines. Tier B only - not Tier A kiosk.
 
 PR body MUST include manual checklist: Alexa, AWS, DNS, Echo Show hookup and LAN testing.
 

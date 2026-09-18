@@ -1,4 +1,4 @@
-# P49 beta — remote deploy plan
+# P49 beta - remote deploy plan
 
 **Branch:** `doc/ritz-ras1245/p49-release` (plan + scaffolds)  
 **Implementation branch:** `feat/ritz-ras1245/p49-rpi-beta` (cloud agent → PR)  
@@ -8,13 +8,13 @@ One SD flash on the Pi, then headless remote deploys forever via **SSH + git + s
 
 ---
 
-## GitHub Free tier — all planned features allowed
+## GitHub Free tier - all planned features allowed
 
 `ritz-ras1245/airplay-status` is a **public** repository. Every GitHub feature in this plan is available on the **GitHub Free** personal plan at no extra cost.
 
 | Planned use | Free tier | Notes |
 |-------------|-----------|-------|
-| GitHub Actions (PR CI, deploy workflow) | **Yes — unlimited minutes** on standard `ubuntu-latest` runners for public repos | [Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions) |
+| GitHub Actions (PR CI, deploy workflow) | **Yes - unlimited minutes** on standard `ubuntu-latest` runners for public repos | [Actions billing](https://docs.github.com/en/billing/concepts/product-billing/github-actions) |
 | `workflow_dispatch` (manual deploy) | **Yes** | Manual trigger while learning the Pi |
 | Push / tag triggers (later) | **Yes** | Automate after beta checklist is green |
 | Repository secrets | **Yes** | e.g. `P49_SSH_PRIVATE_KEY`, `P49_HOST` |
@@ -27,9 +27,9 @@ One SD flash on the Pi, then headless remote deploys forever via **SSH + git + s
 
 **Not required for P49 (no GitHub tier impact):**
 
-- Self-hosted runner on the Pi — health checks run over SSH from `ubuntu-latest`, not on-device
-- Balena Cloud — separate vendor free tier; deferred
-- GitHub Enterprise deployment features — not in scope
+- Self-hosted runner on the Pi - health checks run over SSH from `ubuntu-latest`, not on-device
+- Balena Cloud - separate vendor free tier; deferred
+- GitHub Enterprise deployment features - not in scope
 
 **If the repo were private:** 2,000 Actions minutes/month on Free would still cover occasional manual deploys; public repo avoids that cap entirely.
 
@@ -55,7 +55,7 @@ GitHub Actions ──SSH──► RPi4 (headless, SD stays in)
 
 ---
 
-## Phase 0 — One-time SD flash (~30 min, human)
+## Phase 0 - One-time SD flash (~30 min, human)
 
 Do once; do not remove the SD card for routine updates.
 
@@ -65,16 +65,16 @@ Do once; do not remove the SD card for routine updates.
 | 2 | Enable **SSH**; create user; Wi‑Fi or Ethernet (**Ethernet preferred** for mDNS) |
 | 3 | Static IP or reliable hostname (e.g. `airplay-beta.local`) |
 | 4 | Clone repo; checkout PR branch or `main` |
-| 5 | `sudo ./deploy/rpi/install.sh` (bare metal — ~20 min) |
+| 5 | `sudo ./deploy/rpi/install.sh` (bare metal - ~20 min) |
 | 6 | `./bin/check-p49-beta.sh` |
 | 7 | From Mac: `./bin/check-version.sh http://<pi>:3003` |
-| 8 | iPhone beta checklist — HomePods + **AirPlay Status (Beta)** together |
+| 8 | iPhone beta checklist - HomePods + **AirPlay Status (Beta)** together |
 
 Full steps: [docs/p49-rpi-bare-metal-lessons.md](./p49-rpi-bare-metal-lessons.md) · [deploy/rpi/README.md](../deploy/rpi/README.md).
 
 ---
 
-## Phase 1 — Every deploy after that (remote, headless)
+## Phase 1 - Every deploy after that (remote, headless)
 
 **Default MVP:** SSH + git + systemd (not Balena).
 
@@ -87,26 +87,26 @@ Full steps: [docs/p49-rpi-bare-metal-lessons.md](./p49-rpi-bare-metal-lessons.md
 | 5 | Health: `/api/version`, `./bin/check-sidecar.sh` |
 | 6 | On failure: do not update last-good SHA on Pi |
 
-**Secrets:** SSH deploy key in GitHub Actions secrets; `.env` on Pi only (Tidbyt, Echo, etc.) — never committed.
+**Secrets:** SSH deploy key in GitHub Actions secrets; `.env` on Pi only (Tidbyt, Echo, etc.) - never committed.
 
 ### Deploy triggers (pick one to start)
 
 | Trigger | When |
 |---------|------|
-| **Manual `workflow_dispatch`** | **Start here** — safest while learning the Pi |
+| **Manual `workflow_dispatch`** | **Start here** - safest while learning the Pi |
 | Push to `main` after P49 merge | Every merge to beta |
 | Tag `beta-*` | Explicit beta releases |
 
 ---
 
-## Beta today, prod later — same Pi tier
+## Beta today, prod later - same Pi tier
 
 | Stage | Env file | AirPlay name | When |
 |-------|----------|--------------|------|
-| **beta** | `config/deploy/beta.env.example` | AirPlay Status **(Beta)** | Now — P49 sign-off |
+| **beta** | `config/deploy/beta.env.example` | AirPlay Status **(Beta)** | Now - P49 sign-off |
 | **prod** | `config/deploy/prod.env.example` | AirPlay Status | After P99 |
 
-Same deploy script, different `--stage`. Do **not** run beta and prod on one Pi at once — switch stage on redeploy or use a second Pi for prod.
+Same deploy script, different `--stage`. Do **not** run beta and prod on one Pi at once - switch stage on redeploy or use a second Pi for prod.
 
 ---
 

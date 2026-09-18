@@ -20,7 +20,7 @@ STAR="$ROOT/integrations/tidbyt/airplay-status.star"
 : "${TIDBYT_API_TOKEN:?Set TIDBYT_API_TOKEN (from Tidbyt mobile app)}"
 
 if ! command -v pixlet >/dev/null 2>&1; then
-  echo "pixlet not found — install: brew install tidbyt/tidbyt/pixlet" >&2
+  echo "pixlet not found - install: brew install tidbyt/tidbyt/pixlet" >&2
   exit 1
 fi
 
@@ -34,7 +34,7 @@ if ! node -e "
     -H "Authorization: Bearer ${TIDBYT_API_TOKEN}" \
     "https://api.tidbyt.com/v0/devices/${TIDBYT_DEVICE_ID}/installations/${INSTALLATION_ID}" \
     >/dev/null 2>&1 || true
-  echo "Nothing playing — removed installation ${INSTALLATION_ID} from Tidbyt"
+  echo "Nothing playing - removed installation ${INSTALLATION_ID} from Tidbyt"
   exit 0
 fi
 

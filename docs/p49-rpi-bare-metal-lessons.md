@@ -1,4 +1,4 @@
-# P49 RPi bare-metal — lessons learned (2026-07-26)
+# P49 RPi bare-metal - lessons learned (2026-07-26)
 
 First successful bring-up on **Raspberry Pi 4**, **Raspberry Pi OS Lite 64-bit (Trixie)**, hostname `airplay-beta`.  
 Validated stack: nqptp + shairport-sync AP2 + airplay-status systemd → `http://airplay-beta.local:3003`.
@@ -9,16 +9,16 @@ Validated stack: nqptp + shairport-sync AP2 + airplay-status systemd → `http:/
 
 | Topic | Decision |
 |-------|----------|
-| **Pi deploy path** | **Bare metal** (`sudo ./deploy/rpi/install.sh`) — not Docker on Pi |
-| **Mac Docker** | Smoke/API only — no iPhone AirPlay discovery ([README-WARN](../deploy/docker/README-WARN.md)) |
-| **Imager OS** | Trixie uses **cloud-init** on boot partition — not `wpa_supplicant.conf` |
+| **Pi deploy path** | **Bare metal** (`sudo ./deploy/rpi/install.sh`) - not Docker on Pi |
+| **Mac Docker** | Smoke/API only - no iPhone AirPlay discovery ([README-WARN](../deploy/docker/README-WARN.md)) |
+| **Imager OS** | Trixie uses **cloud-init** on boot partition - not `wpa_supplicant.conf` |
 | **Imager version** | Need **2.0+** for Trixie customisation; 1.7.x is too old |
-| **Install script** | Several build/systemd fixes required (documented below) — now in `deploy/rpi/install.sh` |
+| **Install script** | Several build/systemd fixes required (documented below) - now in `deploy/rpi/install.sh` |
 | **Sanity check** | `./bin/check-p49-beta.sh` after install |
 
 ---
 
-## SD flash — Raspberry Pi Imager
+## SD flash - Raspberry Pi Imager
 
 ### Where settings live (before first boot)
 
@@ -30,7 +30,7 @@ Boot partition mounts as **`bootfs`** on Mac (`/Volumes/bootfs`).
 | Hostname, user, SSH, timezone | **`user-data`** (YAML) |
 
 **Not used on Trixie cloud-init images:** `wpa_supplicant.conf`, `userconf.txt`, `config.json` on the card.  
-**`config.txt`** is still present but is **Pi firmware config** (GPU, overlays) — not Wi‑Fi or user accounts.
+**`config.txt`** is still present but is **Pi firmware config** (GPU, overlays) - not Wi‑Fi or user accounts.
 
 Reference wizard fields: [config/deploy/p49-rpi-imager-customisation.json](../config/deploy/p49-rpi-imager-customisation.json).
 
@@ -46,12 +46,12 @@ rpi-imager --cli \
   /dev/rdiskN
 ```
 
-Our JSON presets are **Imager inputs on the Mac** — they are not copied onto the SD as-is.
+Our JSON presets are **Imager inputs on the Mac** - they are not copied onto the SD as-is.
 
 ### Pitfalls we hit
 
-- **Old Imager (1.7.x)** — customisation for Trixie unreliable; upgrade to current [Raspberry Pi Imager](https://www.raspberrypi.com/software/).
-- **Missing `network-config` / `user-data` after write** — gear-icon customisation did not run; verify files on `bootfs` **before** first boot.
+- **Old Imager (1.7.x)** - customisation for Trixie unreliable; upgrade to current [Raspberry Pi Imager](https://www.raspberrypi.com/software/).
+- **Missing `network-config` / `user-data` after write** - gear-icon customisation did not run; verify files on `bootfs` **before** first boot.
 - **Ethernet** avoids Wi‑Fi debug on first bring-up.
 
 ---
@@ -75,7 +75,7 @@ These were discovered during live bring-up and are fixed in `deploy/rpi/install.
 
 ### nqptp
 
-- **Wrong:** `make clean all` — nqptp has no `clean`/`all` targets in autotools tree.
+- **Wrong:** `make clean all` - nqptp has no `clean`/`all` targets in autotools tree.
 - **Right:** `autoreconf -fi`, `./configure --with-systemd-startup`, `make`, `make install`.
 - **Binary path:** `/usr/local/bin/nqptp` (not `sbin`).
 - **systemd:** `ExecStart=/usr/local/bin/nqptp`.
@@ -96,7 +96,7 @@ These were discovered during live bring-up and are fixed in `deploy/rpi/install.
 
 ### apt lock
 
-- If `apt-get` lock held, wait for other apt process — do not delete lock files.
+- If `apt-get` lock held, wait for other apt process - do not delete lock files.
 
 ---
 

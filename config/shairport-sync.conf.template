@@ -1,4 +1,4 @@
-// AirPlay Status — shairport-sync classic / macOS (template)
+// AirPlay Status - shairport-sync classic / macOS (template)
 // Render: ./bin/render-shairport-config.sh --stage dev --classic
 
 general =

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# P49 Path B — idempotent bare-metal install on Raspberry Pi OS 64-bit (AirPlay 2).
+# P49 Path B - idempotent bare-metal install on Raspberry Pi OS 64-bit (AirPlay 2).
 # Run on the Pi: curl -fsSL … | bash   OR   sudo ./deploy/rpi/install.sh
 set -euo pipefail
 
@@ -114,7 +114,7 @@ build_shairport_sync() {
       return 0
     fi
     if echo "$ver" | grep -Eiq 'airplay.?2|airplay_2|airplay2'; then
-      log "Existing shairport-sync lacks pipe backend — rebuilding..."
+      log "Existing shairport-sync lacks pipe backend - rebuilding..."
     fi
   fi
   log "Building shairport-sync ${SHAIRPORT_VERSION} with AirPlay 2..."
@@ -177,7 +177,7 @@ ensure_setup_token() {
   if [[ -f "$INSTALL_ROOT/.env" ]] \
     && grep -qE '^TIDBYT_DEVICE_ID=.+' "$INSTALL_ROOT/.env" \
     && grep -qE '^TIDBYT_API_TOKEN=.+' "$INSTALL_ROOT/.env"; then
-    log "Tidbyt credentials present — skipping setup token"
+    log "Tidbyt credentials present - skipping setup token"
     rm -f "$INSTALL_ROOT/.setup-token"
     return 0
   fi

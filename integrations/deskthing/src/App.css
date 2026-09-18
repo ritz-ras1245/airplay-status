@@ -19,7 +19,7 @@ body {
   transition: filter 0.5s ease;
 }
 
-/* "Screen off" intent on idle — dim the panel (backlight handled natively). */
+/* "Screen off" intent on idle - dim the panel (backlight handled natively). */
 .dimmed { filter: brightness(0.04); }
 
 .now { flex-direction: row; text-align: left; }

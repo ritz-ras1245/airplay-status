@@ -1,6 +1,6 @@
-"""AirPlay Status — Tidbyt now-playing (64×32, Spotify-style).
+"""AirPlay Status - Tidbyt now-playing (64×32, Spotify-style).
 
-LOCKED LAYOUT — values below were tuned on-device (Jul 2026). Change with care.
+LOCKED LAYOUT - values below were tuned on-device (Jul 2026). Change with care.
 """
 
 load("encoding/json.star", "json")
@@ -27,13 +27,13 @@ TEXT_COLUMN_PAD_LEFT = 1
 PROGRESS_HEIGHT = 3
 PROGRESS_TOP_GAP = 2
 
-# Playback status row — LOCKED
+# Playback status row - LOCKED
 ICON_SIZE = 5              # play triangle height (5 rows); pause bar height
 ICON_TEXT_GAP = 1          # gap between icon and "Playing" / "Paused"
 PAUSE_BAR = 2              # pause bar width (|| ||)
 PAUSE_GAP = 2              # gap between pause bars
 
-# Play triangle rows (widths 1,2,3,2,1 — left-aligned, 3px max width)
+# Play triangle rows (widths 1,2,3,2,1 - left-aligned, 3px max width)
 PLAY_ROWS = [1, 2, 3, 2, 1]
 
 def main(config):

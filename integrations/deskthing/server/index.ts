@@ -16,7 +16,7 @@
  */
 import { DeskThing } from '@deskthing/server';
 import { ServerEvent } from '@deskthing/types';
-// @ts-expect-error — shared pure JS module (no types package needed)
+// @ts-expect-error - shared pure JS module (no types package needed)
 import { initialState, reduce, shouldKeepScreenOn } from '../shared/alwaysOnState.js';
 
 type Settings = {

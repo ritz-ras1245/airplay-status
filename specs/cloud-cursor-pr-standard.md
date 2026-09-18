@@ -1,6 +1,6 @@
 # Cloud Cursor PR Standard
 
-**Status:** Active — apply to every spec marked **Cloud-PR ready**
+**Status:** Active - apply to every spec marked **Cloud-PR ready**
 
 Use this checklist when authoring a phase spec so a Cursor Cloud agent can implement end-to-end and open a PR **without human-in-the-loop during coding**. Human steps belong only in the PR body under **Manual setup & test** (post-merge or pre-merge approval gate).
 
@@ -36,7 +36,7 @@ Every Cloud-PR-ready spec MUST include these sections (P6 is the reference imple
 | **Architecture** | Diagram + data flow; what runs where |
 | **Repository split** | If multi-repo: which files in which repo, link strategy |
 | **Decisions (locked)** | Defaults an agent must not re-litigate |
-| **Open decisions** | Explicit `DECISION REQUIRED` blocks — agent stops and asks if unset |
+| **Open decisions** | Explicit `DECISION REQUIRED` blocks - agent stops and asks if unset |
 | **Configuration** | Env vars, `.env.example` keys, no secret values |
 | **File structure** | Exact paths to create/modify |
 | **Implementation steps** | Numbered, ordered, verifiable |
@@ -52,7 +52,7 @@ Every Cloud-PR-ready spec MUST include these sections (P6 is the reference imple
 3. **Secrets:** Never commit. Extend `.env.example` with empty placeholders only.
 4. **Tests:** Add or extend tests called out in the spec. If the repo has no test runner yet, add the minimal one the spec defines.
 5. **Docs:** Update `AGENTS.md` phase table and any integration README listed in the spec.
-6. **Manual-only work:** Document in PR checklist — do not stub fake credentials or skip documenting AWS/Alexa steps.
+6. **Manual-only work:** Document in PR checklist - do not stub fake credentials or skip documenting AWS/Alexa steps.
 7. **Multi-repo specs:** One PR per repo, cross-linked. Prefer monorepo when spec says so (e.g. P6).
 
 ## PR body template (required)

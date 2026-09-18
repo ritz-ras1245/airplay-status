@@ -1,4 +1,4 @@
-# Raspberry Pi — installed to /etc/promtail/promtail.yml by deploy/rpi/promtail/install-promtail.sh
+# Raspberry Pi - installed to /etc/promtail/promtail.yml by deploy/rpi/promtail/install-promtail.sh
 # Requires promtail -config.expand-env=true and LOKI_PUSH_URL in /etc/default/promtail
 
 server:

@@ -25,7 +25,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 let state = createEmptyPlaybackState();
 
-console.log('=== AirPlay Status — metadata parser demo ===\n');
+console.log('=== AirPlay Status - metadata parser demo ===\n');
 console.log('Simulating shairport-sync-metadata-reader output...\n');
 
 for (const line of SAMPLE_LINES) {

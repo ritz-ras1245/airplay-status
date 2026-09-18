@@ -1,4 +1,4 @@
-# Phase P3 — Kindle / eInk Read-Only Display
+# Phase P3 - Kindle / eInk Read-Only Display
 
 **Status:** Browser `/eink` MVP + transport forms; segmented progress bar + adaptive meta-refresh shipping on `/eink`. Full P3 PNG pipeline still spec.  
 **Depends on:** Phase 4 live metadata (`/api/status`)  
@@ -8,7 +8,7 @@
 
 Show AirPlay now-playing on a Kindle or other eInk device as a **read-only** wall display or bedside screen: album art, title, artist, album, and static progress text at last refresh.
 
-No live progress animation — eInk refresh is slow and battery-intensive; the display updates on a fixed interval only.
+No live progress animation - eInk refresh is slow and battery-intensive; the display updates on a fixed interval only.
 
 ## Assumptions
 
@@ -20,10 +20,10 @@ No live progress animation — eInk refresh is slow and battery-intensive; the d
 
 | Aspect | Assessment |
 |--------|------------|
-| **Overall** | **Yes** — browser path is straightforward; PNG fetch path suits always-on jailbroken setups |
+| **Overall** | **Yes** - browser path is straightforward; PNG fetch path suits always-on jailbroken setups |
 | **Kindle browser** | Works on stock or jailbroken devices if LAN HTTP is reachable |
-| **kindle-dash / TRMNL** | **Yes** — poll PNG URL; server renders **on demand** for connected profiles only |
-| **Live progress bar** | **Out of scope** — no second-by-second animation; optional **segmented** bar (see below) |
+| **kindle-dash / TRMNL** | **Yes** - poll PNG URL; server renders **on demand** for connected profiles only |
+| **Live progress bar** | **Out of scope** - no second-by-second animation; optional **segmented** bar (see below) |
 
 ## Architecture
 
@@ -53,9 +53,9 @@ No live progress animation — eInk refresh is slow and battery-intensive; the d
               [no clients → no PNG work]
 ```
 
-Both paths consume the **same** playback state from `airplayMetadataService` — no duplicate pipe parsing. **PNG images are never pre-rendered in the background** when no eInk client is connected.
+Both paths consume the **same** playback state from `airplayMetadataService` - no duplicate pipe parsing. **PNG images are never pre-rendered in the background** when no eInk client is connected.
 
-## Path A — Kindle browser (recommended MVP)
+## Path A - Kindle browser (recommended MVP)
 
 Serve a minimal page at **`GET /eink`** (alias **`GET /kindle`** optional redirect).
 
@@ -76,10 +76,10 @@ Kindle browsers are slow and often lack reliable EventSource support. Use simple
 
 - **Typography:** Large, high-contrast text; sans-serif; minimum 18px body on 6" screens
 - **Color:** Grayscale-friendly CSS (`color: #000`, `background: #fff`); no gradients or subtle grays that ghost on eInk
-- **Album art:** Small thumbnail (e.g. 120×120 max); optional — hide if art URL fails
+- **Album art:** Small thumbnail (e.g. 120×120 max); optional - hide if art URL fails
 - **Progress:** Static text, e.g. `1:35 / 3:11` from `progressMs` and `durationMs` at page render time
 - **Empty state:** "Nothing playing" + short reminder to select AirPlay Status
-- **No smooth progress animation** — optional segmented bar (below) advances one step per refresh; no sub-interval updates
+- **No smooth progress animation** - optional segmented bar (below) advances one step per refresh; no sub-interval updates
 
 ### Optional: segmented progress bar + adaptive refresh (low priority)
 
@@ -97,7 +97,7 @@ barWidthPx     = EINK_PROGRESS_BAR_PX  // default ~216 (~9 cm equivalent)
 segmentCount   = clamp(floor(barWidthPx / minSegmentPx), 3, EINK_SEGMENT_MAX)
 ```
 
-Cap `segmentCount` (default max 20) so very wide layouts do not over-poll. For podcasts or long tracks, segments represent **larger time chunks** — acceptable on eInk; ultra-smooth progress is not the goal.
+Cap `segmentCount` (default max 20) so very wide layouts do not over-poll. For podcasts or long tracks, segments represent **larger time chunks** - acceptable on eInk; ultra-smooth progress is not the goal.
 
 #### Adaptive refresh rate
 
@@ -127,7 +127,7 @@ filledSegments = isPlaying && durationMs > 0
   : 0
 ```
 
-Render as a row of `<span>` or `<div>` blocks (filled vs empty). No CSS transitions — eInk ghosting makes animation undesirable.
+Render as a row of `<span>` or `<div>` blocks (filled vs empty). No CSS transitions - eInk ghosting makes animation undesirable.
 
 #### Template / API parameters
 
@@ -146,7 +146,7 @@ Example meta tag:
 <meta http-equiv="refresh" content="<%= refreshRateSec %>">
 ```
 
-Optional: expose the same fields on `/api/status` under an `eink` key when `?eink=1` — defer unless PNG path needs it.
+Optional: expose the same fields on `/api/status` under an `eink` key when `?eink=1` - defer unless PNG path needs it.
 
 #### PNG path
 
@@ -154,18 +154,18 @@ Same segment math in `einkDisplayService.js` when that profile is **active** (se
 
 **Priority:** Segmented bar + adaptive refresh now shipping on browser `/eink` (default profile `showProgressBar: true`). Per-device tuning: [P3.1 Side-Quest](#p31-side-quest--device-profiles).
 
-## P3.1 Side-Quest — Device profiles
+## P3.1 Side-Quest - Device profiles
 
 **Status:** Side-quest (optional, after P3 MVP)  
 **Depends on:** P3 `/eink` MVP; optional segmented bar above
 
 ### Goal
 
-Support **known eInk layouts** with tuned bar width, segment size, PNG resolution, and refresh bounds. Profiles use **generic ids** (screen size, PPI class, or numbered `profileN`) — not brand/model names. You map your physical Kindle or eInk screen to whichever profile fits. Unidentified clients use **`default`**: progress text only, **no segmented bar** unless explicitly enabled on default.
+Support **known eInk layouts** with tuned bar width, segment size, PNG resolution, and refresh bounds. Profiles use **generic ids** (screen size, PPI class, or numbered `profileN`) - not brand/model names. You map your physical Kindle or eInk screen to whichever profile fits. Unidentified clients use **`default`**: progress text only, **no segmented bar** unless explicitly enabled on default.
 
 ### Profile id naming
 
-Ids are URL-safe, lowercase, no spaces — describe **display class**, not hardware SKU:
+Ids are URL-safe, lowercase, no spaces - describe **display class**, not hardware SKU:
 
 | Style | Examples | Use when |
 |-------|----------|----------|
@@ -175,18 +175,18 @@ Ids are URL-safe, lowercase, no spaces — describe **display class**, not hardw
 
 Rules:
 
-- **`default`** — always present; unidentified clients land here
-- **`label`** — free-text note, e.g. `"Bedside Kindle (~7\" 300ppi)"`; not used for lookup
+- **`default`** - always present; unidentified clients land here
+- **`label`** - free-text note, e.g. `"Bedside Kindle (~7\" 300ppi)"`; not used for lookup
 - Add or rename profiles in `config/eink-devices.json` without code changes
 - Do **not** encode vendor/model in the id (`kindle-pw3` etc. avoided)
 
 ### Device identification
 
-Kindle browsers often share generic user agents — do **not** rely on UA alone.
+Kindle browsers often share generic user agents - do **not** rely on UA alone.
 
 | Method | Example | Priority |
 |--------|---------|----------|
-| Query param | `/eink?device=7inch` | **Primary** — bookmark on device |
+| Query param | `/eink?device=7inch` | **Primary** - bookmark on device |
 | PNG path segment | `/api/display/300ppi.png` | Fetch clients (kindle-dash) |
 | Env override | `EINK_DEVICE_ID=profile1` | Single-device home install |
 | User-Agent hint | Optional fallback only | Low confidence |
@@ -269,7 +269,7 @@ Unknown id (typo): treat as **`default`**, not an error.
 | `refreshMinSec` / `refreshMaxSec` | Adaptive refresh clamps when bar enabled |
 | `pngWidth` / `pngHeight` | PNG render size for fetch path |
 
-Env vars (`EINK_PROGRESS_BAR_PX`, etc.) **override** profile values when set — useful for one-off testing.
+Env vars (`EINK_PROGRESS_BAR_PX`, etc.) **override** profile values when set - useful for one-off testing.
 
 ### Render behavior by profile
 
@@ -321,7 +321,7 @@ app.get('/kindle', (req, res) => res.redirect('/eink'));
 
 Server-render on each request (meta refresh reloads full page). No client-side state management required for MVP.
 
-## Path B — Jailbroken fetch client (wall display)
+## Path B - Jailbroken fetch client (wall display)
 
 For always-on displays using [kindle-dash](https://github.com/pascalw/kindle-dash), TRMNL, or custom cron scripts that **poll** a PNG URL.
 
@@ -332,11 +332,11 @@ GET /api/display/kindle.png          # alias → default profile
 GET /api/display/:profileId.png      # e.g. 7inch.png, 300ppi.png
 ```
 
-Returns a **grayscale PNG** at resolution from device profile ([P3.1](#p31-side-quest--device-profiles)). Images are **generated on demand** when a client requests them — not on a server timer or on every playback change.
+Returns a **grayscale PNG** at resolution from device profile ([P3.1](#p31-side-quest--device-profiles)). Images are **generated on demand** when a client requests them - not on a server timer or on every playback change.
 
 ### On-demand PNG generation (connected clients + TTL)
 
-**Rule:** If no eInk client has connected recently, the server **does not generate PNGs at all** — no background render loop, no pre-warm on track change, no CPU spent on unused profiles.
+**Rule:** If no eInk client has connected recently, the server **does not generate PNGs at all** - no background render loop, no pre-warm on track change, no CPU spent on unused profiles.
 
 A client is **connected** when it has hit an eInk endpoint within the TTL window:
 
@@ -345,7 +345,7 @@ A client is **connected** when it has hit an eInk endpoint within the TTL window
 | `GET /api/display/:profileId.png` | `:profileId` (or `default` for `kindle.png`) |
 | `GET /eink?device=<profileId>` | `<profileId>` |
 
-**Registry (planned):** `einkClientRegistry` — `Map<profileId, { lastSeenAt, source: 'png'|'html' }>`
+**Registry (planned):** `einkClientRegistry` - `Map<profileId, { lastSeenAt, source: 'png'|'html' }>`
 
 ```
 On GET /api/display/7inch.png (or /eink?device=7inch):
@@ -386,7 +386,7 @@ sequenceDiagram
   S-->>K: fresh PNG
 ```
 
-**Lazy by default:** First request after idle may be slower (cold render). Acceptable — wall displays poll on their own schedule.
+**Lazy by default:** First request after idle may be slower (cold render). Acceptable - wall displays poll on their own schedule.
 
 **Zero clients:** Pi/ Mac CPU cost for PNG path is **nil** until something on the LAN actually uses it.
 
@@ -411,13 +411,13 @@ Use `config/eink-devices.json` per device id; env vars override when set.
 - Read `getPlaybackState()` from `airplayMetadataService`
 - Server-side render via `@resvg/resvg-js`, `sharp`, or `canvas` (choose during implementation)
 - Grayscale conversion + dithering for eInk readability
-- **Profile-scoped cache:** `Map<profileId, { buffer, etag, renderedAt }>` — evicted when client TTL expires
+- **Profile-scoped cache:** `Map<profileId, { buffer, etag, renderedAt }>` - evicted when client TTL expires
 
 **Planned module:** `src/lib/einkClientRegistry.js`
 
 - `touch(profileId, source)` on eInk routes
-- `getActiveProfiles()` — profiles within TTL
-- `prune()` — drop stale clients and trigger cache eviction
+- `getActiveProfiles()` - profiles within TTL
+- `prune()` - drop stale clients and trigger cache eviction
 
 Do **not** subscribe to `onPlaybackChange()` for PNG render unless `getActiveProfiles().length > 0`; then invalidate cache only.
 
@@ -428,7 +428,7 @@ ETag: "<hash of profileId + title + artist + album + isPlaying + filledSegments>
 Cache-Control: no-cache
 ```
 
-Fetch clients send `If-None-Match`; server returns **304 Not Modified** when unchanged — saves battery and avoids redundant renders **for connected profiles only**.
+Fetch clients send `If-None-Match`; server returns **304 Not Modified** when unchanged - saves battery and avoids redundant renders **for connected profiles only**.
 
 Inactive profiles (TTL expired): cache entry removed; next GET is a cold touch + render.
 
@@ -453,7 +453,7 @@ Sharp text at low server cost; useful for devices that render SVG well. **Defer*
 | `EINK_WIDTH` | No | `758` | PNG width (fetch path) |
 | `EINK_HEIGHT` | No | `1024` | PNG height (fetch path) |
 | `EINK_ENABLED` | No | `1` | Set `0` to disable `/eink` and PNG routes |
-| `EINK_DEVICE_ID` | No | — | Default device profile when query param omitted |
+| `EINK_DEVICE_ID` | No | - | Default device profile when query param omitted |
 | `EINK_CLIENT_TTL_SEC` | No | `300` | Drop profile from active set after no requests (5 min) |
 | `EINK_CLIENT_SWEEP_SEC` | No | `60` | Interval to prune expired clients + evict PNG cache |
 
@@ -471,7 +471,7 @@ Per-device fields live in `config/eink-devices.json` ([P3.1](#p31-side-quest--de
 | GET | `/api/display/:deviceId.png` | PNG at named device profile (P3.1) |
 | GET | `/api/display/kindle.svg` | Optional vector display (future) |
 
-`/api/status` unchanged — eInk pages are consumers, not a new state source.
+`/api/status` unchanged - eInk pages are consumers, not a new state source.
 
 ## File structure (planned)
 
@@ -547,6 +547,6 @@ specs/
 
 ## References
 
-- [kindle-dash](https://github.com/pascalw/kindle-dash) — cron PNG fetch pattern
-- [p4-eink-controls.md](./p4-eink-controls.md) — controls layered on this display
-- Phase 4 playback state — `src/lib/metadataParser.js`, `/api/status`
+- [kindle-dash](https://github.com/pascalw/kindle-dash) - cron PNG fetch pattern
+- [p4-eink-controls.md](./p4-eink-controls.md) - controls layered on this display
+- Phase 4 playback state - `src/lib/metadataParser.js`, `/api/status`

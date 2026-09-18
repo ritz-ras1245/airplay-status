@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Query Loki on Mac by timestamp — for Slack "@cursor error at …" handoffs.
+# Query Loki on Mac by timestamp - for Slack "@cursor error at …" handoffs.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

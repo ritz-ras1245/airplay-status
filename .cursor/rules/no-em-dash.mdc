@@ -1,0 +1,13 @@
+---
+description: Ban Unicode em dash in all repo text
+alwaysApply: true
+---
+
+# No em dash
+
+Never use Unicode em dash U+2014, and never write the JSON/text unicode escape for U+2014 in JSON or other text.
+
+Use ASCII hyphen-minus `-` or en dash U+2013 only.
+
+Applies to copy, docs, configs, commits, PR text, and all future edits in this repo.
+Pre-commit rejects staged files that contain either form.

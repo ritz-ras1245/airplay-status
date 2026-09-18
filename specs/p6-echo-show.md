@@ -1,4 +1,4 @@
-# Phase P6 — Echo Show Now Playing (Tier B)
+# Phase P6 - Echo Show Now Playing (Tier B)
 
 **Status:** Spec (Cloud-PR ready)  
 **Depends on:** P0 live metadata (`/api/status`, `/api/events` SSE)  
@@ -24,20 +24,20 @@ Follow specs/cloud-cursor-pr-standard.md.
 
 When AirPlay playback starts (or materially changes), **airplay-status pushes an event to AWS**. Lambda dispatches an **Alexa Routines custom trigger**. A user-configured routine opens the **Silk browser** on Echo Show to a **LAN-resolvable URL** that renders live now-playing metadata via SSE.
 
-Echo Show keeps normal Alexa behavior (voice, Spotify, routines, alarms). Only the **display surface** is replaced while the dashboard is open — avoiding the native home screen **sponsored content** without sideloading or blocking Amazon services.
+Echo Show keeps normal Alexa behavior (voice, Spotify, routines, alarms). Only the **display surface** is replaced while the dashboard is open - avoiding the native home screen **sponsored content** without sideloading or blocking Amazon services.
 
 **Tier A (24×7 kiosk)** is documented here as a **future companion path** when a dedicated home kiosk is ready; P6 implements **Tier B (push on play)** only.
 
 ---
 
-## Tier A — Future kiosk mode (not in P6 scope)
+## Tier A - Future kiosk mode (not in P6 scope)
 
 Use when a dedicated Echo Show acts as an always-on display:
 
 - Silk stays on `ECHO_DISPLAY_URL` (see Configuration)
 - Page uses SSE; idle vs playing states built into `/echo`
 - Optional [keep-silk-open](https://gitlab.com/DaGammla/keep-silk-open) script to prevent Silk sleep
-- Optional Alexa routine: periodic “return to Silk” (HA virtual-switch pattern) — document in `integrations/echo/README.md` only
+- Optional Alexa routine: periodic “return to Silk” (HA virtual-switch pattern) - document in `integrations/echo/README.md` only
 
 **Why defer:** Tier A is lucrative for 24×7 signage; Tier B matches “show when something plays” without occupying the device when idle.
 
@@ -84,7 +84,7 @@ Use when a dedicated Echo Show acts as an always-on display:
 | D1 | **Tier B only** in P6 implementation | User request |
 | D2 | **Push on playback start/change**; debounce like Tidbyt (`250ms`) | Avoid routine spam |
 | D3 | **No push on idle/stop** for MVP | Echo keeps last frame until Silk times out; returns to native home/ads |
-| D4 | **Monorepo** — skill + Lambda under `integrations/echo/` | Single Cloud PR |
+| D4 | **Monorepo** - skill + Lambda under `integrations/echo/` | Single Cloud PR |
 | D5 | **Custom Routines Trigger** (not Proactive Events) | Only path to drive Echo Show display action |
 | D6 | **OpenURL APL** in skill ([home-assistant-on-echo-show](https://github.com/aldadic/home-assistant-on-echo-show)) | Proven Silk open on Echo Show |
 | D7 | **Display URL** default `http://airplay-status.home.arpa:3003/echo` | LAN DNS; eero cannot host records natively (see DNS section) |
@@ -95,13 +95,13 @@ Use when a dedicated Echo Show acts as an always-on display:
 | D12 | **`.env` for local secrets** (gitignored) | Matches P2 Tidbyt pattern |
 | D13 | **Devices:** Echo Show 5/8/10 primary; Fire TV Stick secondary; Echo Spot 1st gen (rook) optional | User request |
 | D14 | **DNS on eero:** document RPi or Synology DNS path; raw IP fallback | eero has no static local DNS |
-| D15 | **Dev/test DNS:** Option D — raw LAN IP; host Node on macOS (`./bin/run-local.sh`) | User decision; Echo uses `http://<mac-lan-ip>:3003/echo` |
+| D15 | **Dev/test DNS:** Option D - raw LAN IP; host Node on macOS (`./bin/run-local.sh`) | User decision; Echo uses `http://<mac-lan-ip>:3003/echo` |
 
 ---
 
 ## Open decisions
 
-_All resolved — agent implements locked decisions above._
+_All resolved - agent implements locked decisions above._
 
 ---
 
@@ -116,7 +116,7 @@ _All resolved — agent implements locked decisions above._
 | `ECHO_PUSH_SECRET` | Yes if enabled | Must match Lambda env `ECHO_PUSH_SECRET` |
 | `ECHO_DISPLAY_URL` | No | Default for skill/routine docs; not read by push service |
 
-### Lambda env (AWS console / SSM — `integrations/echo/`)
+### Lambda env (AWS console / SSM - `integrations/echo/`)
 
 | Variable | Description |
 |----------|-------------|
@@ -139,8 +139,8 @@ Never commit secrets to git.
 | Echo Show 5 | Yes | Compact landscape | **Primary** |
 | Echo Show 8 | Yes | Standard landscape | **Primary** |
 | Echo Show 10 / 11 | Yes | Large landscape | **Primary** |
-| Fire TV Stick | **Partial** — Silk exists; OpenURL APL may not apply | TV-safe `@media (min-width: 1280px)` | **Secondary** — manual Silk doc |
-| Echo Spot 1st gen (**rook**) | Yes if stock Alexa supports OpenURL | Circular `?profile=spot` | **Optional** — skip if low effort / APL blocked |
+| Fire TV Stick | **Partial** - Silk exists; OpenURL APL may not apply | TV-safe `@media (min-width: 1280px)` | **Secondary** - manual Silk doc |
+| Echo Spot 1st gen (**rook**) | Yes if stock Alexa supports OpenURL | Circular `?profile=spot` | **Optional** - skip if low effort / APL blocked |
 
 **Fire TV:** Document manual Silk bookmark in `integrations/echo/docs/fire-tv.md`. Not a merge blocker.
 
@@ -183,7 +183,7 @@ Never commit secrets to git.
 - **Idle state:** “Nothing playing” + subtle AirPlay hint
 - **SSE:** subscribe to `/api/events`; fallback poll `/api/status` every 5s
 - **Silk:** keep-silk-open only when `?kiosk=1` (Tier A)
-- **Profiles:** `?profile=spot` for Echo Spot (rook) — circular-safe layout
+- **Profiles:** `?profile=spot` for Echo Spot (rook) - circular-safe layout
 
 **Non-goals:** Transport controls (P1), login/auth on `/echo`.
 
@@ -213,7 +213,7 @@ Mirror `tidbytPushService.js` patterns:
 7. Log failures; exponential backoff; disable after 10 consecutive failures (bordered WARN like Tidbyt)
 8. `ECHO_PUSH_ENABLED=0` suppresses with cyan hint on stderr
 
-**Do not push** on progress-only updates (title/artist/art/isPlaying key only — no progress buckets).
+**Do not push** on progress-only updates (title/artist/art/isPlaying key only - no progress buckets).
 
 ---
 
@@ -238,7 +238,7 @@ Authorization: Bearer <LWA token, scope alexa::routines:triggerinstances:write>
 ## Alexa skill (`integrations/echo/skill/`)
 
 **Invocation name:** `airplay status`  
-**Intent:** `OpenNowPlayingIntent` — opens `ECHO_DISPLAY_URL` via OpenURL APL
+**Intent:** `OpenNowPlayingIntent` - opens `ECHO_DISPLAY_URL` via OpenURL APL
 
 **Routines integration:**
 
@@ -262,11 +262,11 @@ eero **does not** expose custom static DNS records. Document these options (user
 
 | Option | Where | Summary |
 |--------|-------|---------|
-| **A — RPi** | Pi-hole or AdGuard Home on Raspberry Pi | Local rewrite `airplay-status.home.arpa` → LAN IP; eero → Advanced → DNS → Custom DNS → Pi IP |
-| **B — Synology** | Synology DNS Server or Docker AdGuard | Same rewrite; eero custom DNS → Synology IP |
-| **C — Host dnsmasq** | macOS/Linux on airplay-status host | Local DNS on LAN IP; eero custom DNS → that IP |
-| **D — Raw IP** | No DNS server — **default for dev/test** | `ECHO_DISPLAY_URL=http://192.168.x.x:3003/echo` in Lambda/skill env; Mac runs Node via `./bin/run-local.sh` |
-| **E — mDNS** | Last resort | `http://<host>.local:3003/echo` — flaky on Echo; not MVP sign-off |
+| **A - RPi** | Pi-hole or AdGuard Home on Raspberry Pi | Local rewrite `airplay-status.home.arpa` → LAN IP; eero → Advanced → DNS → Custom DNS → Pi IP |
+| **B - Synology** | Synology DNS Server or Docker AdGuard | Same rewrite; eero custom DNS → Synology IP |
+| **C - Host dnsmasq** | macOS/Linux on airplay-status host | Local DNS on LAN IP; eero custom DNS → that IP |
+| **D - Raw IP** | No DNS server - **default for dev/test** | `ECHO_DISPLAY_URL=http://192.168.x.x:3003/echo` in Lambda/skill env; Mac runs Node via `./bin/run-local.sh` |
+| **E - mDNS** | Last resort | `http://<host>.local:3003/echo` - flaky on Echo; not MVP sign-off |
 
 Also document OpenWrt / UniFi native local DNS where supported.
 
@@ -281,7 +281,7 @@ Also document OpenWrt / UniFi native local DNS where supported.
 1. Add `echoPushService.js` + wire in `src/index.js` (parallel to Tidbyt)
 2. Add `GET /echo` route + `echo.ejs` + responsive static assets
 3. Extend `.env.example`
-4. Add `integrations/echo/` — SAM, Lambdas, skill, docs
+4. Add `integrations/echo/` - SAM, Lambdas, skill, docs
 5. Add tests: `test/` + `integrations/echo/test/`; `"test": "node --test test/**/*.test.js integrations/echo/test/**/*.test.js"` in `package.json`
 6. Update `AGENTS.md` phase table
 
@@ -297,7 +297,7 @@ Also document OpenWrt / UniFi native local DNS where supported.
 | Trigger builds valid Routines payload | `integrations/echo/test/` | `npm test` |
 | Skill returns OpenURL directive | `integrations/echo/test/` | `npm test` |
 
-Use mock playback — no shairport, Echo, or AWS in CI.
+Use mock playback - no shairport, Echo, or AWS in CI.
 
 ---
 
@@ -350,8 +350,8 @@ Use mock playback — no shairport, Echo, or AWS in CI.
 - [ ] Confirm Echo opens Silk within ~5s on play
 - [ ] Change track; confirm SSE updates without new routine fire
 - [ ] Stop playback; confirm no webhook spam (last frame until Silk timeout)
-- [ ] Optional: Fire TV — `integrations/echo/docs/fire-tv.md`
-- [ ] Optional: Echo Spot (rook) — `?profile=spot`
+- [ ] Optional: Fire TV - `integrations/echo/docs/fire-tv.md`
+- [ ] Optional: Echo Spot (rook) - `?profile=spot`
 - [ ] Confirm voice/Spotify/routines still work after Silk closes
 
 ## Spec

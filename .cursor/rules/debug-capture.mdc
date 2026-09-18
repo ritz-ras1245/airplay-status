@@ -4,11 +4,11 @@ globs: src/**/*.{js,ejs},bin/*.sh,docs/debug-capture.md
 alwaysApply: false
 ---
 
-# AirPlay Status — debug capture
+# AirPlay Status - debug capture
 
-**Normal:** `./bin/run-local.sh` — `/debug` and `/?debug=1` redirect to `/`.
+**Normal:** `./bin/run-local.sh` - `/debug` and `/?debug=1` redirect to `/`.
 
-**Debug:** `./bin/run-local.sh --debug` — verbose logs + marker UI at `/debug`.
+**Debug:** `./bin/run-local.sh --debug` - verbose logs + marker UI at `/debug`.
 
 When debugging: read `docs/debug-capture.md`, user runs with `--debug`, taps markers at `/debug`, says **done**, agent reads `/tmp/airplay-status-debug.log`.
 

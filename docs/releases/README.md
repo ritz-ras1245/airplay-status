@@ -4,7 +4,7 @@ Per-ship YAML files for each semver (e.g. `1.0.0.yaml`). Schema matches **Canoni
 
 **When to add:** first **P100** prod ship and every patch (`1.0.1`, …).
 
-**Future use:** GitHub Releases, Jira Fix Version, and ClickUp `Release` field should reference the same values from the record — no new strings at sync time.
+**Future use:** GitHub Releases, Jira Fix Version, and ClickUp `Release` field should reference the same values from the record - no new strings at sync time.
 
 ## Template
 

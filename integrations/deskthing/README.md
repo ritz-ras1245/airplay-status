@@ -1,4 +1,4 @@
-# AirPlay Status — DeskThing / Car Thing app (P8)
+# AirPlay Status - DeskThing / Car Thing app (P8)
 
 An always-on now-playing console for a **Spotify Car Thing** running
 [DeskThing](https://deskthing.app/). It shows live airplay-status metadata,
@@ -7,7 +7,7 @@ keeps the display awake while playing, sleeps when idle, and shows a
 when it dimmed. See the spec: [`../../specs/p8-deskthing-carthing.md`](../../specs/p8-deskthing-carthing.md).
 
 > **Status: authored, device-test pending.** This app is written against the
-> documented DeskThing SDK but has **not** been built/run on hardware in CI —
+> documented DeskThing SDK but has **not** been built/run on hardware in CI -
 > it needs a DeskThing host + Car Thing. Only the shared state machine has
 > automated tests (`node --test`). Pin your DeskThing SDK version (OD5) and
 > verify SDK method names before shipping.
@@ -34,7 +34,7 @@ AirPlay receiver. Shared behaviour lives in
 | Setting | Default | Notes |
 |---------|---------|-------|
 | `airplayStatusUrl` | `http://airplay-status.home.arpa:3003` | Base URL of airplay-status |
-| `fallbackUrl` | — | P10 gateway URL tried when primary fails |
+| `fallbackUrl` | - | P10 gateway URL tried when primary fails |
 | `idleGraceSec` | `45` | Seconds idle before the display sleeps |
 | `pollSec` | `3` | `/api/status` poll interval |
 
