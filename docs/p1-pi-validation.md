@@ -1,6 +1,6 @@
 # P1 transport controls — Pi / device validation
 
-**Branch:** `feat/cursor/p1-remote-control`  
+**Branch:** `release/eink-minimal`  
 **Do not merge until this checklist is filled from a real Pi + phone session.**
 
 The Pi stays **AirPlay 2**. This PR does **not** switch the receiver to Classic/AP1.
