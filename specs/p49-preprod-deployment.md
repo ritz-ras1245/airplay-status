@@ -155,9 +155,28 @@ docs/
 
 - P99 logs/Grafana/SOPs (defer to P99)
 - Public internet exposure / TLS reverse proxy
-- Synology as beta host (P5 - low confidence)
+- Synology as beta host (P5 - low confidence). Dated mapping: [Synology line (2026-10-03)](#synology-line-2026-10-03).
 - Docker Desktop on Mac as beta target
 - More than 4 fleet nodes
+
+### Synology line (2026-10-03)
+
+Synology stays out of scope as the P49 beta host. The beta host in this spec remains the Raspberry Pi 4.
+
+A normal Linux container host replaces Synology Container Manager. Container-shaped workloads map to that host even when older docs say Synology or never name the host.
+
+Host networking on that host (Podman or Docker) removes the discovery blockers tied to a Docker bridge, Docker Desktop on a Mac, and DSM Container Manager. Publishing ports alone does not. [`deploy/docker/docker-compose.yml`](../deploy/docker/docker-compose.yml) uses `network_mode: host`, not a ports map.
+
+That does not make the current AirPlay 2 package runnable. Still required, and not supplied as a container:
+
+1. **nqptp listening on the host (UDP 319 and 320).** This repo only installs it by compiling on the host (`deploy/rpi/install.sh`). There is no nqptp image. [`deploy/docker/README.md`](../deploy/docker/README.md) calls in-container nqptp fragile and keeps it out of compose.
+2. **avahi-daemon on the host.** The only install line is apt. There are no rpm instructions.
+3. **One shared mount** so shairport-sync and the Node app see the same `/tmp/shairport-sync-metadata` FIFO. The packaging table above requires that path on the host. The compose file mounts only the shairport config.
+4. **A start path that loads `linux/amd64` images built elsewhere.** [`bin/p49-up.sh`](../bin/p49-up.sh) runs `docker compose up -d --build` and pulls `mikebrady/shairport-sync:latest`. The repo never says whether that image does AirPlay 2 on amd64. The only image failure it names is lacking AP2 on arm64 (`deploy/docker/README.md`).
+
+[`deploy/rpi/install.sh`](../deploy/rpi/install.sh) is a separate path (`apt-get`, then compile). It is not the container package. Podman is never mentioned.
+
+Same note: [P5 container host mapping](./p5-deployment.md#container-host-mapping-2026-10-03), [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md#linux-container-host-2026-10-03).
 
 ---
 
