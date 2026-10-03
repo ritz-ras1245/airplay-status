@@ -19,6 +19,8 @@ Answer: **No, it does not have to run on a Mac.** Mac remains the dev target; Li
 | **Synology Docker** | Difficult | Low | DSM networking often breaks mDNS; advanced/experimental |
 | **Docker Desktop on Mac** | Poor for receiver | Low | mDNS/AirPlay discovery unreliable inside VM |
 
+**Container host (2026-10-03):** workloads this table calls Synology Docker, and container-shaped workloads that never name a host, map to the Dell OptiPlex 7060 (hostname `sohoni-server`, Fedora CoreOS, Podman). That machine is the replacement and enhancement of Synology Container Manager (the DSM Docker path below). The four AirPlay 2 gaps that remain are in [Container host mapping (2026-10-03)](#container-host-mapping-2026-10-03). The Raspberry Pi row is unchanged.
+
 ## Architecture (production)
 
 ```
@@ -187,6 +189,7 @@ volumes:
 - `output_backend = "pipe"` with `name = "/dev/null"` discards audio
 - On SELinux hosts, label volumes appropriately
 - Pi + Docker adds overhead; **native Pi install preferred** unless user already runs Docker stack
+- The sketch above is a plan. The compose file in the repo is [`deploy/docker/docker-compose.yml`](../deploy/docker/docker-compose.yml): `network_mode: host`, and the only mount is the shairport config. Dell host mapping and the four remaining AirPlay 2 gaps: [Container host mapping (2026-10-03)](#container-host-mapping-2026-10-03).
 
 ### Dockerfile (planned sketch)
 
@@ -239,6 +242,25 @@ Document troubleshooting section in README - do not promise easy Synology setup.
 | Pipe mounted | Node container reads same FIFO path |
 | Firewall | Allow mDNS and RAOP ports on LAN interface |
 
+### Container host mapping (2026-10-03)
+
+The Dell OptiPlex 7060 (hostname `sohoni-server`, Fedora CoreOS, Podman) is the replacement and enhancement of Synology Container Manager. Container-shaped workloads map to that host even when older text here says Synology Docker or DSM Docker, or never names the Dell.
+
+Host networking on that Podman host removes the discovery blockers this spec ties to a Docker bridge, Docker Desktop on a Mac, and DSM Container Manager. Publishing ports alone does not. [`deploy/docker/docker-compose.yml`](../deploy/docker/docker-compose.yml) uses `network_mode: host`, not a ports map.
+
+That mapping does not make the current AirPlay 2 package runnable. Still required, and not supplied as a container:
+
+1. **nqptp listening on the host (UDP 319 and 320).** This repo only installs nqptp by compiling it on the host ([`deploy/rpi/install.sh`](../deploy/rpi/install.sh); the clone and `make` lines in [`deploy/docker/README.md`](../deploy/docker/README.md)). There is no nqptp image. That README calls in-container nqptp fragile and keeps it out of compose.
+2. **avahi-daemon on the host.** The only install line is apt (`sudo apt install avahi-daemon` in `deploy/docker/README.md`; `apt-get` in `deploy/rpi/install.sh`). There are no Fedora or rpm instructions.
+3. **One shared mount** so shairport-sync and the Node app see the same `/tmp/shairport-sync-metadata` FIFO. The [P49 packaging table](./p49-preprod-deployment.md) requires that path on the host. The compose file mounts only the shairport config (`./shairport/shairport-sync.conf`).
+4. **A start path that loads `linux/amd64` images built elsewhere.** [`bin/p49-up.sh`](../bin/p49-up.sh) runs `docker compose up -d --build` and pulls `mikebrady/shairport-sync:latest` (the `image:` in the compose file). The repo never says whether that image does AirPlay 2 on amd64. The only image failure it names is lacking AP2 on arm64 (`deploy/docker/README.md`).
+
+[`deploy/rpi/install.sh`](../deploy/rpi/install.sh) is a separate path (`apt-get`, then compile). It is not the container package. Podman is never mentioned there.
+
+The Raspberry Pi recommendation in this spec is unchanged.
+
+Same note: [deploy/docker/README-WARN.md](../deploy/docker/README-WARN.md#dell-optiplex-podman-2026-10-03), [P49 Synology line](./p49-preprod-deployment.md#synology-line-2026-10-03).
+
 ## Environment variables (all platforms)
 
 | Variable | Default | Description |
@@ -273,6 +295,8 @@ docs/
 | Already run Docker on Linux server | Compose stack with host network |
 | Synology only | Try host network; fallback to Pi |
 | Need receiver on Mac only | Homebrew shairport-sync - no Docker |
+
+Rows that say Synology, and container-shaped workloads this guide never names a host for, map to the Dell OptiPlex 7060 as of 2026-10-03. See [Container host mapping (2026-10-03)](#container-host-mapping-2026-10-03). The Raspberry Pi row is unchanged.
 
 ## Acceptance criteria
 
